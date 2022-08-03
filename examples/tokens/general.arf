@@ -1,0 +1,11 @@
+:arf
+require io
+---
+
+func rr main
+	> argc:Int
+	> argv:{String}
+	< status:Int
+	---
+	io.println [io.readln]
+	= status 0

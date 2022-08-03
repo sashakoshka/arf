@@ -1,0 +1,13 @@
+:arf
+---
+
+data:{Int 6}
+	-39480 398 29 0x3AFe3 0b10001010110 0o666
+
+func rr literals
+	---
+	= stringLiteral:String "skadjlsakdj"
+	= intArrayLiteral:{Int 3} 2398
+		-2938 324
+	= runeLiteral:Rune 'a'
+	= floatArrayLiteral:{F64 5} 3248.23 0.324 -94.29
