@@ -7,10 +7,11 @@ var logger = log.New(os.Stderr, "", 0)
 
 // File represents a read only file that can print out formatted errors.
 type File struct {
-	path        string
-	file        *os.File
-	currentLine int
-	lines       [][]byte
+	path          string
+	file          *os.File
+	currentLine   int
+	currentColumn int
+	lines         [][]byte
 }
 
 // Open opens the file specified by path and returns a new File struct.
@@ -44,10 +45,12 @@ func (file *File) Read (bytes []byte) (amountRead int, err error) {
 		if char == '\n' {
 			file.lines = append(file.lines, []byte { })
 			file.currentLine ++
+			file.currentColumn = 0
 		} else {
 			file.lines[file.currentLine] = append (
 				file.lines[file.currentLine],
 				bytes...)
+			file.currentColumn ++
 		}
 	}
 	
@@ -99,4 +102,14 @@ func (file *File) Error (column, row, width int, message string) {
 // location information is printed.
 func (file *File) Warn (column, row, width int, message string) {
 	file.mistake(column, row, width, message, "!!!")
+}
+
+// Location returns a location struct describing the current position inside of
+// the file. This can be stored and used to print errors.
+func (file *File) Location () (location Location) {
+	return Location {
+		file:   file,
+		row:    file.currentLine,
+		column: file.currentColumn,
+	}
 }
