@@ -1,8 +1,6 @@
 package lexer
 
-import (
-        "github.com/sashakoshka/arf/file"
-)
+import "github.com/sashakoshka/arf/file"
 
 // LexingOperation holds information about an ongoing lexing operataion.
 type LexingOperation struct {
