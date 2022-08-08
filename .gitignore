@@ -8,6 +8,7 @@
 *.so
 *.dylib
 /arfc/arfc
+playground/
 
 # Test binary, built with `go test -c`
 *.test
