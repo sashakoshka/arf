@@ -13,14 +13,14 @@ type File struct {
 	reader        *bufio.Reader
 	currentLine   int
 	currentColumn int
-	lines         [][]byte
+	lines         []string
 }
 
 // Open opens the file specified by path and returns a new File struct.
 func Open (path string) (file *File, err error) {
 	file = &File {
 		path:  path,
-		lines: [][]byte { []byte { } },
+		lines: []string { "" },
 	}
 
 	file.file, err = os.OpenFile(path, os.O_RDONLY, 0660)
@@ -46,17 +46,32 @@ func (file *File) Read (bytes []byte) (amountRead int, err error) {
 	// store the character in the file
 	for _, char := range bytes {
 		if char == '\n' {
-			file.lines = append(file.lines, []byte { })
+			file.lines = append(file.lines, "")
 			file.currentLine ++
 			file.currentColumn = 0
 		} else {
-			file.lines[file.currentLine] = append (
-				file.lines[file.currentLine],
-				bytes...)
+			file.lines[file.currentLine] += string(char)
 			file.currentColumn ++
 		}
 	}
 	
+	return
+}
+
+// ReadRune reads a single UTF-8 encoded Unicode character and returns the rune
+// and its size in bytes. If the encoded rune is invalid, it consumes one byte
+// and returns unicode.ReplacementChar (U+FFFD) with a size of 1.
+func (file *File) ReadRune () (char rune, size int, err error) {
+	char, size, err = file.reader.ReadRune()
+
+	if char == '\n' {
+		file.lines = append(file.lines, "")
+		file.currentLine ++
+		file.currentColumn = 0
+	} else {
+		file.lines[file.currentLine] += string(char)
+		file.currentColumn ++
+	}
 	return
 }
 
