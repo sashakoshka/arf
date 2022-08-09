@@ -75,6 +75,29 @@ func (file *File) ReadRune () (char rune, size int, err error) {
 	return
 }
 
+// ReadString reads until the first occurrence of delimiter in the input,
+// returning a string containing the data up to and including the delimiter. If
+// ReadString encounters an error before finding a delimiter, it returns the
+// data read before the error and the error itself (often io.EOF). ReadString
+// returns err != nil if and only if the returned data does not end in delim.
+func (file *File) ReadString (delimiter byte) (read string, err error) {
+	read, err = file.reader.ReadString(delimiter)
+
+	// store the character in the file
+	for _, char := range read {
+		if char == '\n' {
+			file.lines = append(file.lines, "")
+			file.currentLine ++
+			file.currentColumn = 0
+		} else {
+			file.lines[file.currentLine] += string(char)
+			file.currentColumn ++
+		}
+	}
+	
+	return
+}
+
 // Close closes the file. After the file is closed, data that has been read will
 // still be retained, and errors can be reported.
 func (file *File) Close () {
