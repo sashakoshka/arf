@@ -1,10 +1,7 @@
 package file
 
 import "os"
-import "log"
 import "bufio"
-
-var logger = log.New(os.Stderr, "", 0)
 
 // File represents a read only file that can print out formatted errors.
 type File struct {
@@ -102,47 +99,6 @@ func (file *File) ReadString (delimiter byte) (read string, err error) {
 // still be retained, and errors can be reported.
 func (file *File) Close () {
 	file.file.Close()
-}
-
-// mistake prints an informational message about a mistake that the user made.
-func (file *File) mistake (column, row, width int, message, symbol string) {
-	logger.Print(symbol)
-
-	// print information about the location of the mistake
-	if width > 0 {
-		logger.Print(" ", row + 1, ":", column + 1)
-	}
-	logger.Println(" in", file.path)
-	
-	if width > 0 {
-		// print erroneous line
-		logger.Println(file.lines[row])
-
-		// print an arrow with a tail spanning the width of the mistake
-		for column > 0 {
-			logger.Print(" ")
-			column --
-		}
-		for width > 1 {
-			logger.Print("-")
-		}
-		logger.Println("^")
-	}
-	logger.Println(message)
-}
-
-// Error prints an error at row and column spanning width amount of runes, and
-// a message describing the error. If width is zero, neither the line nor the
-// location information is printed.
-func (file *File) Error (column, row, width int, message string) {
-	file.mistake(column, row, width, message, "ERR")
-}
-
-// Warn prints a warning at row and column spanning width amount of runes, and
-// a message describing the error. If width is zero, neither the line nor the
-// location information is printed.
-func (file *File) Warn (column, row, width int, message string) {
-	file.mistake(column, row, width, message, "!!!")
 }
 
 // Location returns a location struct describing the current position inside of
