@@ -2,6 +2,7 @@ package file
 
 import "os"
 import "log"
+import "bufio"
 
 var logger = log.New(os.Stderr, "", 0)
 
@@ -9,6 +10,7 @@ var logger = log.New(os.Stderr, "", 0)
 type File struct {
 	path          string
 	file          *os.File
+	reader        *bufio.Reader
 	currentLine   int
 	currentColumn int
 	lines         [][]byte
@@ -24,6 +26,7 @@ func Open (path string) (file *File, err error) {
 	file.file, err = os.OpenFile(path, os.O_RDONLY, 0660)
 	if err != nil { return }
 
+	file.reader = bufio.NewReader(file.file)
 	return
 }
 
@@ -38,7 +41,7 @@ func (file *File) Stat () (fileInfo os.FileInfo, err error) {
 // Read returns 0, io.EOF. This method stores all data read into the file struct
 // so it can be used later for error reporting.
 func (file *File) Read (bytes []byte) (amountRead int, err error) {
-	amountRead, err = file.file.Read(bytes)
+	amountRead, err = file.reader.Read(bytes)
 
 	// store the character in the file
 	for _, char := range bytes {
