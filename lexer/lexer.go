@@ -51,16 +51,28 @@ func (lexer *LexingOperation) tokenize () (err error) {
 }
 
 func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
-	// TODO: ignore comments
 	switch lexer.char {
+	case '#':
+		// comment
+		for lexer.char != '\n' {
+			lexer.nextRune()
+		}
 	case '\t':
+		// indent level
+		// TODO: throw error if tab is not at line beginning, or after
+		// other tab
 		for lexer.char == '\t' {
 			lexer.addToken (Token {
 				kind: TokenKindIndent,
 			})
 			lexer.nextRune()
 		}
-	// TODO: newline
+	case '\n':
+		// line break
+		lexer.addToken (Token {
+			kind: TokenKindNewline,
+		})
+		lexer.nextRune()
 	case '"':
 		// TODO: tokenize string literal
 		lexer.nextRune()
@@ -98,28 +110,42 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		})
 		lexer.nextRune()
 	case '+':
-		// TODO: tokenize plus
+		lexer.addToken (Token {
+			kind: TokenKindPlus,
+		})
 		lexer.nextRune()
 	case '-':
 		// TODO: tokenize dash begin
 		lexer.nextRune()
 	case '*':
-		// TODO: tokenize asterisk
+		lexer.addToken (Token {
+			kind: TokenKindAsterisk,
+		})
 		lexer.nextRune()
 	case '/':
-		// TODO: tokenize slash
+		lexer.addToken (Token {
+			kind: TokenKindSlash,
+		})
 		lexer.nextRune()
 	case '@':
-		// TODO: tokenize @
+		lexer.addToken (Token {
+			kind: TokenKindAt,
+		})
 		lexer.nextRune()
 	case '!':
-		// TODO: tokenize exclamation mark
+		lexer.addToken (Token {
+			kind: TokenKindExclamation,
+		})
 		lexer.nextRune()
 	case '%':
-		// TODO: tokenize percent
+		lexer.addToken (Token {
+			kind: TokenKindPercent,
+		})
 		lexer.nextRune()
 	case '~':
-		// TODO: tokenize tilde
+		lexer.addToken (Token {
+			kind: TokenKindTilde,
+		})
 		lexer.nextRune()
 	case '<':
 		// TODO: tokenize less than begin
@@ -133,9 +159,6 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 	case '&':
 		// TODO: tokenize and begin
 		lexer.nextRune()
-		
-	// TODO: add more for things like math symbols, return
-	// direction operators, indentation, etc
 	default:
 		err = file.NewError (
 			lexer.file.Location(), 1,
