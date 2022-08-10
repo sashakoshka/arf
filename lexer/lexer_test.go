@@ -13,6 +13,12 @@ func TestTokenizeAll (test *testing.T) {
 	}
 	
 	tokens, err := Tokenize(file)
+
+	// print all tokens
+	for _, token := range tokens {
+		test.Log("got token:", token.Describe())
+	}
+	
 	test.Log("resulting error:")
 	test.Log(err.Error())
 	if err == nil {

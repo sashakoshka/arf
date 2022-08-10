@@ -1,5 +1,6 @@
 package lexer
 
+import "fmt"
 import "github.com/sashakoshka/arf/file"
 
 // TokenKind is an enum represzenting what role a token has.
@@ -83,4 +84,87 @@ func (token Token) Equals (testToken Token) (match bool) {
 // Location returns the location of the token in its file.
 func (token Token) Location () (location file.Location) {
 	return token.location
+}
+
+// Describe generates a textual description of the token to be used in debug
+// logs.
+func (token Token) Describe () (description string) {
+	switch token.kind {
+	case TokenKindNewline:
+		description += "Newline"
+	case TokenKindIndent:
+		description += "Indent"
+	case TokenKindSeparator:
+		description += "Separator"
+	case TokenKindPermission:
+		description += "Permission"
+	case TokenKindReturnDirection:
+		description += "ReturnDirection"
+	case TokenKindInt:
+		description += "Int"
+	case TokenKindUInt:
+		description += "UInt"
+	case TokenKindFloat:
+		description += "Float"
+	case TokenKindString:
+		description += "String"
+	case TokenKindRune:
+		description += "Rune"
+	case TokenKindName:
+		description += "Name"
+	case TokenKindColon:
+		description += "Colon"
+	case TokenKindDot:
+		description += "Dot"
+	case TokenKindLBracket:
+		description += "LBracket"
+	case TokenKindRBracket:
+		description += "RBracket"
+	case TokenKindLBrace:
+		description += "LBrace"
+	case TokenKindRBrace:
+		description += "RBrace"
+	case TokenKindPlus:
+		description += "Plus"
+	case TokenKindMinus:
+		description += "Minus"
+	case TokenKindIncrement:
+		description += "Increment"
+	case TokenKindDecrement:
+		description += "Decrement"
+	case TokenKindAsterisk:
+		description += "Asterisk"
+	case TokenKindSlash:
+		description += "Slash"
+	case TokenKindAt:
+		description += "At"
+	case TokenKindExclamation:
+		description += "Exclamation"
+	case TokenKindPercent:
+		description += "Percent"
+	case TokenKindTilde:
+		description += "Tilde"
+	case TokenKindLessThan:
+		description += "LessThan"
+	case TokenKindLShift:
+		description += "LShift"
+	case TokenKindGreaterThan:
+		description += "GreaterThan"
+	case TokenKindRShift:
+		description += "RShift"
+	case TokenKindBinaryOr:
+		description += "BinaryOr"
+	case TokenKindLogicalOr:
+		description += "LogicalOr"
+	case TokenKindBinaryAnd:
+		description += "BinaryAnd"
+	case TokenKindLogicalAnd:
+		description += "LogicalAnd"
+	}
+
+	if token.value != nil {
+		description += fmt.Sprint(": ", token.value)
+	}
+
+	return
 }

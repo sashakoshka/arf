@@ -1,7 +1,7 @@
 package lexer
 
 import "io"
-import "fmt"
+// import "fmt"
 import "github.com/sashakoshka/arf/file"
 import "github.com/sashakoshka/arf/types"
 
@@ -33,7 +33,7 @@ func (lexer *LexingOperation) tokenize () (err error) {
 	if err != nil { return }
 
 	for {
-		fmt.Println(string(lexer.char))
+		// fmt.Println(string(lexer.char))
 		
 		lowercase := lexer.char >= 'a' && lexer.char <= 'z'
 		uppercase := lexer.char >= 'A' && lexer.char <= 'Z'
