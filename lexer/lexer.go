@@ -126,13 +126,10 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		})
 		lexer.nextRune()
 	case '+':
-		lexer.addToken (Token {
-			kind: TokenKindPlus,
-		})
+		// TODO: tokenize plus begin
 		lexer.nextRune()
 	case '-':
-		// TODO: tokenize dash begin
-		lexer.nextRune()
+		lexer.tokenizeDashBeginning()
 	case '*':
 		lexer.addToken (Token {
 			kind: TokenKindAsterisk,
@@ -184,6 +181,25 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		return
 	}
 
+	return
+}
+
+func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
+	token := Token { kind: TokenKindMinus }
+	lexer.nextRune()
+	
+	if lexer.char == '-' {
+		token.kind = TokenKindDecrement
+		lexer.nextRune()
+	} else if lexer.char == '>' {
+		token.kind = TokenKindReturnDirection
+		lexer.nextRune()
+	}
+
+	if lexer.char == '-' {
+		token.kind = TokenKindSeparator
+		lexer.nextRune()
+	}
 	return
 }
 
