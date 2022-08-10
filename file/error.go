@@ -1,5 +1,6 @@
 package file
 
+import "os"
 import "fmt"
 
 type ErrorKind int
@@ -69,4 +70,9 @@ func (err Error) Error () (formattedMessage string) {
 	formattedMessage += err.message + "-\n"
 
 	return
+}
+
+// Print formats the error and prints it to stderr.
+func (err Error) Print () {
+	os.Stderr.Write([]byte(err.Error()))
 }
