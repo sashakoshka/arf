@@ -79,6 +79,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		}
 	case '\n':
 		// line break
+		// TODO: if last line was blank, (ony whitespace) discard.
 		lexer.addToken (Token {
 			kind: TokenKindNewline,
 		})
