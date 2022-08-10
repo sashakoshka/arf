@@ -2,6 +2,7 @@ package lexer
 
 import "testing"
 import "github.com/sashakoshka/arf/file"
+import "github.com/sashakoshka/arf/types"
 
 func TestTokenizeAll (test *testing.T) {
 	file, err := file.Open("tests/lexer/all")
@@ -18,7 +19,10 @@ func TestTokenizeAll (test *testing.T) {
 
 	correct := []Token {
 		Token { kind: TokenKindSeparator },
-		Token { kind: TokenKindPermission /* TODO: value */ },
+		Token { kind: TokenKindPermission, value: types.Permission {
+			Internal: types.ModeRead,
+			External: types.ModeWrite,
+		}},
 		Token { kind: TokenKindReturnDirection },
 		Token { kind: TokenKindInt, value: -349820394 },
 		Token { kind: TokenKindUInt, value: 932748397 },
