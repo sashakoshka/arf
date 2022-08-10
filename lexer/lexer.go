@@ -5,14 +5,16 @@ import "github.com/sashakoshka/arf/file"
 
 // LexingOperation holds information about an ongoing lexing operataion.
 type LexingOperation struct {
-	file *file.File
-	char rune
+	file   *file.File
+	char   rune
+	tokens []Token
 }
 
 // Tokenize converts a file into a slice of tokens (lexemes).
 func Tokenize (file *file.File) (tokens []Token, err error) {
 	lexer := LexingOperation { file: file }
-	tokens, err = lexer.tokenize()
+	err = lexer.tokenize()
+	tokens = lexer.tokens
 
 	// if the lexing operation returned io.EOF, nothing went wrong so we
 	// return nil for err.
@@ -24,7 +26,7 @@ func Tokenize (file *file.File) (tokens []Token, err error) {
 
 // tokenize converts a file into a slice of tokens (lexemes). It will always
 // return a non-nil error, but if nothing went wrong it will return io.EOF.
-func (lexer *LexingOperation) tokenize () (tokens []Token, err error) {
+func (lexer *LexingOperation) tokenize () (err error) {
 	err = lexer.nextRune()
 	if err != nil { return }
 
@@ -39,6 +41,13 @@ func (lexer *LexingOperation) tokenize () (tokens []Token, err error) {
 			// TODO: tokenize multi
 		} else {
 			switch lexer.char {
+			case '\t':
+				for lexer.char == '\t' {
+					lexer.addToken (Token {
+						kind: TokenKindIndent,
+					})
+					lexer.nextRune()
+				}
 			case '"':
 				// TODO: tokenize string literal
 				lexer.nextRune()
@@ -73,6 +82,10 @@ func (lexer *LexingOperation) tokenize () (tokens []Token, err error) {
 	}
 
 	return
+}
+
+func (lexer *LexingOperation) addToken (token Token) {
+	lexer.tokens = append(lexer.tokens, token)
 }
 
 // nextRune advances the lexer to the next rune in the file.
