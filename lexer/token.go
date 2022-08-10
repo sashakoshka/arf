@@ -14,12 +14,12 @@ const (
         TokenKindReturnDirection
 
         TokenKindInt
+        TokenKindUInt
         TokenKindFloat
         TokenKindString
         TokenKindRune
 
         TokenKindName
-        TokenKindSymbol
 
         TokenKindColon
         TokenKindDot
@@ -31,6 +31,8 @@ const (
 
         TokenKindPlus
         TokenKindMinus
+        TokenKindIncrement
+        TokenKindDecrement
         TokenKindAsterisk
         TokenKindSlash
 
