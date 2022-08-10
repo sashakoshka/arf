@@ -1,6 +1,7 @@
 package lexer
 
 import "io"
+import "fmt"
 import "github.com/sashakoshka/arf/file"
 
 // LexingOperation holds information about an ongoing lexing operataion.
@@ -37,20 +38,24 @@ func (lexer *LexingOperation) tokenize () (err error) {
 
 		if number {
 			// TODO: tokenize number begin
+			lexer.nextRune()
 		} else if lowercase || uppercase {
 			// TODO: tokenize alpha begin
+			lexer.nextRune()
 		} else {
 			err = lexer.tokenizeSymbolBeginning()
-			if err != nil { return err }
+			if err != nil { return }
 		}
 
-		// TODO:  skip whitespace
+		err = lexer.skipSpaces()
+		if err != nil { return }
 	}
 
 	return
 }
 
 func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
+	fmt.Println(string(lexer.char))
 	switch lexer.char {
 	case '#':
 		// comment
@@ -182,8 +187,19 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 	return
 }
 
+// addToken adds a new token to the lexer's token slice.
 func (lexer *LexingOperation) addToken (token Token) {
 	lexer.tokens = append(lexer.tokens, token)
+}
+
+// skipSpaces skips all space characters (not tabs or newlines)
+func (lexer *LexingOperation) skipSpaces () (err error) {
+	for lexer.char == ' ' {
+		err = lexer.nextRune()
+		if err != nil { return }
+	}
+
+	return
 }
 
 // nextRune advances the lexer to the next rune in the file.
