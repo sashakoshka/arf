@@ -13,6 +13,8 @@ func TestTokenizeAll (test *testing.T) {
 	}
 	
 	tokens, err := Tokenize(file)
+	test.Log("resulting error:")
+	test.Log(err.Error())
 	if err == nil {
 		test.Log("Tokenize() should have returned an error")
 		test.Fail()

@@ -13,7 +13,7 @@ type LexingOperation struct {
 // Tokenize converts a file into a slice of tokens (lexemes).
 func Tokenize (file *file.File) (tokens []Token, err error) {
 	lexer := LexingOperation { file: file }
-	err = lexer.tokenize()
+	err    = lexer.tokenize()
 	tokens = lexer.tokens
 
 	// if the lexing operation returned io.EOF, nothing went wrong so we
