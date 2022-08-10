@@ -40,45 +40,70 @@ func (lexer *LexingOperation) tokenize () (err error) {
 		} else if lowercase || uppercase {
 			// TODO: tokenize multi
 		} else {
-			switch lexer.char {
-			case '\t':
-				for lexer.char == '\t' {
-					lexer.addToken (Token {
-						kind: TokenKindIndent,
-					})
-					lexer.nextRune()
-				}
-			case '"':
-				// TODO: tokenize string literal
-				lexer.nextRune()
-			case '\'':
-				// TODO: tokenize rune literal
-				lexer.nextRune()
-			case ':':
-				// TODO: colon token
-			case '.':
-				// TODO: dot token
-			case '[':
-				// TODO: left bracket token
-			case ']':
-				// TODO: right bracket token
-			case '{':
-				// TODO: left brace token
-			case '}':
-				// TODO: right brace token
-			// TODO: add more for things like math symbols, return
-			// direction operators, indentation, etc
-			default:
-				err = file.NewError (
-					lexer.file.Location(), 1,
-					"unexpected character " +
-					string(lexer.char),
-					file.ErrorKindError)
-				return
-			}
+			err = lexer.tokenizeSymbolBeginning()
+			if err != nil { return err }
 		}
 
 		// TODO:  skip whitespace
+	}
+
+	return
+}
+
+func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
+	switch lexer.char {
+	case '\t':
+		for lexer.char == '\t' {
+			lexer.addToken (Token {
+				kind: TokenKindIndent,
+			})
+			lexer.nextRune()
+		}
+	case '"':
+		// TODO: tokenize string literal
+		lexer.nextRune()
+	case '\'':
+		// TODO: tokenize rune literal
+		lexer.nextRune()
+	case ':':
+		lexer.addToken (Token {
+			kind: TokenKindColon,
+		})
+		lexer.nextRune()
+	case '.':
+		lexer.addToken (Token {
+			kind: TokenKindDot,
+		})
+		lexer.nextRune()
+	case '[':
+		lexer.addToken (Token {
+			kind: TokenKindLBracket,
+		})
+		lexer.nextRune()
+	case ']':
+		lexer.addToken (Token {
+			kind: TokenKindRBracket,
+		})
+		lexer.nextRune()
+	case '{':
+		lexer.addToken (Token {
+			kind: TokenKindLBrace,
+		})
+		lexer.nextRune()
+	case '}':
+		lexer.addToken (Token {
+			kind: TokenKindRBrace,
+		})
+		lexer.nextRune()
+	// TODO: add more for things like math symbols, return
+	// direction operators, indentation, etc
+	default:
+		err = file.NewError (
+			lexer.file.Location(), 1,
+			"unexpected character " +
+			string(lexer.char),
+			file.ErrorKindError)
+		return
 	}
 
 	return
@@ -98,5 +123,3 @@ func (lexer *LexingOperation) nextRune () (err error) {
 	}
 	return
 }
-
-// 
