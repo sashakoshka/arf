@@ -62,6 +62,11 @@ func (token Token) Kind () (kind TokenKind) {
 	return token.kind
 }
 
+// Is returns whether or not the token is of kind kind.
+func (token Token) Is (kind TokenKind) (match bool) {
+	return token.kind == kind
+}
+
 // Value returns the value of the token. Depending on what kind of token it is,
 // this value may be nil.
 func (token Token) Value () (value any) {

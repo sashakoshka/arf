@@ -59,8 +59,18 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		}
 	case '\t':
 		// indent level
-		// TODO: throw error if tab is not at line beginning, or after
-		// other tab
+		previousToken := lexer.tokens[len(lexer.tokens) - 1]
+
+		if !previousToken.Is(TokenKindNewline) ||
+			!previousToken.Is(TokenKindNewline) {
+
+			file.NewError (
+				lexer.file.Location(), 1,
+				"tab not used as indent",
+				file.ErrorKindWarn)
+			break
+		}
+		
 		for lexer.char == '\t' {
 			lexer.addToken (Token {
 				kind: TokenKindIndent,

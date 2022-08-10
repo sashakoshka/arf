@@ -63,6 +63,7 @@ func (err Error) Error () (formattedMessage string) {
 			columnCountdown --
 		}
 		for err.width > 1 {
+			// TODO: for tabs, print out 8 of these instead.
 			formattedMessage += "-"
 		}
 		formattedMessage += "-\n"
