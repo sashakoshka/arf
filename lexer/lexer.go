@@ -3,6 +3,7 @@ package lexer
 import "io"
 import "fmt"
 import "github.com/sashakoshka/arf/file"
+import "github.com/sashakoshka/arf/types"
 
 // LexingOperation holds information about an ongoing lexing operataion.
 type LexingOperation struct {
@@ -32,6 +33,8 @@ func (lexer *LexingOperation) tokenize () (err error) {
 	if err != nil { return }
 
 	for {
+		fmt.Println(string(lexer.char))
+		
 		lowercase := lexer.char >= 'a' && lexer.char <= 'z'
 		uppercase := lexer.char >= 'A' && lexer.char <= 'Z'
 		number    := lexer.char >= '0' && lexer.char <= '9'
@@ -41,7 +44,8 @@ func (lexer *LexingOperation) tokenize () (err error) {
 			lexer.nextRune()
 		} else if lowercase || uppercase {
 			// TODO: tokenize alpha begin
-			lexer.nextRune()
+			err = lexer.tokenizeAlphaBeginning()
+			if err != nil { return }
 		} else {
 			err = lexer.tokenizeSymbolBeginning()
 			if err != nil { return }
@@ -54,13 +58,44 @@ func (lexer *LexingOperation) tokenize () (err error) {
 	return
 }
 
+func (lexer *LexingOperation) tokenizeAlphaBeginning () (err error) {
+	got := ""
+
+	for {
+		lowercase := lexer.char >= 'a' && lexer.char <= 'z'
+		uppercase := lexer.char >= 'A' && lexer.char <= 'Z'
+		number    := lexer.char >= '0' && lexer.char <= '9'
+		if !lowercase && !uppercase && !number { break }
+
+		got += string(lexer.char)
+
+		lexer.nextRune()
+	}
+
+	token := Token { kind: TokenKindName, value: got }
+
+	if len(got) == 2 {
+		firstValid  := got[0] == 'n' || got[0] == 'r' || got[0] == 'w'
+		secondValid := got[1] == 'n' || got[1] == 'r' || got[1] == 'w'
+
+		if firstValid && secondValid {
+			token.kind  = TokenKindPermission
+			token.value = types.PermissionFrom(got)
+		}
+	}
+
+	lexer.addToken(token)
+
+	return
+}
+
 func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
-	fmt.Println(string(lexer.char))
 	switch lexer.char {
 	case '#':
 		// comment
 		for lexer.char != '\n' {
-			lexer.nextRune()
+			err = lexer.nextRune()
+			if err != nil { return }
 		}
 	case '\t':
 		// indent level
@@ -80,7 +115,8 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			lexer.addToken (Token {
 				kind: TokenKindIndent,
 			})
-			lexer.nextRune()
+			err = lexer.nextRune()
+			if err != nil { return }
 		}
 	case '\n':
 		// line break
@@ -88,94 +124,94 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		lexer.addToken (Token {
 			kind: TokenKindNewline,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '"':
 		// TODO: tokenize string literal
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '\'':
 		// TODO: tokenize rune literal
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case ':':
 		lexer.addToken (Token {
 			kind: TokenKindColon,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '.':
 		lexer.addToken (Token {
 			kind: TokenKindDot,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '[':
 		lexer.addToken (Token {
 			kind: TokenKindLBracket,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case ']':
 		lexer.addToken (Token {
 			kind: TokenKindRBracket,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '{':
 		lexer.addToken (Token {
 			kind: TokenKindLBrace,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '}':
 		lexer.addToken (Token {
 			kind: TokenKindRBrace,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '+':
 		// TODO: tokenize plus begin
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '-':
-		lexer.tokenizeDashBeginning()
+		err = lexer.tokenizeDashBeginning()
 	case '*':
 		lexer.addToken (Token {
 			kind: TokenKindAsterisk,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '/':
 		lexer.addToken (Token {
 			kind: TokenKindSlash,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '@':
 		lexer.addToken (Token {
 			kind: TokenKindAt,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '!':
 		lexer.addToken (Token {
 			kind: TokenKindExclamation,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '%':
 		lexer.addToken (Token {
 			kind: TokenKindPercent,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '~':
 		lexer.addToken (Token {
 			kind: TokenKindTilde,
 		})
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '<':
 		// TODO: tokenize less than begin
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '>':
 		// TODO: tokenize greater than begin
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '|':
 		// TODO: tokenize bar begin
-		lexer.nextRune()
+		err = lexer.nextRune()
 	case '&':
 		// TODO: tokenize and begin
-		lexer.nextRune()
+		err = lexer.nextRune()
 	default:
 		err = file.NewError (
 			lexer.file.Location(), 1,
-			"unexpected character " +
+			"unexpected symbol character " +
 			string(lexer.char),
 			file.ErrorKindError)
 		return
@@ -200,6 +236,8 @@ func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
 		token.kind = TokenKindSeparator
 		lexer.nextRune()
 	}
+
+	lexer.addToken(token)
 	return
 }
 
