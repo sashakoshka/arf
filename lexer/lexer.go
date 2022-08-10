@@ -36,9 +36,9 @@ func (lexer *LexingOperation) tokenize () (err error) {
 		number    := lexer.char >= '0' && lexer.char <= '9'
 
 		if number {
-			// TODO: tokenize number
+			// TODO: tokenize number begin
 		} else if lowercase || uppercase {
-			// TODO: tokenize multi
+			// TODO: tokenize alpha begin
 		} else {
 			err = lexer.tokenizeSymbolBeginning()
 			if err != nil { return err }
@@ -51,6 +51,7 @@ func (lexer *LexingOperation) tokenize () (err error) {
 }
 
 func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
+	// TODO: ignore comments
 	switch lexer.char {
 	case '\t':
 		for lexer.char == '\t' {
@@ -59,6 +60,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			})
 			lexer.nextRune()
 		}
+	// TODO: newline
 	case '"':
 		// TODO: tokenize string literal
 		lexer.nextRune()
@@ -95,6 +97,43 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			kind: TokenKindRBrace,
 		})
 		lexer.nextRune()
+	case '+':
+		// TODO: tokenize plus
+		lexer.nextRune()
+	case '-':
+		// TODO: tokenize dash begin
+		lexer.nextRune()
+	case '*':
+		// TODO: tokenize asterisk
+		lexer.nextRune()
+	case '/':
+		// TODO: tokenize slash
+		lexer.nextRune()
+	case '@':
+		// TODO: tokenize @
+		lexer.nextRune()
+	case '!':
+		// TODO: tokenize exclamation mark
+		lexer.nextRune()
+	case '%':
+		// TODO: tokenize percent
+		lexer.nextRune()
+	case '~':
+		// TODO: tokenize tilde
+		lexer.nextRune()
+	case '<':
+		// TODO: tokenize less than begin
+		lexer.nextRune()
+	case '>':
+		// TODO: tokenize greater than begin
+		lexer.nextRune()
+	case '|':
+		// TODO: tokenize bar begin
+		lexer.nextRune()
+	case '&':
+		// TODO: tokenize and begin
+		lexer.nextRune()
+		
 	// TODO: add more for things like math symbols, return
 	// direction operators, indentation, etc
 	default:

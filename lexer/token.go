@@ -11,6 +11,7 @@ const (
 
         TokenKindSeparator
         TokenKindPermission
+        TokenKindReturnDirection
 
         TokenKindInt
         TokenKindFloat
@@ -27,6 +28,25 @@ const (
         TokenKindRBracket
         TokenKindLBrace
         TokenKindRBrace
+
+        TokenKindPlus
+        TokenKindMinus
+        TokenKindAsterisk
+        TokenKindSlash
+
+        TokenKindAt
+        TokenKindExclamation
+        TokenKindPercent
+        TokenKindTilde
+
+        TokenKindLessThan
+        TokenKindLShift
+        TokenKindGreaterThan
+        TokenKindRShift
+        TokenKindBinaryOr
+        TokenKindLogicalOr
+        TokenKindBinaryAnd
+        TokenKindLogicalAnd
 )
 
 // Token represents a single token. It holds its location in the file, as well
