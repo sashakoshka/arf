@@ -69,7 +69,7 @@ func (lexer *LexingOperation) tokenize () (tokens []Token, err error) {
 			}
 		}
 
-		// TODO: skip whitespace
+		// TODO:  skip whitespace
 	}
 
 	return
