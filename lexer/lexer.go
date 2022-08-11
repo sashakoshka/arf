@@ -110,14 +110,18 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 				file.ErrorKindWarn)
 			break
 		}
-		
+
+		indentLevel := 0		
 		for lexer.char == '\t' {
-			lexer.addToken (Token {
-				kind: TokenKindIndent,
-			})
+			indentLevel ++
 			err = lexer.nextRune()
 			if err != nil { return }
 		}
+		
+		lexer.addToken (Token {
+			kind: TokenKindIndent,
+			value: indentLevel,
+		})
 	case '\n':
 		// line break
 		lastLineEmpty := true
