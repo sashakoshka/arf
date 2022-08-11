@@ -329,23 +329,34 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 }
 
 func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
-	token := Token { kind: TokenKindMinus }
-	lexer.nextRune()
-	
+	err = lexer.nextRune()
+	if err != nil { return }
+
 	if lexer.char == '-' {
-		token.kind = TokenKindDecrement
-		lexer.nextRune()
+		token := Token { kind: TokenKindDecrement }
+
+		err = lexer.nextRune()
+		if err != nil { return }
+
+		if lexer.char == '-' {
+			token.kind = TokenKindSeparator
+			lexer.nextRune()
+		}
+		lexer.addToken(token)
 	} else if lexer.char == '>' {
-		token.kind = TokenKindReturnDirection
-		lexer.nextRune()
-	}
+		token := Token { kind: TokenKindReturnDirection }
 
-	if lexer.char == '-' {
-		token.kind = TokenKindSeparator
-		lexer.nextRune()
-	}
+		err = lexer.nextRune() 
+		if err != nil { return }
 
-	lexer.addToken(token)
+		lexer.addToken(token)
+	} else if lexer.char >= '0' && lexer.char <= '9' {
+		lexer.tokenizeNumberBeginning(true)
+	} else {
+		token := Token { kind: TokenKindMinus }
+		lexer.addToken(token)
+	}
+	
 	return
 }
 
