@@ -137,3 +137,21 @@ func TestTokenizeText (test *testing.T) {
 		Token { kind: TokenKindNewline },
 	}, test)
 }
+
+func TestTokenizeIndent (test *testing.T) {
+	checkTokenSlice("../tests/lexer/indent", []Token {
+		Token { kind: TokenKindName, value: "line1" },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindIndent, value: 1 },
+		Token { kind: TokenKindName, value: "line2" },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindIndent, value: 4 },
+		Token { kind: TokenKindName, value: "line3" },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindName, value: "line4" },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindIndent, value: 2 },
+		Token { kind: TokenKindName, value: "line5" },
+		Token { kind: TokenKindNewline },
+	}, test)
+}
