@@ -157,6 +157,58 @@ func (lexer *LexingOperation) tokenizeBinaryNumber (negative bool) (err error) {
 	return
 }
 
+// tokenizeDecimalNumber Reads and tokenizes a decimal number.
+func (lexer *LexingOperation) tokenizeDecimalNumber (negative bool) (err error) {
+	var number uint64
+
+	for lexer.char >= '0' && lexer.char <= '9' {
+		number *= 10
+		number += uint64(lexer.char - '0')
+		
+		err = lexer.nextRune()
+		if err != nil { return }
+	}
+
+	token := Token { }
+
+	if negative {
+		token.kind  = TokenKindInt
+		token.value = int64(number) * -1
+	} else {
+		token.kind  = TokenKindUInt
+		token.value = uint64(number)
+	}
+	
+	lexer.addToken(token)
+	return
+}
+
+// tokenizeOctalNumber Reads and tokenizes an octal number.
+func (lexer *LexingOperation) tokenizeOctalNumber (negative bool) (err error) {
+	var number uint64
+
+	for lexer.char >= '0' && lexer.char <= '7' {
+		number *= 8
+		number += uint64(lexer.char - '0')
+		
+		err = lexer.nextRune()
+		if err != nil { return }
+	}
+
+	token := Token { }
+
+	if negative {
+		token.kind  = TokenKindInt
+		token.value = int64(number) * -1
+	} else {
+		token.kind  = TokenKindUInt
+		token.value = uint64(number)
+	}
+	
+	lexer.addToken(token)
+	return
+}
+
 func (lexer *LexingOperation) tokenizeAlphaBeginning () (err error) {
 	got := ""
 
