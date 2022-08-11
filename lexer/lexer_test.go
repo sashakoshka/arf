@@ -36,7 +36,7 @@ func TestTokenizeAll (test *testing.T) {
 		Token { kind: TokenKindInt, value: int64(-349820394) },
 		Token { kind: TokenKindUInt, value: uint64(932748397) },
 		Token { kind: TokenKindFloat, value: 239485.37520 },
-		Token { kind: TokenKindString, value: "hello world\n" },
+		Token { kind: TokenKindString, value: "hello world!\n" },
 		Token { kind: TokenKindRune, value: 'E' },
 		Token { kind: TokenKindName, value: "helloWorld" },
 		Token { kind: TokenKindColon },

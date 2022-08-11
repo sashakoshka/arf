@@ -2,6 +2,19 @@ package lexer
 
 import "github.com/sashakoshka/arf/file"
 
+var escapeSequenceMap = map[rune] rune {
+        'a':  '\x07',
+        'b':  '\x08',
+        'f':  '\x0c',
+        'n':  '\x0a',
+        'r':  '\x0d',
+        't':  '\x09',
+        'v':  '\x0b',
+        '\'': '\'',
+        '"':  '"',
+        '\\': '\\',
+}
+
 func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
 	err = lexer.nextRune()
 	if err != nil { return }
@@ -9,7 +22,24 @@ func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
 	got := ""
 
 	for {
-		got += string(lexer.char)
+		// TODO: add hexadecimal escape codes
+		if lexer.char == '\\' {
+			err = lexer.nextRune()
+			if err != nil { return }
+	
+			actual, exists := escapeSequenceMap[lexer.char]
+			if exists {
+				got += string(actual)
+			} else {
+				err = file.NewError (
+					lexer.file.Location(), 1,
+					"unknown escape character " +
+					string(lexer.char), file.ErrorKindError)
+				return
+			}
+		} else {
+			got += string(lexer.char)
+		}
 		
 		err = lexer.nextRune()
 		if err != nil { return }
