@@ -15,8 +15,8 @@ func TestTokenizeAll (test *testing.T) {
 	tokens, err := Tokenize(file)
 
 	// print all tokens
-	for _, token := range tokens {
-		test.Log("got token:", token.Describe())
+	for index, token := range tokens {
+		test.Log(index, "\tgot token:", token.Describe())
 	}
 	
 	if err != nil {
@@ -33,8 +33,8 @@ func TestTokenizeAll (test *testing.T) {
 			External: types.ModeWrite,
 		}},
 		Token { kind: TokenKindReturnDirection },
-		Token { kind: TokenKindInt, value: -349820394 },
-		Token { kind: TokenKindUInt, value: 932748397 },
+		Token { kind: TokenKindInt, value: int64(-349820394) },
+		Token { kind: TokenKindUInt, value: uint64(932748397) },
 		Token { kind: TokenKindFloat, value: 239485.37520 },
 		Token { kind: TokenKindString, value: "hello world\n" },
 		Token { kind: TokenKindRune, value: 'E' },
@@ -77,6 +77,9 @@ func TestTokenizeAll (test *testing.T) {
 	for index, token := range tokens {
 		if !token.Equals(correct[index]) {
 			test.Log("token", index, "not equal")
+			test.Log (
+				"have", token.Describe(),
+				"want", correct[index].Describe())
 			test.Fail()
 			return
 		}
