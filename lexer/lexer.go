@@ -101,16 +101,17 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		// indent level
 		previousToken := lexer.tokens[len(lexer.tokens) - 1]
 
-		if !previousToken.Is(TokenKindNewline) ||
-			!previousToken.Is(TokenKindNewline) {
-
+		if !previousToken.Is(TokenKindNewline) {
+			err = lexer.nextRune()
+			
 			file.NewError (
 				lexer.file.Location(), 1,
 				"tab not used as indent",
-				file.ErrorKindWarn)
-			break
+				file.ErrorKindWarn).Print()
+			return
 		}
 
+		// eat up tabs while increasing the indent level
 		indentLevel := 0		
 		for lexer.char == '\t' {
 			indentLevel ++
@@ -124,11 +125,12 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		})
 	case '\n':
 		// line break
+
+		// if the last line is empty, discard it
 		lastLineEmpty := true
 		tokenIndex := len(lexer.tokens) - 1
 		for lexer.tokens[tokenIndex].kind != TokenKindNewline  {
 			if lexer.tokens[tokenIndex].kind != TokenKindIndent {
-
 				lastLineEmpty = false
 				break
 			}	
@@ -139,7 +141,6 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			lexer.tokens = lexer.tokens[:tokenIndex]
 		}
 		
-		// TODO: if last line was blank, (ony whitespace) discard.
 		lexer.addToken (Token {
 			kind: TokenKindNewline,
 		})
