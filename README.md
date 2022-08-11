@@ -38,7 +38,7 @@ These are some design goals that I have followed/am following:
 ## Checklist
 
 - [X] File reader
-- [ ] File -> tokens
+- [X] File -> tokens
 - [ ] Tokens -> syntax tree
 - [ ] Syntax tree -> semantic tree
 - [ ] Semantic tree -> C -> object file
