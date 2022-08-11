@@ -38,9 +38,9 @@ func NewError (
 func (err Error) Error () (formattedMessage string) {
 	switch err.kind {
 	case ErrorKindError:
-		formattedMessage += "ERR"
+		formattedMessage += "\033[31mERR\033[0m"
 	case ErrorKindWarn:
-		formattedMessage += "!!!"
+		formattedMessage += "\033[33m!!!\033[0m"
 	}
 
 	// print information about the location of the mistake
@@ -49,7 +49,9 @@ func (err Error) Error () (formattedMessage string) {
 			" ", err.Location.row + 1,
 			":", err.Location.column + 1)
 	}
-	formattedMessage += " in " +  err.Location.file.path + "\n"
+	formattedMessage +=
+		" \033[90min\033[0m " +
+		err.Location.file.path + "\n"
 	
 	if err.width > 0 {
 		// print erroneous line
