@@ -1,7 +1,7 @@
 package lexer
 
 import "io"
-// import "fmt"
+import "fmt"
 import "github.com/sashakoshka/arf/file"
 import "github.com/sashakoshka/arf/types"
 
@@ -33,14 +33,14 @@ func (lexer *LexingOperation) tokenize () (err error) {
 	if err != nil { return }
 
 	for {
-		// fmt.Println(string(lexer.char))
+		fmt.Println(string(lexer.char))
 		
 		lowercase := lexer.char >= 'a' && lexer.char <= 'z'
 		uppercase := lexer.char >= 'A' && lexer.char <= 'Z'
 		number    := lexer.char >= '0' && lexer.char <= '9'
 
 		if number {
-			// TODO: tokenize number begin
+			// TODO: tokenize number begin\
 			err = lexer.tokenizeNumberBeginning(false)
 			if err != nil { return }
 		} else if lowercase || uppercase {
@@ -60,22 +60,21 @@ func (lexer *LexingOperation) tokenize () (err error) {
 
 // tokenizeSymbolBeginning lexes a token that starts with a number.
 func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error) {
+	var number uint64
+
 	if lexer.char == '0' {
 		lexer.nextRune()
 
 		if lexer.char == 'x' {
 			lexer.nextRune()
-			err = lexer.tokenizeHexidecimalNumber(negative)
-			if err != nil { return }
+			number, err = lexer.tokenizeHexidecimalNumber()
 		} else if lexer.char == 'b' {
 			lexer.nextRune()
-			err = lexer.tokenizeBinaryNumber(negative)
-			if err != nil { return }
+			number, err = lexer.tokenizeBinaryNumber()
 		} else if lexer.char == '.' {
-			err = lexer.tokenizeDecimalNumber(negative)
-			if err != nil { return }
+			number, err = lexer.tokenizeDecimalNumber()
 		} else if lexer.char >= '0' && lexer.char <= '9' {
-			lexer.tokenizeOctalNumber(negative)
+			number, err = lexer.tokenizeOctalNumber()
 		} else {
 			return file.NewError (
 				lexer.file.Location(), 1,
@@ -83,16 +82,27 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 				file.ErrorKindError)
 		}
 	} else {
-		lexer.tokenizeDecimalNumber(negative)
+		number, err = lexer.tokenizeDecimalNumber()
 	}
 
+	if err != nil { return }
+
+	token := Token { }
+
+	if negative {
+		token.kind  = TokenKindInt
+		token.value = int64(number) * -1
+	} else {
+		token.kind  = TokenKindUInt
+		token.value = uint64(number)
+	}
+	
+	lexer.addToken(token)
 	return
 }
 
 // tokenizeHexidecimalNumber Reads and tokenizes a hexidecimal number.
-func (lexer *LexingOperation) tokenizeHexidecimalNumber (negative bool) (err error) {
-	var number uint64
-
+func (lexer *LexingOperation) tokenizeHexidecimalNumber () (number uint64, err error) {
 	for {
 		if lexer.char >= '0' && lexer.char <= '9' {
 			number *= 16
@@ -110,25 +120,11 @@ func (lexer *LexingOperation) tokenizeHexidecimalNumber (negative bool) (err err
 		err = lexer.nextRune()
 		if err != nil { return }
 	}
-
-	token := Token { }
-
-	if negative {
-		token.kind  = TokenKindInt
-		token.value = int64(number) * -1
-	} else {
-		token.kind  = TokenKindUInt
-		token.value = uint64(number)
-	}
-	
-	lexer.addToken(token)
 	return
 }
 
 // tokenizeBinaryNumber Reads and tokenizes a binary number.
-func (lexer *LexingOperation) tokenizeBinaryNumber (negative bool) (err error) {
-	var number uint64
-
+func (lexer *LexingOperation) tokenizeBinaryNumber () (number uint64, err error) {
 	for {
 		if lexer.char == '0' {
 			number *= 2
@@ -142,25 +138,11 @@ func (lexer *LexingOperation) tokenizeBinaryNumber (negative bool) (err error) {
 		err = lexer.nextRune()
 		if err != nil { return }
 	}
-
-	token := Token { }
-
-	if negative {
-		token.kind  = TokenKindInt
-		token.value = int64(number) * -1
-	} else {
-		token.kind  = TokenKindUInt
-		token.value = uint64(number)
-	}
-	
-	lexer.addToken(token)
 	return
 }
 
 // tokenizeDecimalNumber Reads and tokenizes a decimal number.
-func (lexer *LexingOperation) tokenizeDecimalNumber (negative bool) (err error) {
-	var number uint64
-
+func (lexer *LexingOperation) tokenizeDecimalNumber () (number uint64, err error) {
 	for lexer.char >= '0' && lexer.char <= '9' {
 		number *= 10
 		number += uint64(lexer.char - '0')
@@ -168,25 +150,12 @@ func (lexer *LexingOperation) tokenizeDecimalNumber (negative bool) (err error) 
 		err = lexer.nextRune()
 		if err != nil { return }
 	}
-
-	token := Token { }
-
-	if negative {
-		token.kind  = TokenKindInt
-		token.value = int64(number) * -1
-	} else {
-		token.kind  = TokenKindUInt
-		token.value = uint64(number)
-	}
 	
-	lexer.addToken(token)
 	return
 }
 
 // tokenizeOctalNumber Reads and tokenizes an octal number.
-func (lexer *LexingOperation) tokenizeOctalNumber (negative bool) (err error) {
-	var number uint64
-
+func (lexer *LexingOperation) tokenizeOctalNumber () (number uint64, err error) {
 	for lexer.char >= '0' && lexer.char <= '7' {
 		number *= 8
 		number += uint64(lexer.char - '0')
@@ -194,18 +163,6 @@ func (lexer *LexingOperation) tokenizeOctalNumber (negative bool) (err error) {
 		err = lexer.nextRune()
 		if err != nil { return }
 	}
-
-	token := Token { }
-
-	if negative {
-		token.kind  = TokenKindInt
-		token.value = int64(number) * -1
-	} else {
-		token.kind  = TokenKindUInt
-		token.value = uint64(number)
-	}
-	
-	lexer.addToken(token)
 	return
 }
 
