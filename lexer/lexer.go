@@ -41,12 +41,12 @@ func (lexer *LexingOperation) tokenize () (err error) {
 
 		if number {
 			// TODO: tokenize number begin
-			lexer.nextRune()
+			err = lexer.tokenizeNumberBeginning(false)
+			if err != nil { return }
 		} else if lowercase || uppercase {
-			// TODO: tokenize alpha begin
 			err = lexer.tokenizeAlphaBeginning()
 			if err != nil { return }
-		} else {
+		} else if lexer.char >= '0' && lexer.char <= '9' {
 			err = lexer.tokenizeSymbolBeginning()
 			if err != nil { return }
 		}
@@ -55,6 +55,72 @@ func (lexer *LexingOperation) tokenize () (err error) {
 		if err != nil { return }
 	}
 
+	return
+}
+
+func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error) {
+	if lexer.char == '0' {
+		lexer.nextRune()
+
+		if lexer.char == 'x' {
+			lexer.nextRune()
+			err = lexer.tokenizeHexidecimalNumber(negative)
+			if err != nil { return }
+		} else if lexer.char == 'b' {
+			lexer.nextRune()
+			err = lexer.tokenizeBinaryNumber(negative)
+			if err != nil { return }
+		} else if lexer.char == '.' {
+			err = lexer.tokenizeDecimalNumber(negative)
+			if err != nil { return }
+		} else if lexer.char >= '0' && lexer.char <= '9' {
+			lexer.tokenizeOctalNumber(negative)
+		} else {
+			return file.NewError (
+				lexer.file.Location(), 1,
+				"unexpected character in number literal",
+				file.ErrorKindError)
+		}
+	} else {
+		lexer.tokenizeDecimalNumber(negative)
+	}
+
+	return
+}
+
+// tokenizeDecimalNumber Reads and tokenizes a hexidecimal number.
+func (lexer *LexingOperation) tokenizeHexidecimalNumber (negative bool) (err error) {
+	var number uint64
+
+	for {
+		if lexer.char >= '0' && lexer.char <= '9' {
+			number *= 16
+			number += uint64(lexer.char - '0')
+		} else if lexer.char >= 'A' && lexer.char <= 'F' {
+			number *= 16
+			number += uint64(lexer.char - 'A' + 9)
+		} else if lexer.char >= 'a' && lexer.char <= 'f' {
+			number *= 16
+			number += uint64(lexer.char - 'a' + 9)
+		} else {
+			break
+		}
+
+		err = lexer.nextRune()
+		if err != nil { return }
+	}
+
+	token := Token { }
+
+	if negative {
+		token.kind  = TokenKindInt
+		token.value = int64(number) * -1
+	} else {
+		token.kind  = TokenKindUInt
+		token.value = uint64(number)
+	}
+	
+	lexer.addToken(token)
 	return
 }
 
