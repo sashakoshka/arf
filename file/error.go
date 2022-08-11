@@ -58,7 +58,8 @@ func (err Error) Error () (formattedMessage string) {
 
 		// print an arrow with a tail spanning the width of the mistake
 		columnCountdown := err.Location.column
-		for columnCountdown > 0 {
+		for columnCountdown > 1 {
+			// TODO: for tabs, print out a teb instead.
 			formattedMessage += " "
 			columnCountdown --
 		}
@@ -66,9 +67,9 @@ func (err Error) Error () (formattedMessage string) {
 			// TODO: for tabs, print out 8 of these instead.
 			formattedMessage += "-"
 		}
-		formattedMessage += "-\n"
+		formattedMessage += "^\n"
 	}
-	formattedMessage += err.message + "-\n"
+	formattedMessage += err.message + "\n"
 
 	return
 }

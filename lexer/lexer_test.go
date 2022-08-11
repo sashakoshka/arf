@@ -13,10 +13,15 @@ func TestTokenizeAll (test *testing.T) {
 	}
 	
 	tokens, err := Tokenize(file)
-	test.Log("resulting error:")
-	test.Log(err.Error())
-	if err == nil {
-		test.Log("Tokenize() should have returned an error")
+
+	// print all tokens
+	for index, token := range tokens {
+		test.Log(index, "\tgot token:", token.Describe())
+	}
+	
+	if err != nil {
+		test.Log("returned error:")
+		test.Log(err.Error())
 		test.Fail()
 		return
 	}
@@ -28,10 +33,10 @@ func TestTokenizeAll (test *testing.T) {
 			External: types.ModeWrite,
 		}},
 		Token { kind: TokenKindReturnDirection },
-		Token { kind: TokenKindInt, value: -349820394 },
-		Token { kind: TokenKindUInt, value: 932748397 },
+		Token { kind: TokenKindInt, value: int64(-349820394) },
+		Token { kind: TokenKindUInt, value: uint64(932748397) },
 		Token { kind: TokenKindFloat, value: 239485.37520 },
-		Token { kind: TokenKindString, value: "hello world\n" },
+		Token { kind: TokenKindString, value: "hello world!\n" },
 		Token { kind: TokenKindRune, value: 'E' },
 		Token { kind: TokenKindName, value: "helloWorld" },
 		Token { kind: TokenKindColon },
@@ -40,6 +45,7 @@ func TestTokenizeAll (test *testing.T) {
 		Token { kind: TokenKindRBracket },
 		Token { kind: TokenKindLBrace },
 		Token { kind: TokenKindRBrace },
+		Token { kind: TokenKindNewline },
 		Token { kind: TokenKindPlus },
 		Token { kind: TokenKindMinus },
 		Token { kind: TokenKindIncrement },
@@ -58,6 +64,7 @@ func TestTokenizeAll (test *testing.T) {
 		Token { kind: TokenKindLogicalOr },
 		Token { kind: TokenKindBinaryAnd },
 		Token { kind: TokenKindLogicalAnd },
+		Token { kind: TokenKindNewline },
 	}
 
 	if len(tokens) != len(correct) {
@@ -70,6 +77,9 @@ func TestTokenizeAll (test *testing.T) {
 	for index, token := range tokens {
 		if !token.Equals(correct[index]) {
 			test.Log("token", index, "not equal")
+			test.Log (
+				"have", token.Describe(),
+				"want", correct[index].Describe())
 			test.Fail()
 			return
 		}
