@@ -159,7 +159,13 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		})
 		err = lexer.nextRune()
 	case '+':
-		// TODO: tokenize plus begin
+		err = lexer.nextRune()
+		if err != nil { return }
+		token := Token { kind: TokenKindPlus }
+		if lexer.char == '+' {
+			token.kind = TokenKindIncrement
+		}
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '-':
 		err = lexer.tokenizeDashBeginning()
@@ -194,16 +200,40 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		})
 		err = lexer.nextRune()
 	case '<':
-		// TODO: tokenize less than begin
+		err = lexer.nextRune()
+		if err != nil { return }
+		token := Token { kind: TokenKindLessThan }
+		if lexer.char == '<' {
+			token.kind = TokenKindLShift
+		}
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '>':
-		// TODO: tokenize greater than begin
+		err = lexer.nextRune()
+		if err != nil { return }
+		token := Token { kind: TokenKindGreaterThan }
+		if lexer.char == '>' {
+			token.kind = TokenKindRShift
+		}
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '|':
-		// TODO: tokenize bar begin
+		err = lexer.nextRune()
+		if err != nil { return }
+		token := Token { kind: TokenKindBinaryOr }
+		if lexer.char == '|' {
+			token.kind = TokenKindLogicalOr
+		}
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '&':
-		// TODO: tokenize and begin
+		err = lexer.nextRune()
+		if err != nil { return }
+		token := Token { kind: TokenKindBinaryAnd }
+		if lexer.char == '&' {
+			token.kind = TokenKindLogicalAnd
+		}
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	default:
 		err = file.NewError (
