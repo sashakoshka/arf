@@ -46,7 +46,7 @@ func (lexer *LexingOperation) tokenize () (err error) {
 		} else if lowercase || uppercase {
 			err = lexer.tokenizeAlphaBeginning()
 			if err != nil { return }
-		} else if lexer.char >= '0' && lexer.char <= '9' {
+		} else {
 			err = lexer.tokenizeSymbolBeginning()
 			if err != nil { return }
 		}
