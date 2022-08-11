@@ -4,8 +4,8 @@ import "testing"
 import "github.com/sashakoshka/arf/file"
 import "github.com/sashakoshka/arf/types"
 
-func TestTokenizeAll (test *testing.T) {
-	file, err := file.Open("../tests/lexer/all")
+func checkTokenSlice (filePath string, correct []Token, test *testing.T) {
+	file, err := file.Open(filePath)
 	if err != nil {
 		test.Log(err)
 		test.Fail()
@@ -26,7 +26,28 @@ func TestTokenizeAll (test *testing.T) {
 		return
 	}
 
-	correct := []Token {
+	if len(tokens) != len(correct) {
+		test.Log("lexed", len(tokens), "tokens, want", len(correct))
+		test.Fail()
+		return
+	}
+	test.Log("token slice length match", len(tokens), "=", len(correct))
+
+	for index, token := range tokens {
+		if !token.Equals(correct[index]) {
+			test.Log("token", index, "not equal")
+			test.Log (
+				"have", token.Describe(),
+				"want", correct[index].Describe())
+			test.Fail()
+			return
+		}
+	}
+	test.Log("token slice content match")
+}
+
+func TestTokenizeAll (test *testing.T) {
+	checkTokenSlice("../tests/lexer/all", []Token {
 		Token { kind: TokenKindSeparator },
 		Token { kind: TokenKindPermission, value: types.Permission {
 			Internal: types.ModeRead,
@@ -65,24 +86,34 @@ func TestTokenizeAll (test *testing.T) {
 		Token { kind: TokenKindBinaryAnd },
 		Token { kind: TokenKindLogicalAnd },
 		Token { kind: TokenKindNewline },
-	}
+	}, test)
+}
 
-	if len(tokens) != len(correct) {
-		test.Log("lexed", len(tokens), "tokens, want", len(correct))
-		test.Fail()
-		return
-	}
-	test.Log("token slice length match", len(tokens), "=", len(correct))
-
-	for index, token := range tokens {
-		if !token.Equals(correct[index]) {
-			test.Log("token", index, "not equal")
-			test.Log (
-				"have", token.Describe(),
-				"want", correct[index].Describe())
-			test.Fail()
-			return
-		}
-	}
-	test.Log("token slice content match")
+func TestTokenizeNumbers (test *testing.T) {
+	checkTokenSlice("../tests/lexer/numbers", []Token {
+		Token { kind: TokenKindUInt, value: uint64(83628266) },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindUInt, value: uint64(83628266) },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindUInt, value: uint64(83628266) },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindUInt, value: uint64(83628266) },
+		Token { kind: TokenKindNewline },
+		
+		Token { kind: TokenKindInt, value: int64(-83628266) },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindInt, value: int64(-83628266) },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindInt, value: int64(-83628266) },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindInt, value: int64(-83628266) },
+		Token { kind: TokenKindNewline },
+		
+		Token { kind: TokenKindFloat, value: float64(0.123478) },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindFloat, value: float64(234.3095) },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindFloat, value: float64(-2.312) },
+		Token { kind: TokenKindNewline },
+	}, test)
 }
