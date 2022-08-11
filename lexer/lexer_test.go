@@ -133,5 +133,7 @@ func TestTokenizeText (test *testing.T) {
 		Token { kind: TokenKindRune, value: '"'  },
 		Token { kind: TokenKindRune, value: '\\' },
 		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindString, value: "hello world \x40\u0040\U00000040!" },
+		Token { kind: TokenKindNewline },
 	}, test)
 }
