@@ -15,8 +15,8 @@ type Permission struct {
 
 func ModeFrom (char rune) (mode Mode) {
 	switch (char) {
-	case 'r': mode = ModeNone
-	case 'n': mode = ModeRead
+	case 'n': mode = ModeNone
+	case 'r': mode = ModeRead
 	case 'w': mode = ModeWrite	
 	}
 
