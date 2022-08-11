@@ -58,6 +58,7 @@ func (lexer *LexingOperation) tokenize () (err error) {
 	return
 }
 
+// tokenizeSymbolBeginning lexes a token that starts with a number.
 func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error) {
 	if lexer.char == '0' {
 		lexer.nextRune()
@@ -88,7 +89,7 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 	return
 }
 
-// tokenizeDecimalNumber Reads and tokenizes a hexidecimal number.
+// tokenizeHexidecimalNumber Reads and tokenizes a hexidecimal number.
 func (lexer *LexingOperation) tokenizeHexidecimalNumber (negative bool) (err error) {
 	var number uint64
 
@@ -102,6 +103,38 @@ func (lexer *LexingOperation) tokenizeHexidecimalNumber (negative bool) (err err
 		} else if lexer.char >= 'a' && lexer.char <= 'f' {
 			number *= 16
 			number += uint64(lexer.char - 'a' + 9)
+		} else {
+			break
+		}
+
+		err = lexer.nextRune()
+		if err != nil { return }
+	}
+
+	token := Token { }
+
+	if negative {
+		token.kind  = TokenKindInt
+		token.value = int64(number) * -1
+	} else {
+		token.kind  = TokenKindUInt
+		token.value = uint64(number)
+	}
+	
+	lexer.addToken(token)
+	return
+}
+
+// tokenizeBinaryNumber Reads and tokenizes a binary number.
+func (lexer *LexingOperation) tokenizeBinaryNumber (negative bool) (err error) {
+	var number uint64
+
+	for {
+		if lexer.char == '0' {
+			number *= 2
+		} else if lexer.char == '1' {
+			number *= 2
+			number += 1
 		} else {
 			break
 		}
