@@ -58,6 +58,9 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 	return
 }
 
+// runeToDigit converts a rune from 0-F to a corresponding digit, with a maximum
+// radix. If the character is invalid, or the digit is too big, it will return
+// false for worked.
 func runeToDigit (char rune, radix uint64) (digit uint64, worked bool) {
 	worked = true
 

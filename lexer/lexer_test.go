@@ -19,10 +19,9 @@ func TestTokenizeAll (test *testing.T) {
 		test.Log("got token:", token.Describe())
 	}
 	
-	test.Log("resulting error:")
-	test.Log(err.Error())
-	if err == nil {
-		test.Log("Tokenize() should have returned an error")
+	if err != nil {
+		test.Log("returned error:")
+		test.Log(err.Error())
 		test.Fail()
 		return
 	}

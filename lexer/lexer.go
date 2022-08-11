@@ -40,7 +40,6 @@ func (lexer *LexingOperation) tokenize () (err error) {
 		number    := lexer.char >= '0' && lexer.char <= '9'
 
 		if number {
-			// TODO: tokenize number begin\
 			err = lexer.tokenizeNumberBeginning(false)
 			if err != nil { return }
 		} else if lowercase || uppercase {
@@ -126,11 +125,9 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		})
 		err = lexer.nextRune()
 	case '"':
-		// TODO: tokenize string literal
-		err = lexer.nextRune()
+		err = lexer.tokenizeString(false)
 	case '\'':
-		// TODO: tokenize rune literal
-		err = lexer.nextRune()
+		err = lexer.tokenizeString(true)
 	case ':':
 		lexer.addToken (Token {
 			kind: TokenKindColon,
