@@ -117,3 +117,21 @@ func TestTokenizeNumbers (test *testing.T) {
 		Token { kind: TokenKindNewline },
 	}, test)
 }
+
+func TestTokenizeText (test *testing.T) {
+	checkTokenSlice("../tests/lexer/text", []Token {
+		Token { kind: TokenKindString, value: "hello world!\a\b\f\n\r\t\v'\"\\" },
+		Token { kind: TokenKindNewline },
+		Token { kind: TokenKindRune, value: '\a' },
+		Token { kind: TokenKindRune, value: '\b' },
+		Token { kind: TokenKindRune, value: '\f' },
+		Token { kind: TokenKindRune, value: '\n' },
+		Token { kind: TokenKindRune, value: '\r' },
+		Token { kind: TokenKindRune, value: '\t' },
+		Token { kind: TokenKindRune, value: '\v' },
+		Token { kind: TokenKindRune, value: '\'' },
+		Token { kind: TokenKindRune, value: '"'  },
+		Token { kind: TokenKindRune, value: '\\' },
+		Token { kind: TokenKindNewline },
+	}, test)
+}

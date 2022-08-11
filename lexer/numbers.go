@@ -100,7 +100,9 @@ func (lexer *LexingOperation) tokenizeNumber (
 		err = lexer.nextRune()
 		if err != nil { return }
 	}
-	
+
+	// TODO: increase accuracy of this so that TestTokenizeNumbers is
+	// passed.
 	if lexer.char == '.' {
 		isFloat = true
 		err = lexer.nextRune()
