@@ -67,9 +67,9 @@ func runeToDigit (char rune, radix uint64) (digit uint64, worked bool) {
 	if char >= '0' && char <= '9' {
 		digit = uint64(char - '0')
 	} else if char >= 'A' && char <= 'F' {
-		digit = uint64(char - 'A' + 9)
+		digit = uint64(char - 'A' + 10)
 	} else if char >= 'a' && char <= 'f' {
-		digit = uint64(char - 'a' + 9)
+		digit = uint64(char - 'a' + 10)
 	} else {
 		worked = false
 	}
