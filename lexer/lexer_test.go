@@ -45,6 +45,7 @@ func TestTokenizeAll (test *testing.T) {
 		Token { kind: TokenKindRBracket },
 		Token { kind: TokenKindLBrace },
 		Token { kind: TokenKindRBrace },
+		Token { kind: TokenKindNewline },
 		Token { kind: TokenKindPlus },
 		Token { kind: TokenKindMinus },
 		Token { kind: TokenKindIncrement },
@@ -63,6 +64,7 @@ func TestTokenizeAll (test *testing.T) {
 		Token { kind: TokenKindLogicalOr },
 		Token { kind: TokenKindBinaryAnd },
 		Token { kind: TokenKindLogicalAnd },
+		Token { kind: TokenKindNewline },
 	}
 
 	if len(tokens) != len(correct) {

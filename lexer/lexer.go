@@ -54,6 +54,10 @@ func (lexer *LexingOperation) tokenize () (err error) {
 		if err != nil { return }
 	}
 
+	if lexer.tokens[len(lexer.tokens) - 1].kind != TokenKindNewline {
+		lexer.addToken(Token { kind: TokenKindNewline })
+	}
+
 	return
 }
 
@@ -119,6 +123,21 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		}
 	case '\n':
 		// line break
+		lastLineEmpty := true
+		tokenIndex := len(lexer.tokens) - 1
+		for lexer.tokens[tokenIndex].kind != TokenKindNewline  {
+			if lexer.tokens[tokenIndex].kind != TokenKindIndent {
+
+				lastLineEmpty = false
+				break
+			}	
+			tokenIndex --
+		}
+
+		if lastLineEmpty {
+			lexer.tokens = lexer.tokens[:tokenIndex]
+		}
+		
 		// TODO: if last line was blank, (ony whitespace) discard.
 		lexer.addToken (Token {
 			kind: TokenKindNewline,
