@@ -11,14 +11,14 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 
 		if lexer.char == 'x' {
 			lexer.nextRune()
-			number, err = lexer.tokenizeHexidecimalNumber()
+			number, err = lexer.tokenizeNumber(16)
 		} else if lexer.char == 'b' {
 			lexer.nextRune()
-			number, err = lexer.tokenizeBinaryNumber()
+			number, err = lexer.tokenizeNumber(2)
 		} else if lexer.char == '.' {
-			number, err = lexer.tokenizeDecimalNumber()
+			number, err = lexer.tokenizeNumber(10)
 		} else if lexer.char >= '0' && lexer.char <= '9' {
-			number, err = lexer.tokenizeOctalNumber()
+			number, err = lexer.tokenizeNumber(8)
 		} else {
 			return file.NewError (
 				lexer.file.Location(), 1,
@@ -26,7 +26,7 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 				file.ErrorKindError)
 		}
 	} else {
-		number, err = lexer.tokenizeDecimalNumber()
+		number, err = lexer.tokenizeNumber(10)
 	}
 
 	if err != nil { return }
@@ -65,61 +65,15 @@ func runeToDigit (char rune, radix uint64) (digit uint64, worked bool) {
 	return
 }
 
-// tokenizeHexidecimalNumber Reads and tokenizes a hexidecimal number.
-func (lexer *LexingOperation) tokenizeHexidecimalNumber () (number uint64, err error) {
+// tokenizeNumber reads and tokenizes a number with the specified radix.
+func (lexer *LexingOperation) tokenizeNumber (radix uint64) (number uint64, err error) {
 	for {
-		digit, worked := runeToDigit(lexer.char, 16)
+		digit, worked := runeToDigit(lexer.char, radix)
 		if !worked { break }
 
-		number *= 16
+		number *= radix
 		number += digit
 
-		err = lexer.nextRune()
-		if err != nil { return }
-	}
-	return
-}
-
-// tokenizeBinaryNumber Reads and tokenizes a binary number.
-func (lexer *LexingOperation) tokenizeBinaryNumber () (number uint64, err error) {
-	for {
-		digit, worked := runeToDigit(lexer.char, 2)
-		if !worked { break }
-
-		number *= 2
-		number += digit
-
-		err = lexer.nextRune()
-		if err != nil { return }
-	}
-	return
-}
-
-// tokenizeDecimalNumber Reads and tokenizes a decimal number.
-func (lexer *LexingOperation) tokenizeDecimalNumber () (number uint64, err error) {
-	for {
-		digit, worked := runeToDigit(lexer.char, 10)
-		if !worked { break }
-
-		number *= 10
-		number += digit
-		
-		err = lexer.nextRune()
-		if err != nil { return }
-	}
-	
-	return
-}
-
-// tokenizeOctalNumber Reads and tokenizes an octal number.
-func (lexer *LexingOperation) tokenizeOctalNumber () (number uint64, err error) {
-	for {
-		digit, worked := runeToDigit(lexer.char, 8)
-		if !worked { break }
-
-		number *= 8
-		number += digit
-		
 		err = lexer.nextRune()
 		if err != nil { return }
 	}
