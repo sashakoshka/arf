@@ -46,7 +46,7 @@ func (err Error) Error () (formattedMessage string) {
 	// print information about the location of the mistake
 	if err.width > 0 {
 		formattedMessage += fmt.Sprint (
-			" ", err.Location.row + 1,
+			" \033[34m", err.Location.row + 1,
 			":", err.Location.column + 1)
 	}
 	formattedMessage +=
