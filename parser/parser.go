@@ -77,9 +77,25 @@ func (parser *ParsingOperation) expect (allowed ...lexer.TokenKind) (err error) 
 		if parser.token.Is(kind) { return }
 	}
 
+	message :=
+		"unexpected " + parser.token.Kind().Describe() +
+		" token, expected "
+
+	for index, allowedItem := range allowed {
+		if index > 0 {
+			if index == len(allowed) - 1 {
+				message += " or "
+			} else {
+				message += ", " 
+			}
+		}
+	
+		message += allowedItem.Describe()
+	}
+
 	err = file.NewError (
 		parser.token.Location(),
-		"unexpected token", file.ErrorKindError)
+		message, file.ErrorKindError)
 	return
 }
 
