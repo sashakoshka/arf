@@ -1,8 +1,8 @@
 package lexer
 
 import "testing"
-import "github.com/sashakoshka/arf/file"
-import "github.com/sashakoshka/arf/types"
+import "git.tebibyte.media/sashakoshka/arf/file"
+import "git.tebibyte.media/sashakoshka/arf/types"
 
 func checkTokenSlice (filePath string, correct []Token, test *testing.T) {
 	file, err := file.Open(filePath)

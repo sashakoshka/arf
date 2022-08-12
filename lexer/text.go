@@ -1,7 +1,7 @@
 package lexer
 
 import "strconv"
-import "github.com/sashakoshka/arf/file"
+import "git.tebibyte.media/sashakoshka/arf/file"
 
 // tokenizeString tokenizes a string or rune literal.
 func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {

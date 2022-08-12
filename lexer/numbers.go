@@ -1,6 +1,6 @@
 package lexer
 
-import "github.com/sashakoshka/arf/file"
+import "git.tebibyte.media/sashakoshka/arf/file"
 
 // tokenizeSymbolBeginning lexes a token that starts with a number.
 func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error) {

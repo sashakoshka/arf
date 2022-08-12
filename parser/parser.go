@@ -2,8 +2,8 @@ package parser
 
 import "os"
 import "path/filepath"
-import "github.com/sashakoshka/arf/file"
-import "github.com/sashakoshka/arf/lexer"
+import "git.tebibyte.media/sashakoshka/arf/file"
+import "git.tebibyte.media/sashakoshka/arf/lexer"
 
 // ParsingOperation holds information about an ongoing parsing operation.
 type ParsingOperation struct {

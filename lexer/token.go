@@ -1,7 +1,7 @@
 package lexer
 
 import "fmt"
-import "github.com/sashakoshka/arf/file"
+import "git.tebibyte.media/sashakoshka/arf/file"
 
 // TokenKind is an enum represzenting what role a token has.
 type TokenKind int
