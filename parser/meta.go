@@ -37,5 +37,8 @@ func (parser *ParsingOperation) parseMeta () (err error) {
 
 		err = parser.nextToken(lexer.TokenKindNewline)
 		if err != nil { return }
+		
+		err = parser.nextToken()
+		if err != nil { return }
 	}
 }
