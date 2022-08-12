@@ -28,6 +28,20 @@ func Tokenize (file *file.File) (tokens []Token, err error) {
 // tokenize converts a file into a slice of tokens (lexemes). It will always
 // return a non-nil error, but if nothing went wrong it will return io.EOF.
 func (lexer *LexingOperation) tokenize () (err error) {
+	// check to see if the beginning of the file says :arf
+	var shebangCheck = []rune(":arf\n")
+	for index := 0; index < 5; index ++ {
+		err = lexer.nextRune()
+		
+		if err != nil || shebangCheck[index] != lexer.char {
+			err = file.NewError (
+				lexer.file.Location(), 1,
+				"not an arf file",
+				file.ErrorKindError)
+			return
+		}
+	}
+
 	err = lexer.nextRune()
 	if err != nil { return }
 
