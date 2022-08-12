@@ -103,11 +103,11 @@ func (file *File) Close () {
 
 // Location returns a location struct describing the current position inside of
 // the file. This can be stored and used to print errors.
-func (file *File) Location () (location Location) {
+func (file *File) Location (width int) (location Location) {
 	return Location {
 		file:   file,
 		row:    file.currentLine,
 		column: file.currentColumn,
-		width:  1,
+		width:  width,
 	}
 }

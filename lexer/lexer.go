@@ -35,7 +35,7 @@ func (lexer *LexingOperation) tokenize () (err error) {
 		
 		if err != nil || shebangCheck[index] != lexer.char {
 			err = file.NewError (
-				lexer.file.Location(),
+				lexer.file.Location(1),
 				"not an arf file",
 				file.ErrorKindError)
 			return
@@ -66,13 +66,18 @@ func (lexer *LexingOperation) tokenize () (err error) {
 	}
 
 	if lexer.tokens[len(lexer.tokens) - 1].kind != TokenKindNewline {
-		lexer.addToken(Token { kind: TokenKindNewline })
+		token := lexer.newToken()
+		token.kind = TokenKindNewline
+		lexer.addToken(token)
 	}
 
 	return
 }
 
 func (lexer *LexingOperation) tokenizeAlphaBeginning () (err error) {
+	token := lexer.newToken()
+	token.kind = TokenKindName
+
 	got := ""
 
 	for {
@@ -86,7 +91,7 @@ func (lexer *LexingOperation) tokenizeAlphaBeginning () (err error) {
 		lexer.nextRune()
 	}
 
-	token := Token { kind: TokenKindName, value: got }
+	token.value = got
 
 	if len(got) == 2 {
 		firstValid  := got[0] == 'n' || got[0] == 'r' || got[0] == 'w'
@@ -119,11 +124,14 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			err = lexer.nextRune()
 			
 			file.NewError (
-				lexer.file.Location(),
+				lexer.file.Location(1),
 				"tab not used as indent",
 				file.ErrorKindWarn).Print()
 			return
 		}
+		
+		token := lexer.newToken()
+		token.kind = TokenKindIndent
 
 		// eat up tabs while increasing the indent level
 		indentLevel := 0		
@@ -132,11 +140,9 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			err = lexer.nextRune()
 			if err != nil { return }
 		}
-		
-		lexer.addToken (Token {
-			kind: TokenKindIndent,
-			value: indentLevel,
-		})
+
+		token.value = indentLevel
+		lexer.addToken(token)
 	case '\n':
 		// line break
 
@@ -155,48 +161,49 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			lexer.tokens = lexer.tokens[:tokenIndex]
 		}
 		
-		lexer.addToken (Token {
-			kind: TokenKindNewline,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindNewline
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '"':
 		err = lexer.tokenizeString(false)
 	case '\'':
 		err = lexer.tokenizeString(true)
 	case ':':
-		lexer.addToken (Token {
-			kind: TokenKindColon,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindColon
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '.':
-		lexer.addToken (Token {
-			kind: TokenKindDot,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindDot
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '[':
-		lexer.addToken (Token {
-			kind: TokenKindLBracket,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindLBracket
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case ']':
-		lexer.addToken (Token {
-			kind: TokenKindRBracket,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindRBracket
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '{':
-		lexer.addToken (Token {
-			kind: TokenKindLBrace,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindLBrace
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '}':
-		lexer.addToken (Token {
-			kind: TokenKindRBrace,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindRBrace
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '+':
 		err = lexer.nextRune()
 		if err != nil { return }
-		token := Token { kind: TokenKindPlus }
+		token := lexer.newToken()
+		token.kind = TokenKindPlus
 		if lexer.char == '+' {
 			token.kind = TokenKindIncrement
 		}
@@ -205,39 +212,40 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 	case '-':
 		err = lexer.tokenizeDashBeginning()
 	case '*':
-		lexer.addToken (Token {
-			kind: TokenKindAsterisk,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindAsterisk
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '/':
-		lexer.addToken (Token {
-			kind: TokenKindSlash,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindSlash
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '@':
-		lexer.addToken (Token {
-			kind: TokenKindAt,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindAt
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '!':
-		lexer.addToken (Token {
-			kind: TokenKindExclamation,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindExclamation
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '%':
-		lexer.addToken (Token {
-			kind: TokenKindPercent,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindPercent
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '~':
-		lexer.addToken (Token {
-			kind: TokenKindTilde,
-		})
+		token := lexer.newToken()
+		token.kind = TokenKindTilde
+		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '<':
 		err = lexer.nextRune()
 		if err != nil { return }
-		token := Token { kind: TokenKindLessThan }
+		token := lexer.newToken()
+		token.kind = TokenKindLessThan
 		if lexer.char == '<' {
 			token.kind = TokenKindLShift
 		}
@@ -246,7 +254,8 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 	case '>':
 		err = lexer.nextRune()
 		if err != nil { return }
-		token := Token { kind: TokenKindGreaterThan }
+		token := lexer.newToken()
+		token.kind = TokenKindGreaterThan
 		if lexer.char == '>' {
 			token.kind = TokenKindRShift
 		}
@@ -255,7 +264,8 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 	case '|':
 		err = lexer.nextRune()
 		if err != nil { return }
-		token := Token { kind: TokenKindBinaryOr }
+		token := lexer.newToken()
+		token.kind = TokenKindBinaryOr
 		if lexer.char == '|' {
 			token.kind = TokenKindLogicalOr
 		}
@@ -264,7 +274,8 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 	case '&':
 		err = lexer.nextRune()
 		if err != nil { return }
-		token := Token { kind: TokenKindBinaryAnd }
+		token := lexer.newToken()
+		token.kind = TokenKindBinaryAnd
 		if lexer.char == '&' {
 			token.kind = TokenKindLogicalAnd
 		}
@@ -272,7 +283,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		err = lexer.nextRune()
 	default:
 		err = file.NewError (
-			lexer.file.Location(),
+			lexer.file.Location(1),
 			"unexpected symbol character " +
 			string(lexer.char),
 			file.ErrorKindError)
@@ -287,7 +298,8 @@ func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
 	if err != nil { return }
 
 	if lexer.char == '-' {
-		token := Token { kind: TokenKindDecrement }
+		token := lexer.newToken()
+		token.kind = TokenKindDecrement
 
 		err = lexer.nextRune()
 		if err != nil { return }
@@ -298,7 +310,8 @@ func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
 		}
 		lexer.addToken(token)
 	} else if lexer.char == '>' {
-		token := Token { kind: TokenKindReturnDirection }
+		token := lexer.newToken()
+		token.kind = TokenKindReturnDirection
 
 		err = lexer.nextRune() 
 		if err != nil { return }
@@ -307,11 +320,17 @@ func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
 	} else if lexer.char >= '0' && lexer.char <= '9' {
 		lexer.tokenizeNumberBeginning(true)
 	} else {
-		token := Token { kind: TokenKindMinus }
+		token := lexer.newToken()
+		token.kind = TokenKindMinus
 		lexer.addToken(token)
 	}
 	
 	return
+}
+
+// newToken creates a new token from the lexer's current position in the file.
+func (lexer *LexingOperation) newToken () (token Token) {
+	return Token { location: lexer.file.Location(1) }
 }
 
 // addToken adds a new token to the lexer's token slice.
@@ -334,7 +353,7 @@ func (lexer *LexingOperation) nextRune () (err error) {
 	lexer.char, _, err = lexer.file.ReadRune()
 	if err != nil && err != io.EOF {
 		return file.NewError (
-			lexer.file.Location(),
+			lexer.file.Location(1),
 			err.Error(), file.ErrorKindError)
 	}
 	return

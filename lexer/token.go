@@ -78,7 +78,7 @@ func (token Token) Value () (value any) {
 
 // Equals returns whether this token is equal to another token
 func (token Token) Equals (testToken Token) (match bool) {
-	return token == testToken
+	return token.value == testToken.value && token.Is(testToken.kind)
 } 
 
 // Location returns the location of the token in its file.

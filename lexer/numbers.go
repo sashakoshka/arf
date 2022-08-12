@@ -8,6 +8,8 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 	var fragment float64
 	var isFloat  bool
 
+	token := lexer.newToken()
+
 	if lexer.char == '0' {
 		lexer.nextRune()
 
@@ -23,7 +25,7 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 			number, fragment, isFloat, err = lexer.tokenizeNumber(8)
 		} else {
 			return file.NewError (
-				lexer.file.Location(),
+				lexer.file.Location(1),
 				"unexpected character in number literal",
 				file.ErrorKindError)
 		}
@@ -32,8 +34,6 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 	}
 
 	if err != nil { return }
-
-	token := Token { }
 
 	if isFloat {
 		floatNumber := float64(number) + fragment
