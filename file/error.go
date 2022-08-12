@@ -22,9 +22,9 @@ func NewError (
 	message string,
 	kind ErrorKind,
 ) (
-	err *Error,
+	err Error,
 ) {
-	return &Error {
+	return Error {
 		Location: location,
 		message:  message,
 		kind:     kind,

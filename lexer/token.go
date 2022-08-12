@@ -86,6 +86,11 @@ func (token Token) Location () (location file.Location) {
 	return token.location
 }
 
+// NewError creates a new error at this token's location.
+func (token Token) NewError (message string, kind file.ErrorKind) (err file.Error) {
+	return token.location.NewError(message, kind)
+}
+
 // Describe generates a textual description of the token to be used in debug
 // logs.
 func (token Token) Describe () (description string) {

@@ -8,3 +8,8 @@ type Location struct {
 	column int
 	width  int
 }
+
+// NewError creates a new error at this location.
+func (location Location) NewError (message string, kind ErrorKind) (err Error) {
+	return NewError(location, message, kind)
+}
