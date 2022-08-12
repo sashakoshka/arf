@@ -11,18 +11,25 @@ type ParsingOperation struct {
 	token      lexer.Token
 	tokens     []lexer.Token
 	tokenIndex int
+
+	tree *SyntaxTree
 }
 
 // Parse reads the files located in the module specified by modulePath, and
 // converts them into an abstract syntax tree.
 func Parse (modulePath string) (tree *SyntaxTree, err error) {
 	parser := ParsingOperation { modulePath: modulePath }
-	tree, err = parser.parse()
+	err  = parser.parse()
+	tree = parser.tree
 	return
 }
 
 // parse runs the parsing operation.
-func (parser *ParsingOperation) parse () (tree *SyntaxTree, err error) {
+func (parser *ParsingOperation) parse () (err error) {
+	if parser.tree == nil {
+		parser.tree = &SyntaxTree { }
+	}
+
 	if parser.modulePath[len(parser.modulePath) - 1] != '/' {
 		parser.modulePath += "/"
 	}

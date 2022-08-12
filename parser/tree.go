@@ -4,5 +4,8 @@ package parser
 // can be expected to be syntactically correct, but it might not be semantically
 // correct (because it has not been analyzed yet.)
 type SyntaxTree struct {
-	
+	license string
+	author  string
+
+	requires []string
 }

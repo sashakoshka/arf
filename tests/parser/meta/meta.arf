@@ -1,0 +1,6 @@
+:arf
+author "Sasha Koshka"
+license "GPLv3"
+require "someModule"
+require "otherModule"
+---
