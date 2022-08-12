@@ -1,5 +1,6 @@
 package parser
 
+import "io"
 import "os"
 import "path/filepath"
 import "git.tebibyte.media/sashakoshka/arf/file"
@@ -51,14 +52,42 @@ func (parser *ParsingOperation) parse (sourceFile *file.File) (err error) {
 	tokens, err = lexer.Tokenize(sourceFile)
 	if err != nil { return }
 
+	// reset the parser
 	if parser.tree == nil {
 		parser.tree = &SyntaxTree { }
 	}
-
 	if len(tokens) == 0 { return }
 	parser.tokens = tokens
 	parser.token  = tokens[0]
 	parser.tokenIndex = 0
+
+	err = parser.parseMeta()
+	if err != nil { return }
+
+	return
+}
+
+// expect takes in a list of allowed token kinds, and returns an error if the
+// current token isn't one of them. If the length of allowed is zero, this
+// function will not return an error.
+func (parser *ParsingOperation) expect (allowed []lexer.TokenKind) (err error) {
+	if len(allowed) == 0 { return }
+
+	for _, kind := range allowed {
+		if parser.token.Is(kind) { return }
+	}
+
+	err = file.NewError (
+		parser.token.Location(), 1,
+		"unexpected token", file.ErrorKindError)
+	return
+}
+
+// nextToken is the same as expect, but it advances to the next token first.
+func (parser *ParsingOperation) nextToken (allowed []lexer.TokenKind) (err error) {
+	parser.tokenIndex ++
+	if parser.tokenIndex >= len(parser.tokens) { return io.EOF }
+	parser.token = parser.tokens[parser.tokenIndex]
 
 	return
 }
