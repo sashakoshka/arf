@@ -35,7 +35,7 @@ func (lexer *LexingOperation) tokenize () (err error) {
 		
 		if err != nil || shebangCheck[index] != lexer.char {
 			err = file.NewError (
-				lexer.file.Location(), 1,
+				lexer.file.Location(),
 				"not an arf file",
 				file.ErrorKindError)
 			return
@@ -119,7 +119,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			err = lexer.nextRune()
 			
 			file.NewError (
-				lexer.file.Location(), 1,
+				lexer.file.Location(),
 				"tab not used as indent",
 				file.ErrorKindWarn).Print()
 			return
@@ -272,7 +272,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		err = lexer.nextRune()
 	default:
 		err = file.NewError (
-			lexer.file.Location(), 1,
+			lexer.file.Location(),
 			"unexpected symbol character " +
 			string(lexer.char),
 			file.ErrorKindError)
@@ -334,7 +334,7 @@ func (lexer *LexingOperation) nextRune () (err error) {
 	lexer.char, _, err = lexer.file.ReadRune()
 	if err != nil && err != io.EOF {
 		return file.NewError (
-			lexer.file.Location(), 1,
+			lexer.file.Location(),
 			err.Error(), file.ErrorKindError)
 	}
 	return

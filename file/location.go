@@ -6,4 +6,5 @@ type Location struct {
 	file   *File
 	row    int
 	column int
+	width  int
 }

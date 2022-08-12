@@ -23,7 +23,7 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 			number, fragment, isFloat, err = lexer.tokenizeNumber(8)
 		} else {
 			return file.NewError (
-				lexer.file.Location(), 1,
+				lexer.file.Location(),
 				"unexpected character in number literal",
 				file.ErrorKindError)
 		}

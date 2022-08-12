@@ -43,7 +43,7 @@ func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
 	if isRuneLiteral {
 		if len(got) > 1 {
 			err = file.NewError (
-				lexer.file.Location(), len(got) - 1,
+				lexer.file.Location(),
 				"excess data in rune literal",
 				file.ErrorKindError)
 			return
@@ -99,7 +99,7 @@ func (lexer *LexingOperation) getEscapeSequence () (result rune, err error) {
                 
                 if len(number) < 3 {
 			err = file.NewError (
-				lexer.file.Location(), 1,
+				lexer.file.Location(),
 				"octal escape sequence too short",
 				file.ErrorKindError)
 			return
@@ -133,7 +133,7 @@ func (lexer *LexingOperation) getEscapeSequence () (result rune, err error) {
                 
                 if len(number) < want {
 			err = file.NewError (
-				lexer.file.Location(), 1,
+				lexer.file.Location(),
 				"hex escape sequence too short ",
 				file.ErrorKindError)
 			return
@@ -143,7 +143,7 @@ func (lexer *LexingOperation) getEscapeSequence () (result rune, err error) {
                 result = rune(parsedNumber)
 	} else {
 		err = file.NewError (
-			lexer.file.Location(), 1,
+			lexer.file.Location(),
 			"unknown escape character " +
 			string(lexer.char), file.ErrorKindError)
 		return

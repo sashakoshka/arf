@@ -108,5 +108,6 @@ func (file *File) Location () (location Location) {
 		file:   file,
 		row:    file.currentLine,
 		column: file.currentColumn,
+		width:  1,
 	}
 }

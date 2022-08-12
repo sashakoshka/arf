@@ -12,7 +12,6 @@ const (
 
 type Error struct {
 	Location
-	width   int
 	message string
 	kind    ErrorKind
 }
@@ -20,7 +19,6 @@ type Error struct {
 // NewError creates a new error at the specified location.
 func NewError (
 	location Location,
-	width int,
 	message string,
 	kind ErrorKind,
 ) (
@@ -28,7 +26,6 @@ func NewError (
 ) {
 	return &Error {
 		Location: location,
-		width:    width,
 		message:  message,
 		kind:     kind,
 	}
