@@ -47,7 +47,7 @@ func checkTokenSlice (filePath string, correct []Token, test *testing.T) {
 }
 
 func TestTokenizeAll (test *testing.T) {
-	checkTokenSlice("../tests/lexer/all", []Token {
+	checkTokenSlice("../tests/lexer/all.arf", []Token {
 		Token { kind: TokenKindSeparator },
 		Token { kind: TokenKindPermission, value: types.Permission {
 			Internal: types.ModeRead,
@@ -90,7 +90,7 @@ func TestTokenizeAll (test *testing.T) {
 }
 
 func TestTokenizeNumbers (test *testing.T) {
-	checkTokenSlice("../tests/lexer/numbers", []Token {
+	checkTokenSlice("../tests/lexer/numbers.arf", []Token {
 		Token { kind: TokenKindUInt, value: uint64(83628266) },
 		Token { kind: TokenKindNewline },
 		Token { kind: TokenKindUInt, value: uint64(83628266) },
@@ -119,7 +119,7 @@ func TestTokenizeNumbers (test *testing.T) {
 }
 
 func TestTokenizeText (test *testing.T) {
-	checkTokenSlice("../tests/lexer/text", []Token {
+	checkTokenSlice("../tests/lexer/text.arf", []Token {
 		Token { kind: TokenKindString, value: "hello world!\a\b\f\n\r\t\v'\"\\" },
 		Token { kind: TokenKindNewline },
 		Token { kind: TokenKindRune, value: '\a' },
@@ -139,7 +139,7 @@ func TestTokenizeText (test *testing.T) {
 }
 
 func TestTokenizeIndent (test *testing.T) {
-	checkTokenSlice("../tests/lexer/indent", []Token {
+	checkTokenSlice("../tests/lexer/indent.arf", []Token {
 		Token { kind: TokenKindName, value: "line1" },
 		Token { kind: TokenKindNewline },
 		Token { kind: TokenKindIndent, value: 1 },
