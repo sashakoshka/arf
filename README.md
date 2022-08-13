@@ -23,9 +23,12 @@ These are some design goals that I have followed/am following:
 - The standard library will be fully optional, and decoupled from the language
 - The language itself must be extremely simple
 - Language features must be immutable (no reflection or operator overloading)
+- Prefer static over dynamic
 - Data must be immutable by default
 - Memory not on the stack must be allocated and freed manually
 - Language syntax must have zero ambiguity
+- The compiler should not generate new functions or complex logic that the user
+  has not written
 
 ## Planned features
 
