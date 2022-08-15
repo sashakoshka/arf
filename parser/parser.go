@@ -64,6 +64,9 @@ func (parser *ParsingOperation) parse (sourceFile *file.File) (err error) {
 	err = parser.parseMeta()
 	if err != nil { return }
 
+	err = parser.parseBody()
+	if err != nil { return }
+
 	return
 }
 

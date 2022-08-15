@@ -12,6 +12,9 @@ func (parser *ParsingOperation) parseMeta () (err error) {
 		if err != nil { return }
 
 		if parser.token.Is(lexer.TokenKindSeparator) {
+			err = parser.nextToken(lexer.TokenKindNewline)
+			if err != nil { return }
+			
 			err = parser.nextToken()
 			return
 		}
