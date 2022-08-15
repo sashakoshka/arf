@@ -10,7 +10,8 @@ type SyntaxTree struct {
 	license string
 	author  string
 
-	requires []string
+	requires     []string
+	dataSections []DataSection
 }
 
 // Identifier represents a chain of arguments separated by a dot.
@@ -41,14 +42,14 @@ type Type struct {
 	mutable bool
 	kind TypeKind
 
-	// only applicable for arrays. a value of zero means it has an
+	// only applicable for arrays. a value of nil means it has an
 	// undefined/dynamic length.
-	length uint64
+	length *Argument
 
-	// not applicable for pointers.
+	// only applicable for basic.
         name Identifier
 
-	// only applicable for pointers.
+	// not applicable for basic.
 	points *Type
 }
 
@@ -119,6 +120,7 @@ const (
 	ArgumentKindRune
 
 	// + - * / etc...
+	// this is only used as a phrase command
 	ArgumentKindOperator
 )
 

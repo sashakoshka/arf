@@ -2,6 +2,7 @@ package parser
 
 import "reflect"
 import "testing"
+import "git.tebibyte.media/sashakoshka/arf/types"
 
 func checkTree (modulePath string, correct *SyntaxTree, test *testing.T) {
 	tree, err := Parse(modulePath)
@@ -20,8 +21,23 @@ func checkTree (modulePath string, correct *SyntaxTree, test *testing.T) {
 	}
 }
 
+// quickIdentifier returns a simple identifier of names
+func quickIdentifier (trail ...string) (identifier Identifier) {
+	for _, item := range trail {
+		identifier.trail = append (
+			identifier.trail,
+			Argument {
+				what:  ArgumentKindString,
+				value: item,
+			},
+		)
+	}
+
+	return
+}
+
 func TestMeta (test *testing.T) {
-	checkTree("../tests/parser/meta",&SyntaxTree {
+	checkTree ("../tests/parser/meta", &SyntaxTree {
 		license: "GPLv3",
 		author:  "Sasha Koshka",
 	
@@ -30,4 +46,70 @@ func TestMeta (test *testing.T) {
 			"otherModule",
 		},
 	}, test)
+}
+
+func TestData (test *testing.T) {
+	tree := &SyntaxTree {
+		dataSections: []DataSection {
+			DataSection {
+				name: "integer",
+				permission: types.PermissionFrom("wr"),
+				
+				what: Type {
+					kind: TypeKindBasic,
+					name: quickIdentifier("Int"),
+				},
+				value: []Argument {
+					Argument {
+						what: ArgumentKindUInt,
+						value: 3202,
+					},
+				},
+			},
+
+			DataSection {
+				name: "integerPointer",
+				permission: types.PermissionFrom("wr"),
+				
+				what: Type {
+					kind: TypeKindPointer,
+					points: &Type {
+						kind: TypeKindBasic,
+						name: quickIdentifier("Int"),
+					},
+				},
+				value: []Argument {
+					Argument {
+						what:  ArgumentKindUInt,
+						value: 3202,
+					},
+				},
+			},
+
+			DataSection {
+				name: "integerArray16",
+				permission: types.PermissionFrom("wr"),
+				
+				what: Type {
+					kind: TypeKindArray,
+					points: &Type {
+						kind: TypeKindBasic,
+						name: quickIdentifier("Int"),
+					},
+					length: Argument {
+						what:  ArgumentKindUInt,
+						value: 16,
+					}
+				},
+				value: []Argument {
+					Argument {
+						what:  ArgumentKindUInt,
+						value: 3202,
+					},
+				},
+			},
+		},
+	}
+	
+	checkTree ("../tests/parser/data", tree, test)
 }

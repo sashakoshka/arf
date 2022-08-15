@@ -30,3 +30,19 @@ func PermissionFrom (data string) (permission Permission) {
 	permission.External = ModeFrom(rune(data[1]))
 	return
 }
+
+func (mode Mode) ToString () (output string) {
+	switch mode {
+	case ModeNone:  output = "n"
+	case ModeRead:  output = "r"
+	case ModeWrite: output = "w"
+	}
+
+	return
+}
+
+func (permission Permission) ToString () (output string) {
+	output += permission.Internal.ToString()
+	output += permission.External.ToString()
+	return
+}
