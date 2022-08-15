@@ -1,21 +1,26 @@
 package parser
 
-import "reflect"
+import "io"
 import "testing"
-import "git.tebibyte.media/sashakoshka/arf/types"
+// import "git.tebibyte.media/sashakoshka/arf/types"
 
-func checkTree (modulePath string, correct *SyntaxTree, test *testing.T) {
+func checkTree (modulePath string, correct string, test *testing.T) {
 	tree, err := Parse(modulePath)
 	
-	if err != nil {
+	if err != io.EOF {
 		test.Log("returned error:")
 		test.Log(err.Error())
 		test.Fail()
 		return
 	}
 
-	if !reflect.DeepEqual(tree, correct) {
-		test.Log("trees not equal")
+	treeString := tree.ToString(0)
+	if treeString != correct {
+		test.Log("trees not equal!")
+		test.Log("CORRECT TREE:")
+		test.Log(correct)
+		test.Log("WHAT WAS PARSED:")
+		test.Log(treeString)
 		test.Fail()
 		return
 	}
@@ -37,79 +42,13 @@ func quickIdentifier (trail ...string) (identifier Identifier) {
 }
 
 func TestMeta (test *testing.T) {
-	checkTree ("../tests/parser/meta", &SyntaxTree {
-		license: "GPLv3",
-		author:  "Sasha Koshka",
 	
-		requires: []string {
-			"someModule",
-			"otherModule",
-		},
-	}, test)
-}
-
-func TestData (test *testing.T) {
-	tree := &SyntaxTree {
-		dataSections: []DataSection {
-			DataSection {
-				name: "integer",
-				permission: types.PermissionFrom("wr"),
-				
-				what: Type {
-					kind: TypeKindBasic,
-					name: quickIdentifier("Int"),
-				},
-				value: []Argument {
-					Argument {
-						what: ArgumentKindUInt,
-						value: 3202,
-					},
-				},
-			},
-
-			DataSection {
-				name: "integerPointer",
-				permission: types.PermissionFrom("wr"),
-				
-				what: Type {
-					kind: TypeKindPointer,
-					points: &Type {
-						kind: TypeKindBasic,
-						name: quickIdentifier("Int"),
-					},
-				},
-				value: []Argument {
-					Argument {
-						what:  ArgumentKindUInt,
-						value: 3202,
-					},
-				},
-			},
-
-			DataSection {
-				name: "integerArray16",
-				permission: types.PermissionFrom("wr"),
-				
-				what: Type {
-					kind: TypeKindArray,
-					points: &Type {
-						kind: TypeKindBasic,
-						name: quickIdentifier("Int"),
-					},
-					length: Argument {
-						what:  ArgumentKindUInt,
-						value: 16,
-					}
-				},
-				value: []Argument {
-					Argument {
-						what:  ArgumentKindUInt,
-						value: 3202,
-					},
-				},
-			},
-		},
-	}
-	
-	checkTree ("../tests/parser/data", tree, test)
+	checkTree ("../tests/parser/meta",
+`:arf
+author "Sasha Koshka"
+license "GPLv3"
+require "someModule"
+require "otherModule"
+---
+`, test)
 }
