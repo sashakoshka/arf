@@ -11,7 +11,7 @@ type SyntaxTree struct {
 	author  string
 
 	requires     []string
-	dataSections []DataSection
+	dataSections map[string] *DataSection
 }
 
 // Identifier represents a chain of arguments separated by a dot.

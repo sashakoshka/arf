@@ -1,6 +1,9 @@
 package parser
 
 // parseData parses a data section
-func (parser *ParsingOperation) parseData () (err error) {
+func (parser *ParsingOperation) parseDataSection () (
+	section *DataSection,
+	err     error,
+) {
 	return
 }
