@@ -175,5 +175,9 @@ func (section *DataSection) ToString (indent int) (output string) {
 		section.permission.ToString(), " ",
 		section.name, ":",
 		section.what.ToString())
+
+	// TODO: print out initialization values. if there is only one of them,
+	// keep it on the same line. if there are more than one, give each its
+	// own line.
 	return
 }

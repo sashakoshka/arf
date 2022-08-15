@@ -42,7 +42,6 @@ func quickIdentifier (trail ...string) (identifier Identifier) {
 }
 
 func TestMeta (test *testing.T) {
-	
 	checkTree ("../tests/parser/meta",
 `:arf
 author "Sasha Koshka"
@@ -52,3 +51,37 @@ require "otherModule"
 ---
 `, test)
 }
+
+func TestData (test *testing.T) {
+	checkTree ("../tests/parser/data",
+`:arf
+---
+data wr integer:Int 3202
+data wr integerPointer:{Int}
+data wr integerArray16:{Int 16}
+data wr integerArrayVariable:{Int ...}
+data wr integerArrayInitialized:{Int 16}
+	3948
+	293
+	293049
+	948
+	912
+	340
+	0
+	2304
+	0
+	4785
+	92
+data wr object:Obj
+	, this 324
+	, that 2139
+data wr nestedObject:Obj
+	, this
+		, bird0 324
+		, bird1 "hello world"
+	, that
+		, bird2 123.8439
+		, bird3 9328.21348239
+`, test)
+}
+
