@@ -52,20 +52,30 @@ func (err Error) Error () (formattedMessage string) {
 	
 	if err.width > 0 {
 		// print erroneous line
+		line := err.Location.file.lines[err.Location.row]
 		formattedMessage +=
 			err.Location.file.lines[err.Location.row] + "\n"
 
+		// position error marker
+		var index int
+		for index = 0; index < err.Location.column; index ++ {
+			if line[index] == '\t' {
+				formattedMessage += "\t"
+			} else {
+				formattedMessage += " "
+			}
+		}
+		
 		// print an arrow with a tail spanning the width of the mistake
-		columnCountdown := err.Location.column
-		for columnCountdown > 1 {
-			// TODO: for tabs, print out a teb instead.
-			formattedMessage += " "
-			columnCountdown --
-		}
 		for err.width > 1 {
-			// TODO: for tabs, print out 8 of these instead.
-			formattedMessage += "-"
+			if line[index] == '\t' {
+				formattedMessage += "--------"
+			} else {
+				formattedMessage += "-"
+			}
+			index ++
 		}
+		
 		formattedMessage += "^\n"
 	}
 	formattedMessage += err.message + "\n"
