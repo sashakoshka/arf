@@ -93,7 +93,7 @@ func TestTokenizeNumbers (test *testing.T) {
 	checkTokenSlice("../tests/lexer/numbers.arf", []Token {
 		Token { kind: TokenKindUInt, value: uint64(0) },
 		Token { kind: TokenKindNewline },
-		Token { kind: TokenKindUInt, value: uint64(5) },
+		Token { kind: TokenKindUInt, value: uint64(8) },
 		Token { kind: TokenKindNewline },
 		Token { kind: TokenKindUInt, value: uint64(83628266) },
 		Token { kind: TokenKindNewline },

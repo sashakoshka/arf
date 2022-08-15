@@ -1,7 +1,5 @@
 package lexer
 
-import "git.tebibyte.media/sashakoshka/arf/file"
-
 // tokenizeSymbolBeginning lexes a token that starts with a number.
 func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error) {
 	var number   uint64
@@ -23,11 +21,6 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 			number, fragment, isFloat, err = lexer.tokenizeNumber(10)
 		} else if lexer.char >= '0' && lexer.char <= '9' {
 			number, fragment, isFloat, err = lexer.tokenizeNumber(8)
-		} else {
-			return file.NewError (
-				lexer.file.Location(1),
-				"unexpected character in number literal",
-				file.ErrorKindError)
 		}
 	} else {
 		number, fragment, isFloat, err = lexer.tokenizeNumber(10)
