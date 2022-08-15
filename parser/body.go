@@ -10,8 +10,9 @@ func (parser *ParsingOperation) parseBody () (err error) {
 	switch parser.token.Value().(string) {
 	case "data":
 	case "type":
-	case "func":
 	case "face":
+	case "enum":
+	case "func":
 	}
 
 	return
