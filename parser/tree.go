@@ -17,7 +17,7 @@ type SyntaxTree struct {
 // Identifier represents a chain of arguments separated by a dot.
 type Identifier struct {
 	location file.Location
-	trail []Argument
+	trail    []string
 }
 
 // TypeKind represents what kind of type a type is

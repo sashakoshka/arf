@@ -7,7 +7,7 @@ import "testing"
 func checkTree (modulePath string, correct string, test *testing.T) {
 	tree, err := Parse(modulePath)
 	
-	if err != io.EOF {
+	if err != io.EOF && err != nil {
 		test.Log("returned error:")
 		test.Log(err.Error())
 		test.Fail()
@@ -24,21 +24,6 @@ func checkTree (modulePath string, correct string, test *testing.T) {
 		test.Fail()
 		return
 	}
-}
-
-// quickIdentifier returns a simple identifier of names
-func quickIdentifier (trail ...string) (identifier Identifier) {
-	for _, item := range trail {
-		identifier.trail = append (
-			identifier.trail,
-			Argument {
-				what:  ArgumentKindString,
-				value: item,
-			},
-		)
-	}
-
-	return
 }
 
 func TestMeta (test *testing.T) {

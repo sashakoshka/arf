@@ -41,7 +41,7 @@ func (identifier *Identifier) ToString () (output string) {
 			output += "."
 		}
 
-		output += trailItem.ToString(0, false)
+		output += trailItem
 	}
 	return
 }
