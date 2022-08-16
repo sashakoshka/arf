@@ -53,18 +53,33 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 		}
 		
 	case lexer.TokenKindInt:
+		argument.kind  = ArgumentKindInt
+		argument.value = parser.token.Value().(int64)
+		err = parser.nextToken()
 		
 	case lexer.TokenKindUInt:
+		argument.kind  = ArgumentKindUInt
+		argument.value = parser.token.Value().(uint64)
+		err = parser.nextToken()
 		
 	case lexer.TokenKindFloat:
+		argument.kind  = ArgumentKindFloat
+		argument.value = parser.token.Value().(float64)
+		err = parser.nextToken()
 		
 	case lexer.TokenKindString:
+		argument.kind  = ArgumentKindString
+		argument.value = parser.token.Value().(string)
+		parser.nextToken()
 		
 	case lexer.TokenKindRune:
+		argument.kind  = ArgumentKindRune
+		argument.value = parser.token.Value().(rune)
+		parser.nextToken()
 		
-	case lexer.TokenKindLBrace:
+	// case lexer.TokenKindLBrace:
 		
-	case lexer.TokenKindLBracket:
+	// case lexer.TokenKindLBracket:
 
 	default:
 		panic (
