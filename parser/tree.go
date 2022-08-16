@@ -89,6 +89,12 @@ const (
 	// etc...
 	ArgumentKindPhrase ArgumentKind = iota
 
+	// {name}
+	ArgumentKindDereference
+	
+	// {name 23}
+	ArgumentKindSubscript
+
 	// , name value
 	ArgumentKindObjectAttribute
 
