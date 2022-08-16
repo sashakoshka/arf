@@ -44,8 +44,8 @@ func TestData (test *testing.T) {
 ---
 data wr integer:Int 3202
 data wr mutInteger:Int:mut 3202
-data wr integerPointer:{Int} [& integer]
-data wr mutIntegerPointer:{Int}:mut [& integer]
+data wr integerPointer:{Int}
+data wr mutIntegerPointer:{Int}:mut
 data wr integerArray16:{Int 16}
 data wr integerArrayVariable:{Int ...}
 data wr integerArrayInitialized:{Int 16}
@@ -60,6 +60,8 @@ data wr integerArrayInitialized:{Int 16}
 	0
 	4785
 	92
+data wr integerPointerInit:{Int} [& integer]
+data wr mutIntegerPointerInit:{Int}:mut [& integer]
 data wr object:Obj
 	, this 324
 	, that 2139
