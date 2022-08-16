@@ -6,6 +6,12 @@ import "testing"
 
 func checkTree (modulePath string, correct string, test *testing.T) {
 	tree, err := Parse(modulePath)
+	treeString := tree.ToString(0)
+	
+	test.Log("CORRECT TREE:")
+	test.Log(correct)
+	test.Log("WHAT WAS PARSED:")
+	test.Log(treeString)
 	
 	if err != io.EOF && err != nil {
 		test.Log("returned error:")
@@ -14,13 +20,8 @@ func checkTree (modulePath string, correct string, test *testing.T) {
 		return
 	}
 
-	treeString := tree.ToString(0)
 	if treeString != correct {
 		test.Log("trees not equal!")
-		test.Log("CORRECT TREE:")
-		test.Log(correct)
-		test.Log("WHAT WAS PARSED:")
-		test.Log(treeString)
 		test.Fail()
 		return
 	}
@@ -42,7 +43,9 @@ func TestData (test *testing.T) {
 `:arf
 ---
 data wr integer:Int 3202
-data wr integerPointer:{Int}
+data wr mutInteger:Int:mut 3202
+data wr integerPointer:{Int} [& integer]
+data wr mutIntegerPointer:{Int}:mut [& integer]
 data wr integerArray16:{Int 16}
 data wr integerArrayVariable:{Int ...}
 data wr integerArrayInitialized:{Int 16}

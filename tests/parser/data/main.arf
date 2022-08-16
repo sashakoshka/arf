@@ -3,8 +3,11 @@
 
 data wr integer:Int 3202
 
-data wr integerPointer:{Int}
-# TODO: data wr integerPointer:{Int} [& integer]
+data wr mutInteger:Int:mut 3202
+
+data wr integerPointer:{Int} [& integer]
+
+data wr mutIntegerPointer:{Int}:mut [& integer]
 
 data wr integerArray16:{Int 16}
 
