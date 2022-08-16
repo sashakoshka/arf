@@ -63,15 +63,15 @@ data wr integerArrayInitialized:{Int 16}
 data wr integerPointerInit:{Int} [& integer]
 data wr mutIntegerPointerInit:{Int}:mut [& integer]
 data wr object:Obj
-	, this 324
-	, that 2139
+	.this 324
+	.that 2139
 data wr nestedObject:Obj
-	, this
-		, bird0 324
-		, bird1 "hello world"
-	, that
-		, bird2 123.8439
-		, bird3 9328.21348239
+	.this
+		.bird0 324
+		.bird1 "hello world"
+	.that
+		.bird2 123.8439
+		.bird3 9328.21348239
 `, test)
 }
 

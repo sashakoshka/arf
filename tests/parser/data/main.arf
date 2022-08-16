@@ -26,18 +26,26 @@ data wr object:Obj
 	, that 2139
 
 data wr nestedObject:Obj
-	, this
-		, bird0 324
-		, bird1 "hello world"
-	, that
-		, bird2 123.8439
-		, bird3 9328.21348239
+	.this
+		.bird0 324
+		.bird1 "hello world"
+	.that
+		.bird2 123.8439
+		.bird3 9328.21348239
 
 
 # func rr main
 	# ---
-	# [let object:Obj
-		# , this 324
-		# , that 2139]
+	# # TODO: set should be a special case, checking under itself for object
+	# member initialization args. it should also check for args in general
+	# under there which should be treated as array initialization args.
+	# basically, under a set phrase, it should do the same checks that it
+	# does under a data section.
+	#
+	# [set object:Obj]
+		# .this 324
+		# .that 2139
 	# 
-	# let object:Obj , this 324 , that 2139
+	# set object:Obj 
+	#	.this 324
+	#	.that 2139
