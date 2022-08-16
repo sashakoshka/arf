@@ -30,7 +30,7 @@ func (tree *SyntaxTree) ToString (indent int) (output string) {
 	output += doIndent(indent, "---\n")
 
 	for _, require := range tree.dataSections {
-		output += require.ToString(1)
+		output += require.ToString(indent)
 	}
 	return
 }
@@ -165,6 +165,8 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 	case ArgumentKindOperator:
 		// TODO
 	}
+
+	if breakLine { output += "\n" }
 	return
 }
 
@@ -176,8 +178,16 @@ func (section *DataSection) ToString (indent int) (output string) {
 		section.name, ":",
 		section.what.ToString())
 
-	// TODO: print out initialization values. if there is only one of them,
-	// keep it on the same line. if there are more than one, give each its
-	// own line.
+	if len(section.value) == 0 {
+		output += "\n"
+	} else if len(section.value) == 1 {
+		output += " " + section.value[0].ToString(0, false)
+		output += "\n"
+	} else {
+		output += "\n"
+		for _, argument := range(section.value) {
+			output += argument.ToString(indent + 1, true)
+		}
+	}
 	return
 }
