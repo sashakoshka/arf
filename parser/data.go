@@ -24,27 +24,44 @@ func (parser *ParsingOperation) parseDataSection () (
 
 	err = parser.nextToken(lexer.TokenKindColon)
 	if err != nil { return }
+	err = parser.nextToken()
+	if err != nil { return }
 	section.what, err = parser.parseType()
 	if err != nil { return }
 
+	if parser.token.Is(lexer.TokenKindNewline) {
+		// TODO: parse arguments
+	} else {
+		var argument Argument
+		argument, err = parser.parseArgument()
+		section.value = append(section.value, argument)
+
+		err = parser.expect(lexer.TokenKindNewline)
+		if err != nil { return }
+		err = parser.nextToken()
+		if err != nil { return }
+	}
 	return
 }
 
 // parseType parses a type notation of the form Name, {Name}, etc.
 func (parser *ParsingOperation) parseType () (what Type, err error) {
-	err = parser.nextToken(lexer.TokenKindName, lexer.TokenKindLBrace)
+	err = parser.expect(lexer.TokenKindName, lexer.TokenKindLBrace)
 	if err != nil { return }
 	what.location = parser.token.Location()
 
 	if parser.token.Is(lexer.TokenKindLBrace) {
 		what.kind = TypeKindPointer
+
+		err = parser.nextToken()
+		if err != nil { return }
 	
 		var points Type
 		points, err = parser.parseType()
 		if err != nil { return }
 		what.points = &points
 
-		err = parser.nextToken (
+		err = parser.expect (
 			lexer.TokenKindUInt,
 			lexer.TokenKindRBrace)
 		if err != nil { return }
@@ -54,17 +71,16 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 		
 			what.length = parser.token.Value().(uint64)
 		
-			err = parser.nextToken (
-				lexer.TokenKindUInt,
-				lexer.TokenKindRBrace)
+			err = parser.nextToken(lexer.TokenKindRBrace)
 			if err != nil { return }
 		}
+
+		err = parser.nextToken()
+		if err != nil { return }
 	} else {
 		what.name, err = parser.parseIdentifier()
 		if err != nil { return }
 	}
-
-	err = parser.nextToken()
 
 	if parser.token.Is(lexer.TokenKindColon) {
 		err = parser.nextToken(lexer.TokenKindName)
@@ -80,6 +96,9 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 				file.ErrorKindError)
 			return
 		}
+		
+		err = parser.nextToken()
+		if err != nil { return }
 	}
 
 	return
