@@ -57,9 +57,7 @@ type Type struct {
 type Declaration struct {
 	location file.Location
 	name     string
-	
-	what  Type
-	value []Argument
+	what     Type
 }
 
 // ObjectAttribute represents a notation to initialize object attributes. It
@@ -134,7 +132,7 @@ const (
 // allows things like phrases being arguments to other phrases.
 type Argument struct {
 	location file.Location
-	what     ArgumentKind
+	kind     ArgumentKind
 	value    any
 	// TODO: if there is an argument expansion operator its existence should
 	// be stored here in a boolean.
