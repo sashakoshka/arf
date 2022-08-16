@@ -42,9 +42,9 @@ type Type struct {
 	mutable bool
 	kind TypeKind
 
-	// only applicable for arrays. a value of nil means it has an
+	// only applicable for arrays. a value of zero means it has an
 	// undefined/dynamic length.
-	length *Argument
+	length uint64
 
 	// only applicable for basic.
         name Identifier
