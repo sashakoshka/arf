@@ -29,6 +29,8 @@ These are some design goals that I have followed/am following:
 - Language syntax must have zero ambiguity
 - The compiler should not generate new functions or complex logic that the user
   has not written
+- One line at a time - the language's syntax should encourage writing code that
+  flows vertically and not horizontally, with minimal nesting
 
 ## Planned features
 

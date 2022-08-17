@@ -24,6 +24,8 @@ const (
 
         TokenKindColon
         TokenKindDot
+        TokenKindElipsis
+        TokenKindComma
         
         TokenKindLBracket
         TokenKindRBracket
@@ -133,6 +135,10 @@ func (tokenKind TokenKind) Describe () (description string) {
 		description = "Colon"
 	case TokenKindDot:
 		description = "Dot"
+	case TokenKindElipsis:
+		description = "Elipsis"
+	case TokenKindComma:
+		description = "Comma"
 	case TokenKindLBracket:
 		description = "LBracket"
 	case TokenKindRBracket:
