@@ -104,12 +104,12 @@ func (attributes *ObjectInitializationValues) ToString (
 	for _, name := range sortMapKeysAlphabetically(attributes.attributes) {
 		value := attributes.attributes[name]
 	
-		output += doIndent(indent, ".", name, " ")
+		output += doIndent(indent, ".", name)
 		if value.kind == ArgumentKindObjectInitializationValues {
 			output += "\n"
 			output += value.ToString(indent + 1, true)
 		} else {
-			output += value.ToString(0, false) + "\n"
+			output += " " + value.ToString(0, false) + "\n"
 		}
 	}
 	
