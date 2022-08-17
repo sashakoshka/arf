@@ -131,6 +131,11 @@ func (phrase *Phrase) ToString (indent int, breakLine bool) (output string) {
 
 func (argument *Argument) ToString (indent int, breakLine bool) (output string) {
 	if !breakLine { indent = 0 }
+	if argument.value == nil {
+		output += "NIL ARGUMENT"
+		if breakLine { output += "\n" }
+		return
+	}
 
 	switch argument.kind {
 	case ArgumentKindPhrase:
