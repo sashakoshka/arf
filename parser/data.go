@@ -65,13 +65,75 @@ func (parser *ParsingOperation) parseInitializationValues (
 	err = parser.nextToken()
 	if err != nil { return }
 
+	// TODO: make data sections have only one value argument and create a
+	// similar data structure to ObjectAttributes for arrays
 	if parser.token.Is(lexer.TokenKindDot) {
-		// TODO: parse as object initialization
+		var attributes ObjectAttributes
+		attributes, err = parser.parseObjectInitializationValues (
+			baseIndent + 1)
+
+		values = []Argument {
+			Argument {
+				location: attributes.location,
+				value:    &attributes,
+				kind:     ArgumentKindObjectAttributes,
+			},
+		}
 	} else {
 		values, err = parser.parseArrayInitializationValues (
 			baseIndent + 1)
 	}
 	
+	return
+}
+
+// parseObjectInitializationValues parses a list of object initialization
+// values until the indentation level is not equal to indent.
+func (parser *ParsingOperation) parseObjectInitializationValues (
+	indent int,
+) (
+	values ObjectAttributes,
+	err    error,
+) {
+	values.attributes = make(map[string] Argument)
+	values.location   = parser.token.Location()
+
+	for {
+		// get attribute name and value
+		err = parser.nextToken(lexer.TokenKindName)
+		if err != nil { return }
+		name := parser.token.Value().(string)
+		
+		_, exists := values.attributes[name]
+		if exists {
+			err = parser.token.NewError (
+				"duplicate member \"" + name + "\" in object " +
+				"member initialization",
+				file.ErrorKindError)
+			return
+		}
+		
+		err = parser.nextToken()
+		if err != nil { return }
+		var value Argument
+		value, err = parser.parseArgument()
+
+		// store in object
+		values.attributes[name] = value
+		
+		// go onto the next line
+		err = parser.expect(lexer.TokenKindNewline)
+		if err != nil { return }
+		err = parser.nextToken()
+		if err != nil { return }
+		if !parser.token.Is(lexer.TokenKindIndent) { break }
+		// TODO: if indent is greater, recurse instead
+		if parser.token.Value().(int) != indent { break }
+
+		// the next line must start with a dot
+		err = parser.nextToken(lexer.TokenKindDot)
+		if err != nil { return }
+	}
 	return
 }
 
@@ -85,7 +147,6 @@ func (parser *ParsingOperation) parseArrayInitializationValues (
 ) {
 	for {
 		if parser.token.Is(lexer.TokenKindNewline) {
-			println("line break")
 			err = parser.nextToken()
 			if err != nil { return }
 			
@@ -94,9 +155,7 @@ func (parser *ParsingOperation) parseArrayInitializationValues (
 			err = parser.nextToken()
 			if err != nil { return }
 		}
-		if err != nil { return }
-		println(parser.token.Describe())
-
+		
 		var argument Argument
 		argument, err = parser.parseArgument()
 		if err != nil { return }
