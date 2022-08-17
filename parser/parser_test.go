@@ -58,10 +58,8 @@ data wr integerArrayInitialized:{Int 16}
 	92
 data wr integerArrayVariable:{Int ..}
 data wr integerPointer:{Int}
-data wr integerPointerInit:{Int} [& integer]
 data wr mutInteger:Int:mut 3202
 data wr mutIntegerPointer:{Int}:mut
-data wr mutIntegerPointerInit:{Int}:mut [& integer]
 data wr nestedObject:Obj
 	.that
 		.bird2 123.8439
@@ -70,8 +68,8 @@ data wr nestedObject:Obj
 		.bird0 324
 		.bird1 "hello world"
 data wr object:Obj
-	.this 324
 	.that 2139
+	.this 324
 `, test)
 }
 
