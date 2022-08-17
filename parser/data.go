@@ -30,7 +30,11 @@ func (parser *ParsingOperation) parseDataSection () (
 	if err != nil { return }
 
 	if parser.token.Is(lexer.TokenKindNewline) {
-		// TODO: parse arguments
+		err = parser.nextToken()
+		if err != nil { return }
+
+		section.value, err = parser.parseInitializationValues(0)
+		if err != nil { return }
 	} else {
 		var argument Argument
 		argument, err = parser.parseArgument()
@@ -41,6 +45,29 @@ func (parser *ParsingOperation) parseDataSection () (
 		err = parser.nextToken()
 		if err != nil { return }
 	}
+	return
+}
+
+// parseInitializationValues starts on the line after a data section, or a set
+// phrase. It checks for an indent greater than the indent of the aforementioned
+// data section or set phrase (passed through baseIndent), and if there is,
+// it parses initialization values.
+func (parser *ParsingOperation) parseInitializationValues (
+	baseIndent int,
+) (
+	values []Argument,
+	err    error,
+) {
+	// check if line is indented one more than baseIndent
+	if !parser.token.Is(lexer.TokenKindIndent) { return }
+	if parser.token.Value().(int) != baseIndent + 1 { return }
+
+	if parser.token.Is(lexer.TokenKindDot) {
+		// TODO: parse as object initialization
+	} else {
+		// TODO: parse as array initialization
+	}
+	
 	return
 }
 
@@ -114,6 +141,8 @@ func (parser *ParsingOperation) parseIdentifier () (
 	identifier.location = parser.token.Location()
 
 	for {
+		// TODO: eat up newlines and tabs after the dot, but not before
+		// it.
 		if !parser.token.Is(lexer.TokenKindName) { break }
 
 		identifier.trail = append (

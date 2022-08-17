@@ -22,8 +22,8 @@ data wr integerPointerInit:{Int} [& integer]
 data wr mutIntegerPointerInit:{Int}:mut [& integer]
 
 data wr object:Obj
-	, this 324
-	, that 2139
+	.this 324
+	.that 2139
 
 data wr nestedObject:Obj
 	.this
