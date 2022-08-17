@@ -43,11 +43,7 @@ func TestData (test *testing.T) {
 `:arf
 ---
 data wr integer:Int 3202
-data wr mutInteger:Int:mut 3202
-data wr integerPointer:{Int}
-data wr mutIntegerPointer:{Int}:mut
 data wr integerArray16:{Int 16}
-data wr integerArrayVariable:{Int ..}
 data wr integerArrayInitialized:{Int 16}
 	3948
 	293
@@ -60,18 +56,22 @@ data wr integerArrayInitialized:{Int 16}
 	0
 	4785
 	92
+data wr integerArrayVariable:{Int ..}
+data wr integerPointer:{Int}
 data wr integerPointerInit:{Int} [& integer]
+data wr mutInteger:Int:mut 3202
+data wr mutIntegerPointer:{Int}:mut
 data wr mutIntegerPointerInit:{Int}:mut [& integer]
-data wr object:Obj
-	.this 324
-	.that 2139
 data wr nestedObject:Obj
-	.this
-		.bird0 324
-		.bird1 "hello world"
 	.that
 		.bird2 123.8439
 		.bird3 9328.21348239
+	.this
+		.bird0 324
+		.bird1 "hello world"
+data wr object:Obj
+	.this 324
+	.that 2139
 `, test)
 }
 
