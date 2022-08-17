@@ -1,6 +1,7 @@
 package parser
 
 import "fmt"
+import "sort"
 
 func doIndent (indent int, input ...string) (output string) {
 	for index := 0; index < indent; index ++ {
@@ -9,6 +10,22 @@ func doIndent (indent int, input ...string) (output string) {
 	for _, inputSection := range input {
 		output += inputSection
 	}
+	return
+}
+
+func sortMapKeysAlphabetically[KEY_TYPE any] (
+	unsortedMap map[string] KEY_TYPE,
+) (
+	sortedKeys []string,
+) {
+	sortedKeys = make([]string, len(unsortedMap))
+	index := 0
+	for key, _ := range unsortedMap {
+		sortedKeys[index] = key
+		index ++
+	}
+	sort.Strings(sortedKeys)
+
 	return
 }
 
@@ -29,8 +46,9 @@ func (tree *SyntaxTree) ToString (indent int) (output string) {
 	
 	output += doIndent(indent, "---\n")
 
-	for _, require := range tree.dataSections {
-		output += require.ToString(indent)
+	dataSectionKeys := sortMapKeysAlphabetically(tree.dataSections)
+	for _, name := range dataSectionKeys {
+		output += tree.dataSections[name].ToString(indent)
 	}
 	return
 }
@@ -83,7 +101,9 @@ func (attributes *ObjectInitializationValues) ToString (
 ) (
 	output string,
 ) {
-	for name, value := range attributes.attributes {
+	for _, name := range sortMapKeysAlphabetically(attributes.attributes) {
+		value := attributes.attributes[name]
+	
 		output += doIndent(indent, ".", name, " ")
 		if value.kind == ArgumentKindObjectInitializationValues {
 			output += "\n"
