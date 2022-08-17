@@ -111,3 +111,12 @@ func (parser *ParsingOperation) nextToken (allowed ...lexer.TokenKind) (err erro
 	err = parser.expect(allowed...)
 	return
 }
+
+// previousToken goes back one token. If the parser is already at the beginning,
+// this does nothing.
+func (parser *ParsingOperation) previousToken () {
+	parser.tokenIndex --
+	if parser.tokenIndex < 0 { parser.tokenIndex = 0 }
+	parser.token = parser.tokens[parser.tokenIndex]
+	return
+}
