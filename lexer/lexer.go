@@ -175,10 +175,15 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '.':
+		err = lexer.nextRune()
+		if err != nil { return }
 		token := lexer.newToken()
 		token.kind = TokenKindDot
+		if lexer.char == '.' {
+			token.kind = TokenKindElipsis
+			err = lexer.nextRune()
+		}
 		lexer.addToken(token)
-		err = lexer.nextRune()
 	case ',':
 		token := lexer.newToken()
 		token.kind = TokenKindComma

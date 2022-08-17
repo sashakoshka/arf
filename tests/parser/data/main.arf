@@ -11,7 +11,7 @@ data wr mutIntegerPointer:{Int}:mut
 
 data wr integerArray16:{Int 16}
 
-data wr integerArrayVariable:{Int ...}
+data wr integerArrayVariable:{Int ..}
 
 data wr integerArrayInitialized:{Int 16}
 	3948 293 293049 948 912

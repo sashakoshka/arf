@@ -63,6 +63,7 @@ func TestTokenizeAll (test *testing.T) {
 		Token { kind: TokenKindColon },
 		Token { kind: TokenKindDot },
 		Token { kind: TokenKindComma },
+		Token { kind: TokenKindElipsis },
 		Token { kind: TokenKindLBracket },
 		Token { kind: TokenKindRBracket },
 		Token { kind: TokenKindLBrace },
