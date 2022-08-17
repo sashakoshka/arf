@@ -52,6 +52,16 @@ func (what *Type) ToString () (output string) {
 	} else {
 		output += "{"
 		output += what.points.ToString()
+
+		if what.kind == TypeKindArray {
+			output += " "
+			if what.length == 0 {
+				output += ".."
+			} else {
+				output += fmt.Sprint(what.length)
+			}
+		}
+		
 		output += "}"
 	}
 
@@ -164,6 +174,9 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 		
 	case ArgumentKindOperator:
 		// TODO
+		// also when parsing this argument kind, don't do it in the
+		// argument parsing function. do it specifically when parsing a
+		// phrase command.
 	}
 
 	if breakLine { output += "\n" }
