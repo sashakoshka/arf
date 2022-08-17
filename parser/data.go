@@ -61,13 +61,48 @@ func (parser *ParsingOperation) parseInitializationValues (
 	// check if line is indented one more than baseIndent
 	if !parser.token.Is(lexer.TokenKindIndent) { return }
 	if parser.token.Value().(int) != baseIndent + 1 { return }
+	
+	err = parser.nextToken()
+	if err != nil { return }
 
 	if parser.token.Is(lexer.TokenKindDot) {
 		// TODO: parse as object initialization
 	} else {
-		// TODO: parse as array initialization
+		values, err = parser.parseArrayInitializationValues (
+			baseIndent + 1)
 	}
 	
+	return
+}
+
+// parseArrayInitializationValues parses a list of array initialization values
+// until the indentation lexel is not equal to indent.
+func (parser *ParsingOperation) parseArrayInitializationValues (
+	indent int,
+) (
+	values []Argument,
+	err    error,
+) {
+	for {
+		if parser.token.Is(lexer.TokenKindNewline) {
+			println("line break")
+			err = parser.nextToken()
+			if err != nil { return }
+			
+			if !parser.token.Is(lexer.TokenKindIndent) { break }
+			if parser.token.Value().(int) != indent { break }
+			err = parser.nextToken()
+			if err != nil { return }
+		}
+		if err != nil { return }
+		println(parser.token.Describe())
+
+		var argument Argument
+		argument, err = parser.parseArgument()
+		if err != nil { return }
+		values = append(values, argument)
+	}
+
 	return
 }
 

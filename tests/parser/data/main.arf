@@ -17,9 +17,9 @@ data wr integerArrayInitialized:{Int 16}
 	3948 293 293049 948 912
 	340 0 2304 0 4785 92
 	
-data wr integerPointerInit:{Int} [& integer]
+data wr integerPointerInit:{Int} #[& integer]
 
-data wr mutIntegerPointerInit:{Int}:mut [& integer]
+data wr mutIntegerPointerInit:{Int}:mut #[& integer]
 
 data wr object:Obj
 	.this 324
