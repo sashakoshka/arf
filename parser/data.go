@@ -62,9 +62,13 @@ func (parser *ParsingOperation) parseInitializationValues (
 	if parser.token.Value().(int) != baseIndent + 1 { return }
 
 	initializationArgument.location = parser.token.Location()
+	
+	err = parser.nextToken()
+	if err != nil { return }
 
 	if parser.token.Is(lexer.TokenKindDot) {
 	
+		parser.previousToken()
 		var initializationValues ObjectInitializationValues
 		initializationValues, err    = parser.parseObjectInitializationValues()
 		initializationArgument.kind  = ArgumentKindObjectInitializationValues
@@ -72,6 +76,7 @@ func (parser *ParsingOperation) parseInitializationValues (
 		
 	} else {
 	
+		parser.previousToken()
 		var initializationValues ArrayInitializationValues
 		initializationValues, err    = parser.parseArrayInitializationValues()
 		initializationArgument.kind  = ArgumentKindArrayInitializationValues
@@ -85,86 +90,84 @@ func (parser *ParsingOperation) parseInitializationValues (
 // parseObjectInitializationValues parses a list of object initialization
 // values until the indentation level drops.
 func (parser *ParsingOperation) parseObjectInitializationValues () (
-	values ObjectInitializationValues,
-	err    error,
+	initializationValues ObjectInitializationValues,
+	err                  error,
 ) {
-	// println("PARSING")
-	// defer println("DONE\n")
-	// values.attributes = make(map[string] Argument)
-	// values.location   = parser.token.Location()
-// 
-	// for {
-		// // get attribute name and value
-		// err = parser.nextToken(lexer.TokenKindName)
-		// if err != nil { return }
-		// name := parser.token.Value().(string)
-		// println("  name:", name)
-		// 
-		// _, exists := values.attributes[name]
-		// if exists {
-			// err = parser.token.NewError (
-				// "duplicate member \"" + name + "\" in object " +
-				// "member initialization",
-				// file.ErrorKindError)
-			// return
-		// }
-		// 
-		// err = parser.nextToken()
-		// if err != nil { return }
-// 
-		// println("  parsing value argument")
-		// // parse value argument
-		// var value Argument
-		// if parser.token.Is(lexer.TokenKindNewline) {
-			// println("    is newline")
-			// // if there is none on this line, expect complex
-			// // initialization below
-// 
-			// possibleErrorLocation := parser.token.Location()
-			// err = parser.nextToken(lexer.TokenKindIndent)
+	initializationValues.attributes = make(map[string] Argument)
+
+	baseIndent := 0
+	begin      := true
+	
+	for {
+		println(parser.token.Describe())
+	
+		// if there is no indent we can just stop parsing
+		if !parser.token.Is(lexer.TokenKindIndent) { break}
+		indent := parser.token.Value().(int)
+		
+		if begin == true {
+			initializationValues.location = parser.token.Location()
+			baseIndent = indent 
+			begin      = false
+		}
+
+		// do not parse any further if the indent has changed
+		if indent != baseIndent { break }
+
+		// move on to the beginning of the line, which must contain
+		// a member initialization value
+		err = parser.nextToken(lexer.TokenKindDot)
+		if err != nil { return }
+		err = parser.nextToken(lexer.TokenKindName)
+		if err != nil { return }
+		name := parser.token.Value().(string)
+
+		// if the member has already been listed, throw an error
+		_, exists := initializationValues.attributes[name]
+		if exists {
+			err = parser.token.NewError (
+				"duplicate member \"" + name + "\" in object " +
+				"member initialization",
+				file.ErrorKindError)
+			return
+		}
+
+		// parse the argument determining the member initialization
+		// value
+		err = parser.nextToken()
+		if err != nil { return }
+		var value Argument
+		if parser.token.Is(lexer.TokenKindNewline) {
+		
+			// TODO: recurse
+			err = parser.nextToken(lexer.TokenKindIndent)
+			if err != nil { return }
+			// value, err = parser.parseInitializationValues()
 			// if err != nil { return }
-// 
-			// value, err = parser.parseInitializationValues(indent)
-			// if err != nil { return }
-// 
-			// // TODO: this doesn't seem to produce an error at the
-			// // correct location.
-			// if value.value == nil {
-				// err = possibleErrorLocation.NewError (
-					// "empty initialization value",
-					// file.ErrorKindError)
-				// return
-			// }
-			// 
-		// } else {
-			// println("    is not newline")
-			// value, err = parser.parseArgument()
-			// if err != nil { return }
-			// err = parser.expect(lexer.TokenKindNewline)
-			// if err != nil { return }
-		// }
-// 
-		// // store in object
-		// values.attributes[name] = value
-// 
-		// // if indent drops, or does something strange, stop parsing
-		// err = parser.nextToken()
-		// if err != nil { return }
-		// if !parser.token.Is(lexer.TokenKindIndent) { break }
-		// if parser.token.Value().(int) != indent { break }
-// 
-		// // the next line must start with a dot
-		// err = parser.nextToken(lexer.TokenKindDot)
-		// if err != nil { return }
-	// }
+			
+		} else {
+
+			// parse as normal argument
+			value, err = parser.parseArgument()
+			if err != nil { return }
+			err = parser.expect(lexer.TokenKindNewline)
+			if err != nil { return }
+			err = parser.nextToken()
+			if err != nil { return }
+		}
+		
+		// store in object
+		initializationValues.attributes[name] = value
+	}
+	
 	return
 }
 
 // parseArrayInitializationValues parses a list of array initialization values
 // until the indentation lexel drops.
 func (parser *ParsingOperation) parseArrayInitializationValues () (
-	values ArrayInitializationValues,
-	err    error,
+	initializationValues ArrayInitializationValues,
+	err                  error,
 ) {
 	baseIndent := 0
 	begin      := true
@@ -175,7 +178,7 @@ func (parser *ParsingOperation) parseArrayInitializationValues () (
 		indent := parser.token.Value().(int)
 		
 		if begin == true {
-			values.location = parser.token.Location()
+			initializationValues.location = parser.token.Location()
 			baseIndent = indent 
 			begin      = false
 		}
@@ -201,7 +204,9 @@ func (parser *ParsingOperation) parseArrayInitializationValues () (
 			var argument Argument
 			argument, err = parser.parseArgument()
 			if err != nil { return }
-			values.values = append(values.values, argument)
+			initializationValues.values = append (
+				initializationValues.values,
+				argument)
 		}
 	}
 
