@@ -36,9 +36,8 @@ func (parser *ParsingOperation) parseDataSection () (
 		section.value, err = parser.parseInitializationValues(0)
 		if err != nil { return }
 	} else {
-		var argument Argument
-		argument, err = parser.parseArgument()
-		section.value = append(section.value, argument)
+		section.value, err = parser.parseArgument()
+		if err != nil { return }
 
 		err = parser.expect(lexer.TokenKindNewline)
 		if err != nil { return }
@@ -55,8 +54,8 @@ func (parser *ParsingOperation) parseDataSection () (
 func (parser *ParsingOperation) parseInitializationValues (
 	baseIndent int,
 ) (
-	values []Argument,
-	err    error,
+	value Argument,
+	err   error,
 ) {
 	// check if line is indented one more than baseIndent
 	if !parser.token.Is(lexer.TokenKindIndent) { return }
@@ -65,23 +64,20 @@ func (parser *ParsingOperation) parseInitializationValues (
 	err = parser.nextToken()
 	if err != nil { return }
 
-	// TODO: make data sections have only one value argument and create a
-	// similar data structure to ObjectAttributes for arrays
-	if parser.token.Is(lexer.TokenKindDot) {
-		var attributes ObjectAttributes
-		attributes, err = parser.parseObjectInitializationValues (
-			baseIndent + 1)
+	value.location = parser.token.Location()
 
-		values = []Argument {
-			Argument {
-				location: attributes.location,
-				value:    &attributes,
-				kind:     ArgumentKindObjectAttributes,
-			},
-		}
-	} else {
-		values, err = parser.parseArrayInitializationValues (
+	if parser.token.Is(lexer.TokenKindDot) {
+		var values ObjectInitializationValues
+		values, err = parser.parseObjectInitializationValues (
 			baseIndent + 1)
+		value.kind = ArgumentKindObjectInitializationValues
+		value.value = &values
+	} else {
+		var values ArrayInitializationValues
+		value.value, err = parser.parseArrayInitializationValues (
+			baseIndent + 1)
+		value.kind = ArgumentKindArrayInitializationValues
+		value.value = &values
 	}
 	
 	return
@@ -92,7 +88,7 @@ func (parser *ParsingOperation) parseInitializationValues (
 func (parser *ParsingOperation) parseObjectInitializationValues (
 	indent int,
 ) (
-	values ObjectAttributes,
+	values ObjectInitializationValues,
 	err    error,
 ) {
 	values.attributes = make(map[string] Argument)
@@ -142,9 +138,11 @@ func (parser *ParsingOperation) parseObjectInitializationValues (
 func (parser *ParsingOperation) parseArrayInitializationValues (
 	indent int,
 ) (
-	values []Argument,
+	values ArrayInitializationValues,
 	err    error,
 ) {
+	values.location = parser.token.Location()
+	
 	for {
 		if parser.token.Is(lexer.TokenKindNewline) {
 			err = parser.nextToken()
@@ -159,7 +157,7 @@ func (parser *ParsingOperation) parseArrayInitializationValues (
 		var argument Argument
 		argument, err = parser.parseArgument()
 		if err != nil { return }
-		values = append(values, argument)
+		values.values = append(values.values, argument)
 	}
 
 	return

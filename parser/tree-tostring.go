@@ -78,19 +78,31 @@ func (declaration *Declaration) ToString () (output string) {
 	return
 }
 
-func (attributes *ObjectAttributes) ToString (
-	indent    int,
+func (attributes *ObjectInitializationValues) ToString (
+	indent int,
 ) (
 	output string,
 ) {
 	for name, value := range attributes.attributes {
 		output += doIndent(indent, ".", name, " ")
-		if value.kind == ArgumentKindObjectAttributes {
+		if value.kind == ArgumentKindObjectInitializationValues {
 			output += "\n"
 			output += value.ToString(indent + 1, true)
 		} else {
 			output += value.ToString(0, false) + "\n"
 		}
+	}
+	
+	return
+}
+
+func (values *ArrayInitializationValues) ToString (
+	indent int,
+) (
+	output string,
+) {
+	for _, value := range values.values {
+		output += value.ToString(indent, true)
 	}
 	
 	return
@@ -139,17 +151,19 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 
 	switch argument.kind {
 	case ArgumentKindPhrase:
-		output += doIndent (
-			indent,
-			argument.value.(*Phrase).ToString (	
+		output += argument.value.(*Phrase).ToString (	
 				indent,
-				breakLine))
+				breakLine)
 	
-	case ArgumentKindObjectAttributes:
+	case ArgumentKindObjectInitializationValues:
 		// this should only appear in contexts where breakLine is true
-		output += doIndent (
-			indent,
-			argument.value.(*ObjectAttributes).ToString (indent))
+		output += argument.value.(*ObjectInitializationValues).
+				ToString (indent)
+	
+	case ArgumentKindArrayInitializationValues:
+		// this should only appear in contexts where breakLine is true
+		output += argument.value.(*ArrayInitializationValues).
+				ToString (indent)
 	
 	case ArgumentKindIdentifier:
 		output += doIndent (
@@ -193,16 +207,18 @@ func (section *DataSection) ToString (indent int) (output string) {
 		section.name, ":",
 		section.what.ToString())
 
-	if len(section.value) == 0 {
+	isComplexInitialization :=
+		section.value.kind == ArgumentKindObjectInitializationValues ||
+		section.value.kind == ArgumentKindArrayInitializationValues
+
+	if section.value.value == nil {
 		output += "\n"
-	} else if len(section.value) == 1 {
-		output += " " + section.value[0].ToString(0, false)
+	} else if isComplexInitialization {
 		output += "\n"
+		output += section.value.ToString(indent + 1, true)
 	} else {
+		output += " " + section.value.ToString(0, false)
 		output += "\n"
-		for _, argument := range(section.value) {
-			output += argument.ToString(indent + 1, true)
-		}
 	}
 	return
 }

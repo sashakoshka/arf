@@ -60,11 +60,18 @@ type Declaration struct {
 	what     Type
 }
 
-// ObjectAttributes represents a list of object member initialization
+// ObjectInitializationValues represents a list of object member initialization
 // attributes.
-type ObjectAttributes struct {
+type ObjectInitializationValues struct {
 	location   file.Location
 	attributes map[string] Argument
+}
+
+// ArrayInitializationValues represents a list of attributes initializing an
+// array.
+type ArrayInitializationValues struct {
+	location file.Location
+	values   []Argument
 }
 
 // Phrase represents a function call or operator. In ARF they are the same
@@ -94,7 +101,10 @@ const (
 
 	// .name value
 	// but like, a lot of them
-	ArgumentKindObjectAttributes
+	ArgumentKindObjectInitializationValues
+
+	// value value...
+	ArgumentKindArrayInitializationValues
 
 	// name.name
 	// name.name.name
@@ -144,6 +154,6 @@ type DataSection struct {
 	name     string
 	
 	what       Type
-	value      []Argument
+	value      Argument
 	permission types.Permission
 }
