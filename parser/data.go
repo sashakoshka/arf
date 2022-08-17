@@ -54,8 +54,8 @@ func (parser *ParsingOperation) parseDataSection () (
 func (parser *ParsingOperation) parseInitializationValues (
 	baseIndent int,
 ) (
-	value Argument,
-	err   error,
+	initializationArgument Argument,
+	err error,
 ) {
 	// check if line is indented one more than baseIndent
 	if !parser.token.Is(lexer.TokenKindIndent) { return }
@@ -64,20 +64,20 @@ func (parser *ParsingOperation) parseInitializationValues (
 	err = parser.nextToken()
 	if err != nil { return }
 
-	value.location = parser.token.Location()
+	initializationArgument.location = parser.token.Location()
 
 	if parser.token.Is(lexer.TokenKindDot) {
-		var values ObjectInitializationValues
-		values, err = parser.parseObjectInitializationValues (
+		var initializationValues ObjectInitializationValues
+		initializationValues, err = parser.parseObjectInitializationValues (
 			baseIndent + 1)
-		value.kind = ArgumentKindObjectInitializationValues
-		value.value = &values
+		initializationArgument.kind = ArgumentKindObjectInitializationValues
+		initializationArgument.value = &initializationValues
 	} else {
-		var values ArrayInitializationValues
-		value.value, err = parser.parseArrayInitializationValues (
+		var initializationValues ArrayInitializationValues
+		initializationValues, err = parser.parseArrayInitializationValues (
 			baseIndent + 1)
-		value.kind = ArgumentKindArrayInitializationValues
-		value.value = &values
+		initializationArgument.kind = ArgumentKindArrayInitializationValues
+		initializationArgument.value = &initializationValues
 	}
 	
 	return
