@@ -67,7 +67,8 @@ func (parser *ParsingOperation) parseInitializationValues (
 	if err != nil { return }
 
 	if parser.token.Is(lexer.TokenKindDot) {
-	
+
+		// object initialization
 		parser.previousToken()
 		var initializationValues ObjectInitializationValues
 		initializationValues, err    = parser.parseObjectInitializationValues()
@@ -76,12 +77,12 @@ func (parser *ParsingOperation) parseInitializationValues (
 		
 	} else {
 	
+		// array initialization
 		parser.previousToken()
 		var initializationValues ArrayInitializationValues
 		initializationValues, err    = parser.parseArrayInitializationValues()
 		initializationArgument.kind  = ArgumentKindArrayInitializationValues
 		initializationArgument.value = &initializationValues
-		
 	}
 	
 	return
@@ -93,14 +94,15 @@ func (parser *ParsingOperation) parseObjectInitializationValues () (
 	initializationValues ObjectInitializationValues,
 	err                  error,
 ) {
+	println("BEGIN")
+	defer println("END")
+	
 	initializationValues.attributes = make(map[string] Argument)
 
 	baseIndent := 0
 	begin      := true
 	
 	for {
-		println(parser.token.Describe())
-	
 		// if there is no indent we can just stop parsing
 		if !parser.token.Is(lexer.TokenKindIndent) { break}
 		indent := parser.token.Value().(int)
@@ -113,6 +115,8 @@ func (parser *ParsingOperation) parseObjectInitializationValues () (
 
 		// do not parse any further if the indent has changed
 		if indent != baseIndent { break }
+
+		println("HIT")
 
 		// move on to the beginning of the line, which must contain
 		// a member initialization value
@@ -139,25 +143,26 @@ func (parser *ParsingOperation) parseObjectInitializationValues () (
 		var value Argument
 		if parser.token.Is(lexer.TokenKindNewline) {
 		
-			// TODO: recurse
+			// recurse
 			err = parser.nextToken(lexer.TokenKindIndent)
 			if err != nil { return }
-			// value, err = parser.parseInitializationValues()
-			// if err != nil { return }
+			
+			value, err = parser.parseInitializationValues(baseIndent)
+			initializationValues.attributes[name] = value
+			if err != nil { return }
 			
 		} else {
 
 			// parse as normal argument
 			value, err = parser.parseArgument()
+			initializationValues.attributes[name] = value
 			if err != nil { return }
+			
 			err = parser.expect(lexer.TokenKindNewline)
 			if err != nil { return }
 			err = parser.nextToken()
 			if err != nil { return }
 		}
-		
-		// store in object
-		initializationValues.attributes[name] = value
 	}
 	
 	return

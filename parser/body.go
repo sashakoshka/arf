@@ -14,12 +14,12 @@ func (parser *ParsingOperation) parseBody () (err error) {
 		case "data":
 			var section *DataSection
 			section, err = parser.parseDataSection()
-			if err != nil { return }
 			if parser.tree.dataSections == nil {
 				parser.tree.dataSections =
 					make(map[string] *DataSection)
 			}
 			parser.tree.dataSections[section.name] = section
+			if err != nil { return }
 		case "type":
 		case "face":
 		case "enum":
