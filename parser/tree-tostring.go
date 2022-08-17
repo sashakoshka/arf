@@ -158,35 +158,40 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 	case ArgumentKindObjectInitializationValues:
 		// this should only appear in contexts where breakLine is true
 		output += argument.value.(*ObjectInitializationValues).
-				ToString (indent)
+				ToString(indent)
 	
 	case ArgumentKindArrayInitializationValues:
 		// this should only appear in contexts where breakLine is true
 		output += argument.value.(*ArrayInitializationValues).
-				ToString (indent)
+				ToString(indent)
 	
 	case ArgumentKindIdentifier:
 		output += doIndent (
 			indent,
 			argument.value.(*Identifier).ToString())
+		if breakLine { output += "\n" }
 	
 	case ArgumentKindDeclaration:
 		output += doIndent (
 			indent,
 			argument.value.(*Declaration).ToString())
+		if breakLine { output += "\n" }
 	
 	case ArgumentKindInt, ArgumentKindUInt, ArgumentKindFloat:
 		output += doIndent(indent, fmt.Sprint(argument.value))
+		if breakLine { output += "\n" }
 	
 	case ArgumentKindString:
 		output += doIndent (
 			indent,
 			"\"" + argument.value.(string) + "\"")
+		if breakLine { output += "\n" }
 		
 	case ArgumentKindRune:
 		output += doIndent (
 			indent,
 			"'" + string(argument.value.(rune)) + "'")
+		if breakLine { output += "\n" }
 		
 	case ArgumentKindOperator:
 		// TODO
@@ -195,7 +200,6 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 		// phrase command.
 	}
 
-	if breakLine { output += "\n" }
 	return
 }
 
