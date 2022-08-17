@@ -60,12 +60,11 @@ type Declaration struct {
 	what     Type
 }
 
-// ObjectAttribute represents a notation to initialize object attributes. It
-// contains a name, and the value that the attribute should be initialized to.
-type ObjectAttribute struct {
-	location file.Location
-	name     string
-	value    Argument
+// ObjectAttributes represents a list of object member initialization
+// attributes.
+type ObjectAttributes struct {
+	location   file.Location
+	attributes map[string] Argument
 }
 
 // Phrase represents a function call or operator. In ARF they are the same
@@ -93,8 +92,9 @@ const (
 	// {name 23}
 	ArgumentKindSubscript
 
-	// , name value
-	ArgumentKindObjectAttribute
+	// .name value
+	// but like, a lot of them
+	ArgumentKindObjectAttributes
 
 	// name.name
 	// name.name.name
@@ -103,7 +103,7 @@ const (
 
 	// name:Type
 	// name:{Type}
-	// name:{Type ...}
+	// name:{Type ..}
 	// name:{Type 23}
 	// etc...
 	ArgumentKindDeclaration

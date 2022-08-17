@@ -78,23 +78,21 @@ func (declaration *Declaration) ToString () (output string) {
 	return
 }
 
-func (attribute *ObjectAttribute) ToString (
+func (attributes *ObjectAttributes) ToString (
 	indent    int,
-	breakLine bool,
 ) (
 	output string,
 ) {
-	if breakLine {
-		output += doIndent(indent)
+	for name, value := range attributes.attributes {
+		output += doIndent(indent, ".", name, " ")
+		if value.kind == ArgumentKindObjectAttributes {
+			output += "\n"
+			output += value.ToString(indent + 1, true)
+		} else {
+			output += value.ToString(0, false) + "\n"
+		}
 	}
 	
-	output += ", " +  attribute.name
-	if breakLine {
-		output += "\n" + attribute.value.ToString(indent + 1, true)
-	} else {
-		output += " " + attribute.value.ToString(0, false)
-	}
-		
 	return
 }
 
@@ -142,12 +140,11 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 				indent,
 				breakLine))
 	
-	case ArgumentKindObjectAttribute:
+	case ArgumentKindObjectAttributes:
+		// this should only appear in contexts where breakLine is true
 		output += doIndent (
 			indent,
-			argument.value.(*ObjectAttribute).ToString (	
-				indent,
-				breakLine))
+			argument.value.(*ObjectAttributes).ToString (indent))
 	
 	case ArgumentKindIdentifier:
 		output += doIndent (
