@@ -90,13 +90,19 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 
 		err = parser.expect (
 			lexer.TokenKindUInt,
-			lexer.TokenKindRBrace)
+			lexer.TokenKindRBrace,
+			lexer.TokenKindElipsis)
 		if err != nil { return }
 
 		if parser.token.Is(lexer.TokenKindUInt) {
 			what.kind = TypeKindArray
 		
 			what.length = parser.token.Value().(uint64)
+		
+			err = parser.nextToken(lexer.TokenKindRBrace)
+			if err != nil { return }
+		} else if parser.token.Is(lexer.TokenKindElipsis) {
+			what.kind = TypeKindArray
 		
 			err = parser.nextToken(lexer.TokenKindRBrace)
 			if err != nil { return }
