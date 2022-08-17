@@ -60,104 +60,149 @@ func (parser *ParsingOperation) parseInitializationValues (
 	// check if line is indented one more than baseIndent
 	if !parser.token.Is(lexer.TokenKindIndent) { return }
 	if parser.token.Value().(int) != baseIndent + 1 { return }
-	
-	err = parser.nextToken()
-	if err != nil { return }
 
 	initializationArgument.location = parser.token.Location()
 
 	if parser.token.Is(lexer.TokenKindDot) {
+	
 		var initializationValues ObjectInitializationValues
-		initializationValues, err = parser.parseObjectInitializationValues (
-			baseIndent + 1)
-		initializationArgument.kind = ArgumentKindObjectInitializationValues
+		initializationValues, err    = parser.parseObjectInitializationValues()
+		initializationArgument.kind  = ArgumentKindObjectInitializationValues
 		initializationArgument.value = &initializationValues
+		
 	} else {
+	
 		var initializationValues ArrayInitializationValues
-		initializationValues, err = parser.parseArrayInitializationValues (
-			baseIndent + 1)
-		initializationArgument.kind = ArgumentKindArrayInitializationValues
+		initializationValues, err    = parser.parseArrayInitializationValues()
+		initializationArgument.kind  = ArgumentKindArrayInitializationValues
 		initializationArgument.value = &initializationValues
+		
 	}
 	
 	return
 }
 
 // parseObjectInitializationValues parses a list of object initialization
-// values until the indentation level is not equal to indent.
-func (parser *ParsingOperation) parseObjectInitializationValues (
-	indent int,
-) (
+// values until the indentation level drops.
+func (parser *ParsingOperation) parseObjectInitializationValues () (
 	values ObjectInitializationValues,
 	err    error,
 ) {
-	values.attributes = make(map[string] Argument)
-	values.location   = parser.token.Location()
-
-	for {
-		// get attribute name and value
-		err = parser.nextToken(lexer.TokenKindName)
-		if err != nil { return }
-		name := parser.token.Value().(string)
-		
-		_, exists := values.attributes[name]
-		if exists {
-			err = parser.token.NewError (
-				"duplicate member \"" + name + "\" in object " +
-				"member initialization",
-				file.ErrorKindError)
-			return
-		}
-		
-		err = parser.nextToken()
-		if err != nil { return }
-		var value Argument
-		value, err = parser.parseArgument()
-
-		// store in object
-		values.attributes[name] = value
-		
-		// go onto the next line
-		err = parser.expect(lexer.TokenKindNewline)
-		if err != nil { return }
-		err = parser.nextToken()
-		if err != nil { return }
-		if !parser.token.Is(lexer.TokenKindIndent) { break }
-		// TODO: if indent is greater, recurse instead
-		if parser.token.Value().(int) != indent { break }
-
-		// the next line must start with a dot
-		err = parser.nextToken(lexer.TokenKindDot)
-		if err != nil { return }
-	}
+	// println("PARSING")
+	// defer println("DONE\n")
+	// values.attributes = make(map[string] Argument)
+	// values.location   = parser.token.Location()
+// 
+	// for {
+		// // get attribute name and value
+		// err = parser.nextToken(lexer.TokenKindName)
+		// if err != nil { return }
+		// name := parser.token.Value().(string)
+		// println("  name:", name)
+		// 
+		// _, exists := values.attributes[name]
+		// if exists {
+			// err = parser.token.NewError (
+				// "duplicate member \"" + name + "\" in object " +
+				// "member initialization",
+				// file.ErrorKindError)
+			// return
+		// }
+		// 
+		// err = parser.nextToken()
+		// if err != nil { return }
+// 
+		// println("  parsing value argument")
+		// // parse value argument
+		// var value Argument
+		// if parser.token.Is(lexer.TokenKindNewline) {
+			// println("    is newline")
+			// // if there is none on this line, expect complex
+			// // initialization below
+// 
+			// possibleErrorLocation := parser.token.Location()
+			// err = parser.nextToken(lexer.TokenKindIndent)
+			// if err != nil { return }
+// 
+			// value, err = parser.parseInitializationValues(indent)
+			// if err != nil { return }
+// 
+			// // TODO: this doesn't seem to produce an error at the
+			// // correct location.
+			// if value.value == nil {
+				// err = possibleErrorLocation.NewError (
+					// "empty initialization value",
+					// file.ErrorKindError)
+				// return
+			// }
+			// 
+		// } else {
+			// println("    is not newline")
+			// value, err = parser.parseArgument()
+			// if err != nil { return }
+			// err = parser.expect(lexer.TokenKindNewline)
+			// if err != nil { return }
+		// }
+// 
+		// // store in object
+		// values.attributes[name] = value
+// 
+		// // if indent drops, or does something strange, stop parsing
+		// err = parser.nextToken()
+		// if err != nil { return }
+		// if !parser.token.Is(lexer.TokenKindIndent) { break }
+		// if parser.token.Value().(int) != indent { break }
+// 
+		// // the next line must start with a dot
+		// err = parser.nextToken(lexer.TokenKindDot)
+		// if err != nil { return }
+	// }
 	return
 }
 
 // parseArrayInitializationValues parses a list of array initialization values
-// until the indentation lexel is not equal to indent.
-func (parser *ParsingOperation) parseArrayInitializationValues (
-	indent int,
-) (
+// until the indentation lexel drops.
+func (parser *ParsingOperation) parseArrayInitializationValues () (
 	values ArrayInitializationValues,
 	err    error,
 ) {
-	values.location = parser.token.Location()
+	baseIndent := 0
+	begin      := true
 	
 	for {
-		if parser.token.Is(lexer.TokenKindNewline) {
-			err = parser.nextToken()
-			if err != nil { return }
-			
-			if !parser.token.Is(lexer.TokenKindIndent) { break }
-			if parser.token.Value().(int) != indent { break }
-			err = parser.nextToken()
-			if err != nil { return }
-		}
+		// if there is no indent we can just stop parsing
+		if !parser.token.Is(lexer.TokenKindIndent) { break}
+		indent := parser.token.Value().(int)
 		
-		var argument Argument
-		argument, err = parser.parseArgument()
+		if begin == true {
+			values.location = parser.token.Location()
+			baseIndent = indent 
+			begin      = false
+		}
+
+		// do not parse any further if the indent has changed
+		if indent != baseIndent { break }
+
+		// move on to the beginning of the line, which must contain
+		// arguments
+		err = parser.nextToken(validArgumentStartTokens...)
 		if err != nil { return }
-		values.values = append(values.values, argument)
+
+		for {
+			// stop parsing this line and go on to the next if a
+			// newline token is encountered
+			if parser.token.Is(lexer.TokenKindNewline) {
+				err = parser.nextToken()
+				if err != nil { return }
+				break
+			}
+
+			// otherwise, parse the argument
+			var argument Argument
+			argument, err = parser.parseArgument()
+			if err != nil { return }
+			values.values = append(values.values, argument)
+		}
 	}
 
 	return

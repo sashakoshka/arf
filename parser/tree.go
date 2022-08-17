@@ -88,10 +88,12 @@ type Phrase struct {
 type ArgumentKind int
 
 const (
+	ArgumentKindNil ArgumentKind = iota
+	
 	// [name argument]
 	// [name argument argument]
 	// etc...
-	ArgumentKindPhrase ArgumentKind = iota
+	ArgumentKindPhrase = iota
 
 	// {name}
 	ArgumentKindDereference
