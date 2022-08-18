@@ -93,6 +93,7 @@ func (lexer *LexingOperation) tokenizeAlphaBeginning () (err error) {
 	}
 
 	token.value = got
+	token.location.SetWidth(len(got))
 
 	if len(got) == 2 {
 		firstValid  := got[0] == 'n' || got[0] == 'r' || got[0] == 'w'
@@ -143,6 +144,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		}
 
 		token.value = indentLevel
+		token.location.SetWidth(indentLevel)
 		lexer.addToken(token)
 	case '\n':
 		// line break
@@ -183,6 +185,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		if lexer.char == '.' {
 			token.kind = TokenKindElipsis
 			err = lexer.nextRune()
+			token.location.SetWidth(2)
 		}
 		lexer.addToken(token)
 	case ',':
@@ -218,6 +221,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		if lexer.char == '+' {
 			token.kind = TokenKindIncrement
 			err = lexer.nextRune()
+			token.location.SetWidth(2)
 		}
 		lexer.addToken(token)
 	case '-':
@@ -260,6 +264,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		if lexer.char == '<' {
 			token.kind = TokenKindLShift
 			err = lexer.nextRune()
+			token.location.SetWidth(2)
 		}
 		lexer.addToken(token)
 	case '>':
@@ -270,6 +275,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		if lexer.char == '>' {
 			token.kind = TokenKindRShift
 			err = lexer.nextRune()
+			token.location.SetWidth(2)
 		}
 		lexer.addToken(token)
 	case '|':
@@ -280,6 +286,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		if lexer.char == '|' {
 			token.kind = TokenKindLogicalOr
 			err = lexer.nextRune()
+			token.location.SetWidth(2)
 		}
 		lexer.addToken(token)
 	case '&':
@@ -290,6 +297,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		if lexer.char == '&' {
 			token.kind = TokenKindLogicalAnd
 			err = lexer.nextRune()
+			token.location.SetWidth(2)
 		}
 		lexer.addToken(token)
 	default:
@@ -311,6 +319,7 @@ func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
 	if lexer.char == '-' {
 		token := lexer.newToken()
 		token.kind = TokenKindDecrement
+		token.location.SetWidth(2)
 
 		err = lexer.nextRune()
 		if err != nil { return }
@@ -318,11 +327,13 @@ func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
 		if lexer.char == '-' {
 			token.kind = TokenKindSeparator
 			lexer.nextRune()
+			token.location.SetWidth(3)
 		}
 		lexer.addToken(token)
 	} else if lexer.char == '>' {
 		token := lexer.newToken()
 		token.kind = TokenKindReturnDirection
+		token.location.SetWidth(2)
 
 		err = lexer.nextRune() 
 		if err != nil { return }
