@@ -109,3 +109,36 @@ data ro object:Obj
 `, test)
 }
 
+func TestType (test *testing.T) {
+	checkTree ("../tests/parser/type",
+`
+:arf
+---
+type ro Basic:Int
+
+type ro BasicInit:Int 6
+
+type ro IntArray:{Int ..}
+
+type ro IntArrayInit:{Int 3}
+	3298 923 92
+
+type ro Complex:Obj
+	ro that:Basic
+	ro this:Basic
+
+type ro ComplexInit:Obj
+	ro that:BasicInit
+	ro this:Basic 23
+
+type ro ComplexWithComplexInit
+	ro basic:Basic 87
+	ro complex0:Complex
+		.that 98
+		.this 2
+	ro complex1:Complex
+		.that 98902
+		.this 235
+`, test)
+}
+

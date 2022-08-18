@@ -156,6 +156,27 @@ type DataSection struct {
 	name     string
 	
 	what       Type
-	value      Argument
 	permission types.Permission
+	value      Argument
+}
+
+// TypeMember represents member data 
+type TypeMember struct {
+	location file.Location
+	name     string
+	
+	what         Type
+	permission   types.Permission
+	defaultValue Argument
+}
+
+// TypeSection represents a type definition.
+type TypeSection struct {
+	location file.Location
+	name     string
+	
+	what       Type
+	permission types.Permission
+	// this should be 1 dimensional for now.
+	members	   map[string] TypeMember
 }
