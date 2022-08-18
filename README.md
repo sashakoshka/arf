@@ -1,4 +1,6 @@
-# ARF
+<br>
+
+# ![ARF](assets/logo.svg)
 
 The ARF programming language.
 
