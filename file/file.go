@@ -111,3 +111,13 @@ func (file *File) Location (width int) (location Location) {
 		width:  width,
 	}
 }
+
+// Path returns the path that teh file is located at.
+func (file *File) Path () (path string) {
+	return file.path
+}
+
+// GetLine returns the line at the specified index.
+func (file *File) GetLine (index int) (line string) {
+	return file.lines[index]
+}
