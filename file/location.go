@@ -1,5 +1,7 @@
 package file
 
+import "fmt"
+
 // Location represents a specific point in a file. It is used for error
 // reporting.
 type Location struct {
@@ -30,4 +32,13 @@ func (location Location) Column () (column int) {
 // and column.
 func (location Location) Width () (width int) {
 	return location.width
+}
+
+// Describe generates a description of the location for debug purposes
+func (location Location) Describe () (description string) {
+	return fmt.Sprint (
+		"in ", location.file.Path(),
+		" row ", location.row,
+		" column ", location.column,
+		" width ", location.width)
 }
