@@ -1,4 +1,4 @@
-package error
+package infoerr
 
 import "os"
 import "fmt"
