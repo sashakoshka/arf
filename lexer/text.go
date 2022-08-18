@@ -9,17 +9,20 @@ func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
 	if err != nil { return }
 
 	token := lexer.newToken()
-	got := ""
+	got   := ""
+	tokenWidth := 2
 
 	beginning := lexer.file.Location(1)
 	for {
-		// TODO: add hexadecimal escape codes
 		if lexer.char == '\\' {
 			err = lexer.nextRune()
+			tokenWidth ++
 			if err != nil { return }
 
-			var actual rune
-			actual, err = lexer.getEscapeSequence()
+			var actual     rune
+			var amountRead int
+			actual, amountRead, err = lexer.getEscapeSequence()
+			tokenWidth += amountRead
 			if err != nil { return }
 
 			got += string(actual)
@@ -27,6 +30,7 @@ func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
 			got += string(lexer.char)
 			
 			err = lexer.nextRune()
+			tokenWidth ++
 			if err != nil { return }
 		}
 
@@ -57,6 +61,7 @@ func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
 		token.value = got
 	}
 
+	token.location.SetWidth(tokenWidth)
 	lexer.addToken(token)
 	return
 }
@@ -77,16 +82,22 @@ var escapeSequenceMap = map[rune] rune {
 }
 
 // getEscapeSequence reads an escape sequence in a string or rune literal.
-func (lexer *LexingOperation) getEscapeSequence () (result rune, err error) {
+func (lexer *LexingOperation) getEscapeSequence () (
+	result     rune,
+	amountRead int,
+	err        error,
+) {
 	result, exists := escapeSequenceMap[lexer.char]
 	if exists {
                 err = lexer.nextRune()
+                amountRead ++
                 return
 	} else if lexer.char >= '0' && lexer.char <= '7' {
                 // octal escape sequence
                 number := string(lexer.char)
         
                 err = lexer.nextRune()
+                amountRead ++
                 if err != nil { return }
                 
                 for len(number) < 3 {
@@ -95,6 +106,7 @@ func (lexer *LexingOperation) getEscapeSequence () (result rune, err error) {
                         number += string(lexer.char)
                         
 	                err = lexer.nextRune()
+	                amountRead ++
 	                if err != nil { return }
                 }
                 
@@ -118,6 +130,7 @@ func (lexer *LexingOperation) getEscapeSequence () (result rune, err error) {
                 number := ""
 
                 err = lexer.nextRune()
+                amountRead ++
                 if err != nil { return }
                 
                 for len(number) < want {
@@ -129,6 +142,7 @@ func (lexer *LexingOperation) getEscapeSequence () (result rune, err error) {
                         number += string(lexer.char)
                         
 			err = lexer.nextRune()
+	                amountRead ++
 			if err != nil { return }
                 }
                 
