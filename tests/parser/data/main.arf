@@ -1,19 +1,19 @@
 :arf
 ---
 
-data wr integer:Int 3202
+data ro integer:Int 3202
 
-data wr mutInteger:Int:mut 3202
+data ro mutInteger:Int:mut 3202
 
-data wr integerPointer:{Int}
+data ro integerPointer:{Int}
 
-data wr mutIntegerPointer:{Int}:mut
+data ro mutIntegerPointer:{Int}:mut
 
-data wr integerArray16:{Int 16}
+data ro integerArray16:{Int 16}
 
-data wr integerArrayVariable:{Int ..}
+data ro integerArrayVariable:{Int ..}
 
-data wr integerArrayInitialized:{Int 16}
+data ro integerArrayInitialized:{Int 16}
 	3948 293 293049 948 912
 	340 0 2304 0 4785 92
 
@@ -22,11 +22,11 @@ data wr integerArrayInitialized:{Int 16}
 
 # data wr mutIntegerPointerInit:{Int}:mut [& integer]
 
-data wr object:Obj
+data ro object:Obj
 	.this 324
 	.that 2139
 
-data wr nestedObject:Obj
+data ro nestedObject:Obj
 	.this
 		.bird0 324
 		.bird1 "hello world"
@@ -35,7 +35,7 @@ data wr nestedObject:Obj
 		.bird3 9328.21348239
 
 
-# func rr main
+# func ro main
 	# ---
 	# # TODO: set should be a special case, checking under itself for object
 	# member initialization args. it should also check for args in general

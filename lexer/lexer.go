@@ -96,12 +96,11 @@ func (lexer *LexingOperation) tokenizeAlphaBeginning () (err error) {
 	token.location.SetWidth(len(got))
 
 	if len(got) == 2 {
-		firstValid  := got[0] == 'n' || got[0] == 'r' || got[0] == 'w'
-		secondValid := got[1] == 'n' || got[1] == 'r' || got[1] == 'w'
-
-		if firstValid && secondValid {
+		permission, isPermission := types.PermissionFrom(got)
+		
+		if isPermission {
 			token.kind  = TokenKindPermission
-			token.value = types.PermissionFrom(got)
+			token.value = permission
 		}
 	}
 

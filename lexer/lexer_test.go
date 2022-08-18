@@ -126,10 +126,7 @@ func compareErr (
 func TestTokenizeAll (test *testing.T) {
 	checkTokenSlice("../tests/lexer/all.arf", test,
 		quickToken(3, TokenKindSeparator, nil),
-		quickToken(2, TokenKindPermission, types.Permission {
-			Internal: types.ModeRead,
-			External: types.ModeWrite,
-		}),
+		quickToken(2, TokenKindPermission, types.PermissionReadWrite),
 		quickToken(2, TokenKindReturnDirection, nil),
 		quickToken(10, TokenKindInt, int64(-349820394)),
 		quickToken(9, TokenKindUInt, uint64(932748397)),

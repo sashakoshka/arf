@@ -78,9 +78,9 @@ func TestData (test *testing.T) {
 	checkTree ("../tests/parser/data",
 `:arf
 ---
-data wr integer:Int 3202
-data wr integerArray16:{Int 16}
-data wr integerArrayInitialized:{Int 16}
+data ro integer:Int 3202
+data ro integerArray16:{Int 16}
+data ro integerArrayInitialized:{Int 16}
 	3948
 	293
 	293049
@@ -92,18 +92,18 @@ data wr integerArrayInitialized:{Int 16}
 	0
 	4785
 	92
-data wr integerArrayVariable:{Int ..}
-data wr integerPointer:{Int}
-data wr mutInteger:Int:mut 3202
-data wr mutIntegerPointer:{Int}:mut
-data wr nestedObject:Obj
+data ro integerArrayVariable:{Int ..}
+data ro integerPointer:{Int}
+data ro mutInteger:Int:mut 3202
+data ro mutIntegerPointer:{Int}:mut
+data ro nestedObject:Obj
 	.that
 		.bird2 123.8439
 		.bird3 9328.21348239
 	.this
 		.bird0 324
 		.bird1 "hello world"
-data wr object:Obj
+data ro object:Obj
 	.that 2139
 	.this 324
 `, test)
