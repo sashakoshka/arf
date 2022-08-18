@@ -68,6 +68,9 @@ func compareErr (
 	_, err = Tokenize(file)
 	check := err.(infoerr.Error)
 
+	test.Log("error that was recieved:")
+	test.Log(check)
+
 	if check.Kind() != correctKind {
 		test.Log("mismatched error kind")
 		test.Log("- want:", correctKind)
@@ -222,9 +225,23 @@ func TestTokenizeIndent (test *testing.T) {
 
 func TestTokenizeErr (test *testing.T) {
 	compareErr (
-		"../tests/lexer/error.arf",
+		"../tests/lexer/error/unexpectedSymbol.arf",
 		infoerr.ErrorKindError,
 		"unexpected symbol character ;",
-		1, 0, 1,
+		1, 5, 1,
+		test)
+	
+	compareErr (
+		"../tests/lexer/error/excessDataRune.arf",
+		infoerr.ErrorKindError,
+		"excess data in rune literal",
+		1, 8, 1,
+		test)
+	
+	compareErr (
+		"../tests/lexer/error/unknownEscape.arf",
+		infoerr.ErrorKindError,
+		"unknown escape character g",
+		1, 2, 1,
 		test)
 }
