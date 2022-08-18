@@ -1,7 +1,7 @@
 package parser
 
-import "git.tebibyte.media/sashakoshka/arf/file"
 import "git.tebibyte.media/sashakoshka/arf/lexer"
+import "git.tebibyte.media/sashakoshka/arf/infoerr"
 
 // parse body parses the body of an arf file, after the metadata header.
 func (parser *ParsingOperation) parseBody () (err error) {
@@ -27,7 +27,7 @@ func (parser *ParsingOperation) parseBody () (err error) {
 		default:
 			err = parser.token.NewError (
 				"unknown section type \"" + sectionType + "\"",
-				file.ErrorKindError)
+				infoerr.ErrorKindError)
 			return
 		}
 	}

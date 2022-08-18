@@ -1,7 +1,7 @@
 package parser
 
-import "git.tebibyte.media/sashakoshka/arf/file"
 import "git.tebibyte.media/sashakoshka/arf/lexer"
+import "git.tebibyte.media/sashakoshka/arf/infoerr"
 
 var validArgumentStartTokens = []lexer.TokenKind {
 	lexer.TokenKindName,
@@ -37,7 +37,7 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 				err = parser.token.NewError (
 					"cannot use member selection in " +
 					"a variable definition",
-					file.ErrorKindError)
+					infoerr.ErrorKindError)
 				return
 			}
 

@@ -1,7 +1,7 @@
 package lexer
 
 import "strconv"
-import "git.tebibyte.media/sashakoshka/arf/file"
+import "git.tebibyte.media/sashakoshka/arf/infoerr"
 
 // tokenizeSymbolBeginning lexes a token that starts with a number.
 func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error) {
@@ -89,10 +89,10 @@ func (lexer *LexingOperation) tokenizeNumber (
 		if !runeIsDigit(lexer.char, radix) { break }
 		if lexer.char == '.' {
 			if radix != 10 {
-				err = file.NewError (
+				err = infoerr.NewError (
 					lexer.file.Location(1),
 					"floats must have radix of 10",
-					file.ErrorKindError)
+					infoerr.ErrorKindError)
 				return
 			}
 			isFloat = true
@@ -110,10 +110,10 @@ func (lexer *LexingOperation) tokenizeNumber (
 	}
 	
 	if err != nil {
-		err = file.NewError (
+		err = infoerr.NewError (
 			lexer.file.Location(1),
 			"could not parse number: " + err.Error(),
-			file.ErrorKindError)
+			infoerr.ErrorKindError)
 		return
 	}
 

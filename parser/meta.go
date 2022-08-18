@@ -1,7 +1,7 @@
 package parser
 
-import "git.tebibyte.media/sashakoshka/arf/file"
 import "git.tebibyte.media/sashakoshka/arf/lexer"
+import "git.tebibyte.media/sashakoshka/arf/infoerr"
 
 // parseMeta parsese the metadata header at the top of an arf file.
 func (parser *ParsingOperation) parseMeta () (err error) {
@@ -35,7 +35,7 @@ func (parser *ParsingOperation) parseMeta () (err error) {
 		default:
 			parser.token.NewError (
 				"unrecognized metadata field: " + field,
-				file.ErrorKindError)
+				infoerr.ErrorKindError)
 		}
 
 		err = parser.nextToken(lexer.TokenKindNewline)

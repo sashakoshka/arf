@@ -3,6 +3,7 @@ package lexer
 import "io"
 import "git.tebibyte.media/sashakoshka/arf/file"
 import "git.tebibyte.media/sashakoshka/arf/types"
+import "git.tebibyte.media/sashakoshka/arf/infoerr"
 
 // LexingOperation holds information about an ongoing lexing operataion.
 type LexingOperation struct {
@@ -34,10 +35,10 @@ func (lexer *LexingOperation) tokenize () (err error) {
 		err = lexer.nextRune()
 		
 		if err != nil || shebangCheck[index] != lexer.char {
-			err = file.NewError (
+			err = infoerr.NewError (
 				lexer.file.Location(1),
 				"not an arf file",
-				file.ErrorKindError)
+				infoerr.ErrorKindError)
 			return
 		}
 	}
@@ -123,10 +124,10 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		if !previousToken.Is(TokenKindNewline) {
 			err = lexer.nextRune()
 			
-			file.NewError (
+			infoerr.NewError (
 				lexer.file.Location(1),
 				"tab not used as indent",
-				file.ErrorKindWarn).Print()
+				infoerr.ErrorKindWarn).Print()
 			return
 		}
 		
@@ -292,11 +293,11 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		}
 		lexer.addToken(token)
 	default:
-		err = file.NewError (
+		err = infoerr.NewError (
 			lexer.file.Location(1),
 			"unexpected symbol character " +
 			string(lexer.char),
-			file.ErrorKindError)
+			infoerr.ErrorKindError)
 		return
 	}
 
@@ -362,9 +363,9 @@ func (lexer *LexingOperation) skipSpaces () (err error) {
 func (lexer *LexingOperation) nextRune () (err error) {
 	lexer.char, _, err = lexer.file.ReadRune()
 	if err != nil && err != io.EOF {
-		return file.NewError (
+		return infoerr.NewError (
 			lexer.file.Location(1),
-			err.Error(), file.ErrorKindError)
+			err.Error(), infoerr.ErrorKindError)
 	}
 	return
 }

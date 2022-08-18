@@ -5,6 +5,7 @@ import "os"
 import "path/filepath"
 import "git.tebibyte.media/sashakoshka/arf/file"
 import "git.tebibyte.media/sashakoshka/arf/lexer"
+import "git.tebibyte.media/sashakoshka/arf/infoerr"
 
 // ParsingOperation holds information about an ongoing parsing operation.
 type ParsingOperation struct {
@@ -96,9 +97,9 @@ func (parser *ParsingOperation) expect (allowed ...lexer.TokenKind) (err error) 
 		message += allowedItem.Describe()
 	}
 
-	err = file.NewError (
+	err = infoerr.NewError (
 		parser.token.Location(),
-		message, file.ErrorKindError)
+		message, infoerr.ErrorKindError)
 	return
 }
 

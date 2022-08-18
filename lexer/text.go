@@ -1,7 +1,7 @@
 package lexer
 
 import "strconv"
-import "git.tebibyte.media/sashakoshka/arf/file"
+import "git.tebibyte.media/sashakoshka/arf/infoerr"
 
 // tokenizeString tokenizes a string or rune literal.
 func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
@@ -42,10 +42,10 @@ func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
 
 	if isRuneLiteral {
 		if len(got) > 1 {
-			err = file.NewError (
+			err = infoerr.NewError (
 				lexer.file.Location(1),
 				"excess data in rune literal",
-				file.ErrorKindError)
+				infoerr.ErrorKindError)
 			return
 		}
 
@@ -98,10 +98,10 @@ func (lexer *LexingOperation) getEscapeSequence () (result rune, err error) {
                 }
                 
                 if len(number) < 3 {
-			err = file.NewError (
+			err = infoerr.NewError (
 				lexer.file.Location(1),
 				"octal escape sequence too short",
-				file.ErrorKindError)
+				infoerr.ErrorKindError)
 			return
                 }
 
@@ -132,20 +132,20 @@ func (lexer *LexingOperation) getEscapeSequence () (result rune, err error) {
                 }
                 
                 if len(number) < want {
-			err = file.NewError (
+			err = infoerr.NewError (
 				lexer.file.Location(1),
 				"hex escape sequence too short ",
-				file.ErrorKindError)
+				infoerr.ErrorKindError)
 			return
                 }
 
                 parsedNumber, _ := strconv.ParseInt(number, 16, want * 4)
                 result = rune(parsedNumber)
 	} else {
-		err = file.NewError (
+		err = infoerr.NewError (
 			lexer.file.Location(1),
 			"unknown escape character " +
-			string(lexer.char), file.ErrorKindError)
+			string(lexer.char), infoerr.ErrorKindError)
 		return
 	}
 

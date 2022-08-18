@@ -1,8 +1,8 @@
 package parser
 
-import "git.tebibyte.media/sashakoshka/arf/file"
 import "git.tebibyte.media/sashakoshka/arf/types"
 import "git.tebibyte.media/sashakoshka/arf/lexer"
+import "git.tebibyte.media/sashakoshka/arf/infoerr"
 
 // parseData parses a data section.
 func (parser *ParsingOperation) parseDataSection () (
@@ -132,7 +132,7 @@ func (parser *ParsingOperation) parseObjectInitializationValues () (
 			err = parser.token.NewError (
 				"duplicate member \"" + name + "\" in object " +
 				"member initialization",
-				file.ErrorKindError)
+				infoerr.ErrorKindError)
 			return
 		}
 
@@ -273,7 +273,7 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 		default:
 			err = parser.token.NewError (
 				"unknown type qualifier \"" + qualifier + "\"",
-				file.ErrorKindError)
+				infoerr.ErrorKindError)
 			return
 		}
 		

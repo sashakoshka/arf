@@ -2,6 +2,7 @@ package lexer
 
 import "fmt"
 import "git.tebibyte.media/sashakoshka/arf/file"
+import "git.tebibyte.media/sashakoshka/arf/infoerr"
 
 // TokenKind is an enum represzenting what role a token has.
 type TokenKind int
@@ -89,8 +90,13 @@ func (token Token) Location () (location file.Location) {
 }
 
 // NewError creates a new error at this token's location.
-func (token Token) NewError (message string, kind file.ErrorKind) (err file.Error) {
-	return token.location.NewError(message, kind)
+func (token Token) NewError (
+	message string,
+	kind    infoerr.ErrorKind,
+) (
+	err infoerr.Error,
+) {
+	return infoerr.NewError(token.location, message, kind)
 }
 
 // Describe generates a textual description of the token to be used in debug
