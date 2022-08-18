@@ -235,13 +235,13 @@ func TestTokenizeErr (test *testing.T) {
 		"../tests/lexer/error/excessDataRune.arf",
 		infoerr.ErrorKindError,
 		"excess data in rune literal",
-		1, 8, 1,
+		1, 1, 7,
 		test)
 	
 	compareErr (
 		"../tests/lexer/error/unknownEscape.arf",
 		infoerr.ErrorKindError,
 		"unknown escape character g",
-		1, 1, 7,
+		1, 2, 1,
 		test)
 }
