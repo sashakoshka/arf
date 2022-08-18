@@ -8,25 +8,48 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 	var intNumber   uint64
 	var floatNumber float64
 	var isFloat     bool
+	var amountRead  int
+	var totalRead   int
 
 	token := lexer.newToken()
 
 	if lexer.char == '0' {
 		lexer.nextRune()
+		totalRead ++
 
 		if lexer.char == 'x' {
 			lexer.nextRune()
-			intNumber, floatNumber, isFloat, err = lexer.tokenizeNumber(16)
+			totalRead ++
+			intNumber, floatNumber,
+			isFloat, amountRead,
+			err = lexer.tokenizeNumber(16)
+			
 		} else if lexer.char == 'b' {
 			lexer.nextRune()
-			intNumber, floatNumber, isFloat, err = lexer.tokenizeNumber(2)
+			totalRead ++
+			intNumber, floatNumber,
+			isFloat, amountRead,
+			err = lexer.tokenizeNumber(2)
+			
 		} else if lexer.char == '.' {
-			intNumber, floatNumber, isFloat, err = lexer.tokenizeNumber(10)
+			intNumber, floatNumber,
+			isFloat, amountRead,
+			err = lexer.tokenizeNumber(10)
+			
 		} else if lexer.char >= '0' && lexer.char <= '9' {
-			intNumber, floatNumber, isFloat, err = lexer.tokenizeNumber(8)
+			intNumber, floatNumber,
+			isFloat, amountRead,
+			err = lexer.tokenizeNumber(8)
 		}
 	} else {
-		intNumber, floatNumber, isFloat, err = lexer.tokenizeNumber(10)
+		intNumber, floatNumber,
+		isFloat, amountRead,
+		err = lexer.tokenizeNumber(10)
+	}
+
+	totalRead += amountRead
+	if negative {
+		totalRead += 1
 	}
 
 	if err != nil { return }
@@ -47,7 +70,8 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 			token.value = uint64(intNumber)
 		}		
 	}
-	
+
+	token.location.SetWidth(totalRead)
 	lexer.addToken(token)
 	return
 }
@@ -82,6 +106,7 @@ func (lexer *LexingOperation) tokenizeNumber (
 	intNumber   uint64,
 	floatNumber float64,
 	isFloat     bool,
+	amountRead  int,
 	err         error,
 ) {
 	got := ""
@@ -102,6 +127,8 @@ func (lexer *LexingOperation) tokenizeNumber (
 		err = lexer.nextRune()
 		if err != nil { return }
 	}
+
+	amountRead = len(got)
 
 	if isFloat {
 		floatNumber, err = strconv.ParseFloat(got, 64)
