@@ -9,11 +9,6 @@ type Location struct {
 	width  int
 }
 
-// NewError creates a new error at this location.
-func (location Location) NewError (message string, kind ErrorKind) (err Error) {
-	return NewError(location, message, kind)
-}
-
 // File returns the file the location is in
 func (location Location) File () (file *File) {
 	return location.file
