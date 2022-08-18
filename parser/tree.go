@@ -11,6 +11,7 @@ type SyntaxTree struct {
 	author  string
 
 	requires     []string
+	typeSections map[string] *TypeSection
 	dataSections map[string] *DataSection
 }
 
