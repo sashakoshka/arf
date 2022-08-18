@@ -5,8 +5,11 @@ import "git.tebibyte.media/sashakoshka/arf/file"
 import "git.tebibyte.media/sashakoshka/arf/types"
 import "git.tebibyte.media/sashakoshka/arf/infoerr"
 
-func quickToken (kind TokenKind, value any) (token Token) {
-	return Token { kind: kind, value: value }
+func quickToken (width int, kind TokenKind, value any) (token Token) {
+	token.location.SetWidth(width)
+	token.kind  = kind
+	token.value = value
+	return
 }
 
 func checkTokenSlice (filePath string, test *testing.T, correct ...Token) {
@@ -40,6 +43,15 @@ func checkTokenSlice (filePath string, test *testing.T, correct ...Token) {
 	test.Log("token slice length match", len(tokens), "=", len(correct))
 
 	for index, token := range tokens {
+		if token.location.Width() != correct[index].location.Width() {
+			test.Log("token", index, "has bad width")
+			test.Log (
+				"have", token.location.Width(),
+				"want", correct[index].location.Width())
+			test.Fail()
+			return
+		}
+		
 		if !token.Equals(correct[index]) {
 			test.Log("token", index, "not equal")
 			test.Log (
@@ -113,117 +125,117 @@ func compareErr (
 
 func TestTokenizeAll (test *testing.T) {
 	checkTokenSlice("../tests/lexer/all.arf", test,
-		quickToken(TokenKindSeparator, nil),
-		quickToken (TokenKindPermission, types.Permission {
+		quickToken(3, TokenKindSeparator, nil),
+		quickToken(2, TokenKindPermission, types.Permission {
 			Internal: types.ModeRead,
 			External: types.ModeWrite,
 		}),
-		quickToken(TokenKindReturnDirection, nil),
-		quickToken(TokenKindInt, int64(-349820394)),
-		quickToken(TokenKindUInt, uint64(932748397)),
-		quickToken(TokenKindFloat, 239485.37520),
-		quickToken(TokenKindString, "hello world!\n"),
-		quickToken(TokenKindRune, 'E'),
-		quickToken(TokenKindName, "helloWorld"),
-		quickToken(TokenKindColon, nil),
-		quickToken(TokenKindDot, nil),
-		quickToken(TokenKindComma, nil),
-		quickToken(TokenKindElipsis, nil),
-		quickToken(TokenKindLBracket, nil),
-		quickToken(TokenKindRBracket, nil),
-		quickToken(TokenKindLBrace, nil),
-		quickToken(TokenKindRBrace, nil),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindPlus, nil),
-		quickToken(TokenKindMinus, nil),
-		quickToken(TokenKindIncrement, nil),
-		quickToken(TokenKindDecrement, nil),
-		quickToken(TokenKindAsterisk, nil),
-		quickToken(TokenKindSlash, nil),
-		quickToken(TokenKindAt, nil),
-		quickToken(TokenKindExclamation, nil),
-		quickToken(TokenKindPercent, nil),
-		quickToken(TokenKindTilde, nil),
-		quickToken(TokenKindLessThan, nil),
-		quickToken(TokenKindLShift, nil),
-		quickToken(TokenKindGreaterThan, nil),
-		quickToken(TokenKindRShift, nil),
-		quickToken(TokenKindBinaryOr, nil),
-		quickToken(TokenKindLogicalOr, nil),
-		quickToken(TokenKindBinaryAnd, nil),
-		quickToken(TokenKindLogicalAnd, nil),
-		quickToken(TokenKindNewline, nil),
+		quickToken(2, TokenKindReturnDirection, nil),
+		quickToken(10, TokenKindInt, int64(-349820394)),
+		quickToken(9, TokenKindUInt, uint64(932748397)),
+		quickToken(12, TokenKindFloat, 239485.37520),
+		quickToken(16, TokenKindString, "hello world!\n"),
+		quickToken(3, TokenKindRune, 'E'),
+		quickToken(10, TokenKindName, "helloWorld"),
+		quickToken(1, TokenKindColon, nil),
+		quickToken(1, TokenKindDot, nil),
+		quickToken(1, TokenKindComma, nil),
+		quickToken(2, TokenKindElipsis, nil),
+		quickToken(1, TokenKindLBracket, nil),
+		quickToken(1, TokenKindRBracket, nil),
+		quickToken(1, TokenKindLBrace, nil),
+		quickToken(1, TokenKindRBrace, nil),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(1, TokenKindPlus, nil),
+		quickToken(1, TokenKindMinus, nil),
+		quickToken(2, TokenKindIncrement, nil),
+		quickToken(2, TokenKindDecrement, nil),
+		quickToken(1, TokenKindAsterisk, nil),
+		quickToken(1, TokenKindSlash, nil),
+		quickToken(1, TokenKindAt, nil),
+		quickToken(1, TokenKindExclamation, nil),
+		quickToken(1, TokenKindPercent, nil),
+		quickToken(1, TokenKindTilde, nil),
+		quickToken(1, TokenKindLessThan, nil),
+		quickToken(2, TokenKindLShift, nil),
+		quickToken(1, TokenKindGreaterThan, nil),
+		quickToken(2, TokenKindRShift, nil),
+		quickToken(1, TokenKindBinaryOr, nil),
+		quickToken(2, TokenKindLogicalOr, nil),
+		quickToken(1, TokenKindBinaryAnd, nil),
+		quickToken(2, TokenKindLogicalAnd, nil),
+		quickToken(1, TokenKindNewline, nil),
 	)
 }
 
 func TestTokenizeNumbers (test *testing.T) {
 	checkTokenSlice("../tests/lexer/numbers.arf", test,
-		quickToken(TokenKindUInt, uint64(0)),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindUInt, uint64(8)),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindUInt, uint64(83628266)),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindUInt, uint64(83628266)),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindUInt, uint64(83628266)),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindUInt, uint64(83628266)),
-		quickToken(TokenKindNewline, nil),
+		quickToken(1, TokenKindUInt, uint64(0)),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(1, TokenKindUInt, uint64(8)),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(8, TokenKindUInt, uint64(83628266)),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(29, TokenKindUInt, uint64(83628266)),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(9, TokenKindUInt, uint64(83628266)),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(10, TokenKindUInt, uint64(83628266)),
+		quickToken(1, TokenKindNewline, nil),
 		
-		quickToken(TokenKindInt, int64(-83628266)),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindInt, int64(-83628266)),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindInt, int64(-83628266)),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindInt, int64(-83628266)),
-		quickToken(TokenKindNewline, nil),
+		quickToken(9, TokenKindInt, int64(-83628266)),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(30, TokenKindInt, int64(-83628266)),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(10, TokenKindInt, int64(-83628266)),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(11, TokenKindInt, int64(-83628266)),
+		quickToken(1, TokenKindNewline, nil),
 		
-		quickToken(TokenKindFloat, float64(0.123478)),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindFloat, float64(234.3095)),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindFloat, float64(-2.312)),
-		quickToken(TokenKindNewline, nil),
+		quickToken(8, TokenKindFloat, float64(0.123478)),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(8, TokenKindFloat, float64(234.3095)),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(6, TokenKindFloat, float64(-2.312)),
+		quickToken(1, TokenKindNewline, nil),
 	)
 }
 
 func TestTokenizeText (test *testing.T) {
 	checkTokenSlice("../tests/lexer/text.arf", test,
-		quickToken(TokenKindString, "hello world!\a\b\f\n\r\t\v'\"\\"),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindRune, '\a'),
-		quickToken(TokenKindRune, '\b'),
-		quickToken(TokenKindRune, '\f'),
-		quickToken(TokenKindRune, '\n'),
-		quickToken(TokenKindRune, '\r'),
-		quickToken(TokenKindRune, '\t'),
-		quickToken(TokenKindRune, '\v'),
-		quickToken(TokenKindRune, '\''),
-		quickToken(TokenKindRune, '"' ),
-		quickToken(TokenKindRune, '\\'),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindString, "hello world \x40\u0040\U00000040!"),
-		quickToken(TokenKindNewline, nil),
+		quickToken(34, TokenKindString, "hello world!\a\b\f\n\r\t\v'\"\\"),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(4, TokenKindRune, '\a'),
+		quickToken(4, TokenKindRune, '\b'),
+		quickToken(4, TokenKindRune, '\f'),
+		quickToken(4, TokenKindRune, '\n'),
+		quickToken(4, TokenKindRune, '\r'),
+		quickToken(4, TokenKindRune, '\t'),
+		quickToken(4, TokenKindRune, '\v'),
+		quickToken(4, TokenKindRune, '\''),
+		quickToken(4, TokenKindRune, '"' ),
+		quickToken(4, TokenKindRune, '\\'),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(35, TokenKindString, "hello world \x40\u0040\U00000040!"),
+		quickToken(1, TokenKindNewline, nil),
 	)
 }
 
 func TestTokenizeIndent (test *testing.T) {
 	checkTokenSlice("../tests/lexer/indent.arf", test,
-		quickToken(TokenKindName, "line1"),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindIndent, 1),
-		quickToken(TokenKindName, "line2"),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindIndent, 4),
-		quickToken(TokenKindName, "line3"),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindName, "line4"),
-		quickToken(TokenKindNewline, nil),
-		quickToken(TokenKindIndent, 2),
-		quickToken(TokenKindName, "line5"),
-		quickToken(TokenKindNewline, nil),
+		quickToken(5, TokenKindName, "line1"),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(1, TokenKindIndent, 1),
+		quickToken(5, TokenKindName, "line2"),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(4, TokenKindIndent, 4),
+		quickToken(5, TokenKindName, "line3"),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(5, TokenKindName, "line4"),
+		quickToken(1, TokenKindNewline, nil),
+		quickToken(2, TokenKindIndent, 2),
+		quickToken(5, TokenKindName, "line5"),
+		quickToken(1, TokenKindNewline, nil),
 	)
 }
 
