@@ -1,10 +1,13 @@
 package lexer
 
+import "strconv"
+import "git.tebibyte.media/sashakoshka/arf/file"
+
 // tokenizeSymbolBeginning lexes a token that starts with a number.
 func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error) {
-	var number   uint64
-	var fragment float64
-	var isFloat  bool
+	var intNumber   uint64
+	var floatNumber float64
+	var isFloat     bool
 
 	token := lexer.newToken()
 
@@ -13,24 +16,22 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 
 		if lexer.char == 'x' {
 			lexer.nextRune()
-			number, fragment, isFloat, err = lexer.tokenizeNumber(16)
+			intNumber, floatNumber, isFloat, err = lexer.tokenizeNumber(16)
 		} else if lexer.char == 'b' {
 			lexer.nextRune()
-			number, fragment, isFloat, err = lexer.tokenizeNumber(2)
+			intNumber, floatNumber, isFloat, err = lexer.tokenizeNumber(2)
 		} else if lexer.char == '.' {
-			number, fragment, isFloat, err = lexer.tokenizeNumber(10)
+			intNumber, floatNumber, isFloat, err = lexer.tokenizeNumber(10)
 		} else if lexer.char >= '0' && lexer.char <= '9' {
-			number, fragment, isFloat, err = lexer.tokenizeNumber(8)
+			intNumber, floatNumber, isFloat, err = lexer.tokenizeNumber(8)
 		}
 	} else {
-		number, fragment, isFloat, err = lexer.tokenizeNumber(10)
+		intNumber, floatNumber, isFloat, err = lexer.tokenizeNumber(10)
 	}
 
 	if err != nil { return }
 
 	if isFloat {
-		floatNumber := float64(number) + fragment
-	
 		token.kind  = TokenKindFloat
 		if negative {
 			token.value = floatNumber * -1
@@ -40,10 +41,10 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 	} else {
 		if negative {
 			token.kind  = TokenKindInt
-			token.value = int64(number) * -1
+			token.value = int64(intNumber) * -1
 		} else {
 			token.kind  = TokenKindUInt
-			token.value = uint64(number)
+			token.value = uint64(intNumber)
 		}		
 	}
 	
@@ -51,24 +52,24 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 	return
 }
 
-// runeToDigit converts a rune from 0-F to a corresponding digit, with a maximum
-// radix. If the character is invalid, or the digit is too big, it will return
-// false for worked.
-func runeToDigit (char rune, radix uint64) (digit uint64, worked bool) {
-	worked = true
+// runeIsDigit checks to see if the rune is a valid digit within the given
+// radix, up to 16. A '.' rune will also be treated as valid.
+func runeIsDigit (char rune, radix uint64) (isDigit bool) {
+	isDigit = true
 
+	var digit uint64
 	if char >= '0' && char <= '9' {
 		digit = uint64(char - '0')
 	} else if char >= 'A' && char <= 'F' {
 		digit = uint64(char - 'A' + 10)
 	} else if char >= 'a' && char <= 'f' {
 		digit = uint64(char - 'a' + 10)
-	} else {
-		worked = false
+	} else if char != '.' {
+		isDigit = false
 	}
 
 	if digit >= radix {
-		worked = false
+		isDigit = false
 	}
 
 	return
@@ -78,42 +79,43 @@ func runeToDigit (char rune, radix uint64) (digit uint64, worked bool) {
 func (lexer *LexingOperation) tokenizeNumber (
 	radix uint64,
 ) (
-	number   uint64,
-	fragment float64,
-	isFloat  bool,
-	err      error,
+	intNumber   uint64,
+	floatNumber float64,
+	isFloat     bool,
+	err         error,
 ) {
+	got := ""
 	for {
-		digit, worked := runeToDigit(lexer.char, radix)
-		if !worked { break }
+		if !runeIsDigit(lexer.char, radix) { break }
+		if lexer.char == '.' {
+			if radix != 10 {
+				err = file.NewError (
+					lexer.file.Location(1),
+					"floats must have radix of 10",
+					file.ErrorKindError)
+				return
+			}
+			isFloat = true
+		}
 
-		number *= radix
-		number += digit
-
+		got += string(lexer.char)
 		err = lexer.nextRune()
 		if err != nil { return }
 	}
 
-	// TODO: increase accuracy of this so that TestTokenizeNumbers is
-	// passed.
-	if lexer.char == '.' {
-		isFloat = true
-		err = lexer.nextRune()
-		if err != nil { return }
-
-		coef := 1 / float64(radix)
-		for {
-			digit, worked := runeToDigit(lexer.char, radix)
-			if !worked { break }
-
-			fragment += float64(digit) * coef
-			
-			coef /= float64(radix)
-
-			err = lexer.nextRune()
-			if err != nil { return }
-		}
+	if isFloat {
+		floatNumber, err = strconv.ParseFloat(got, 64)
+	} else {
+		intNumber, err = strconv.ParseUint(got, int(radix), 64)
 	}
 	
+	if err != nil {
+		err = file.NewError (
+			lexer.file.Location(1),
+			"could not parse number: " + err.Error(),
+			file.ErrorKindError)
+		return
+	}
+
 	return
 }
