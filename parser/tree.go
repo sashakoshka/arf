@@ -176,8 +176,9 @@ type TypeSection struct {
 	location file.Location
 	name     string
 	
-	what       Type
-	permission types.Permission
+	what         Type
+	permission   types.Permission
+	defaultValue Argument
 	// this should be 1 dimensional for now.
-	members	   map[string] TypeMember
+	members	     map[string] TypeMember
 }
