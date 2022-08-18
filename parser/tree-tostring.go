@@ -258,7 +258,7 @@ func (section *TypeSection) ToString (indent int) (output string) {
 		"type ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString())
+		section.inherits.ToString())
 	
 	if section.defaultValue.value == nil {
 		// TODO: print out members
