@@ -8,6 +8,8 @@ type File struct {
 	path          string
 	file          *os.File
 	reader        *bufio.Reader
+	realLine      int
+	realColumn    int
 	currentLine   int
 	currentColumn int
 	lines         []string
@@ -42,6 +44,9 @@ func (file *File) Read (bytes []byte) (amountRead int, err error) {
 
 	// store the character in the file
 	for _, char := range bytes {
+		file.realLine   = file.currentLine		
+		file.realColumn = file.currentColumn
+		
 		if char == '\n' {
 			file.lines = append(file.lines, "")
 			file.currentLine ++
@@ -61,6 +66,9 @@ func (file *File) Read (bytes []byte) (amountRead int, err error) {
 func (file *File) ReadRune () (char rune, size int, err error) {
 	char, size, err = file.reader.ReadRune()
 
+	file.realLine   = file.currentLine		
+	file.realColumn = file.currentColumn
+	
 	if char == '\n' {
 		file.lines = append(file.lines, "")
 		file.currentLine ++
@@ -106,8 +114,8 @@ func (file *File) Close () {
 func (file *File) Location (width int) (location Location) {
 	return Location {
 		file:   file,
-		row:    file.currentLine,
-		column: file.currentColumn,
+		row:    file.realLine,
+		column: file.realColumn,
 		width:  width,
 	}
 }
