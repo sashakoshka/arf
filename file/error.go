@@ -87,3 +87,13 @@ func (err Error) Error () (formattedMessage string) {
 func (err Error) Print () {
 	os.Stderr.Write([]byte(err.Error()))
 }
+
+// Message returns the error's message string
+func (err Error) Message () (message string) {
+	return err.message
+}
+
+// Kind returns what kind of error the error is.
+func (err Error) Kind () (kind ErrorKind) {
+	return err.kind
+}
