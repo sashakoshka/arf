@@ -34,6 +34,11 @@ func (location Location) Width () (width int) {
 	return location.width
 }
 
+// SetWidth sets the location's width
+func (location *Location) SetWidth (width int) {
+	location.width = width
+}
+
 // Describe generates a description of the location for debug purposes
 func (location Location) Describe () (description string) {
 	return fmt.Sprint (

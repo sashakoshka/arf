@@ -9,9 +9,9 @@ func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
 	if err != nil { return }
 
 	token := lexer.newToken()
-
 	got := ""
 
+	beginning := lexer.file.Location(1)
 	for {
 		// TODO: add hexadecimal escape codes
 		if lexer.char == '\\' {
@@ -40,10 +40,11 @@ func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
 	err = lexer.nextRune()
 	if err != nil { return }
 
+	beginning.SetWidth(len(got))
 	if isRuneLiteral {
 		if len(got) > 1 {
 			err = infoerr.NewError (
-				lexer.file.Location(1),
+				beginning,
 				"excess data in rune literal",
 				infoerr.ErrorKindError)
 			return

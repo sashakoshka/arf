@@ -67,7 +67,7 @@ func (err Error) Error () (formattedMessage string) {
 		}
 		
 		// print an arrow with a tail spanning the width of the mistake
-		for err.Width() > 1 {
+		for index < err.Column() + err.Width() - 1 {
 			if line[index] == '\t' {
 				formattedMessage += "--------"
 			} else {

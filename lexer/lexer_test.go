@@ -242,6 +242,6 @@ func TestTokenizeErr (test *testing.T) {
 		"../tests/lexer/error/unknownEscape.arf",
 		infoerr.ErrorKindError,
 		"unknown escape character g",
-		1, 2, 1,
+		1, 1, 7,
 		test)
 }
