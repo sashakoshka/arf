@@ -4,6 +4,7 @@ import "git.tebibyte.media/sashakoshka/arf/types"
 import "git.tebibyte.media/sashakoshka/arf/lexer"
 // import "git.tebibyte.media/sashakoshka/arf/infoerr"
 
+// parseTypeSection parses a type definition.
 func (parser *ParsingOperation) parseTypeSection () (
 	section *TypeSection,
 	err     error,
@@ -16,19 +17,19 @@ func (parser *ParsingOperation) parseTypeSection () (
 	// get permission
 	err = parser.nextToken(lexer.TokenKindPermission)
 	if err != nil { return }
-	section.permission = parser.token.Value().(types.Permission)
+	section.root.permission = parser.token.Value().(types.Permission)
 
 	// get name
 	err = parser.nextToken(lexer.TokenKindName)
 	if err != nil { return }
-	section.name = parser.token.Value().(string)
+	section.root.name = parser.token.Value().(string)
 
 	// get inherited type
 	err = parser.nextToken(lexer.TokenKindColon)
 	if err != nil { return }
 	err = parser.nextToken()
 	if err != nil { return }
-	section.inherits, err = parser.parseType()
+	section.root.what, err = parser.parseType()
 	if err != nil { return }
 
 	if parser.token.Is(lexer.TokenKindNewline) {
@@ -38,7 +39,7 @@ func (parser *ParsingOperation) parseTypeSection () (
 		// section.value, err = parser.parseInitializationValues(0)
 		// if err != nil { return }
 	} else {
-		section.defaultValue, err = parser.parseArgument()
+		section.root.defaultValue, err = parser.parseArgument()
 		if err != nil { return }
 
 		err = parser.expect(lexer.TokenKindNewline)

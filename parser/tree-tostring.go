@@ -253,22 +253,30 @@ func (section *DataSection) ToString (indent int) (output string) {
 }
 
 func (section *TypeSection) ToString (indent int) (output string) {
-	output += doIndent (
-		indent,
-		"type ",
-		section.permission.ToString(), " ",
-		section.name, ":",
-		section.inherits.ToString())
+	output += section.root.ToString(indent, true)
+	return
+}
+
+func (node TypeNode) ToString (indent int, isRoot bool) (output string) {
+	doIndent(indent)
+	if isRoot {
+		output += "type "
+	}
 	
-	if section.defaultValue.value == nil {
-		if len(section.members) > 0 {
+	output += node.permission.ToString() + " "
+	output += node.name + ":"
+	output += node.what.ToString()
+	
+	if node.defaultValue.value == nil {
+		if len(node.children) > 0 {
 			// TODO: print out members
 		} else {
 			output += "\n"
 		}
 	} else {
-		output += " " + section.defaultValue.ToString(0, false)
+		output += " " + node.defaultValue.ToString(0, false)
 		output += "\n"	
 	}
+
 	return
 }

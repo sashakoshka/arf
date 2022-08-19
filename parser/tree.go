@@ -161,24 +161,19 @@ type DataSection struct {
 	value      Argument
 }
 
-// TypeMember represents member data 
-type TypeMember struct {
+// TypeNode represents a part of a type.  
+type TypeNode struct {
 	location file.Location
 	name     string
 	
 	what         Type
 	permission   types.Permission
 	defaultValue Argument
+	children     map[string] TypeNode
 }
 
 // TypeSection represents a type definition.
 type TypeSection struct {
 	location file.Location
-	name     string
-	
-	inherits     Type
-	permission   types.Permission
-	defaultValue Argument
-	// this should be 1 dimensional for now.
-	members	     map[string] TypeMember
+	root     TypeNode
 }

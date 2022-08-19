@@ -27,7 +27,7 @@ func (parser *ParsingOperation) parseBody () (err error) {
 				parser.tree.typeSections =
 					make(map[string] *TypeSection)
 			}
-			parser.tree.typeSections[section.name] = section
+			parser.tree.typeSections[section.root.name] = section
 			if err != nil { return }
 		case "face":
 		case "enum":
