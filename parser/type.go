@@ -2,7 +2,7 @@ package parser
 
 import "git.tebibyte.media/sashakoshka/arf/types"
 import "git.tebibyte.media/sashakoshka/arf/lexer"
-// import "git.tebibyte.media/sashakoshka/arf/infoerr"
+import "git.tebibyte.media/sashakoshka/arf/infoerr"
 
 // parseTypeSection parses a type definition.
 func (parser *ParsingOperation) parseTypeSection () (
@@ -17,32 +17,19 @@ func (parser *ParsingOperation) parseTypeSection () (
 	// parse root node
 	err = parser.nextToken()
 	if err != nil { return }
-	section.root, err = parser.parseTypeNode(true)
+	section.root, err = parser.parseTypeNode(0)
 
 	return
 }
 
-// parseTypeNode parses a single type definition node recursively. If isRoot is
-// true, the parser will assume the current node is the root node of a type
-// section and will not search for an indent.
+// parseTypeNode parses a single type definition node recursively.
 func (parser *ParsingOperation) parseTypeNode (
-	isRoot bool,
+	baseIndent int,
 ) (
 	node TypeNode,
 	err  error,
 ) {
 	node.children = make(map[string] TypeNode)
-
-	// determine the indent level of this type node. if this is the root
-	// node, assume the indent level is zero.
-	baseIndent := 0
-	if !isRoot {
-		err = parser.expect(lexer.TokenKindIndent)
-		if err != nil { return }
-		baseIndent = parser.token.Value().(int)
-		err = parser.nextToken()
-		if err != nil { return }
-	}
 
 	// get permission
 	err = parser.expect(lexer.TokenKindPermission)
@@ -112,6 +99,12 @@ func (parser *ParsingOperation) parseTypeNodeBlock (
 		initializationArgument.value = &initializationValues
 		parent.defaultValue = initializationArgument
 		
+	} else if parser.token.Is(lexer.TokenKindPermission) {
+
+		// child members
+		parser.previousToken()
+		err = parser.parseTypeNodeChildren(parent)
+		
 	} else {
 	
 		// array initialization
@@ -122,6 +115,52 @@ func (parser *ParsingOperation) parseTypeNodeBlock (
 		initializationArgument.kind  = ArgumentKindArrayInitializationValues
 		initializationArgument.value = &initializationValues
 		parent.defaultValue = initializationArgument
+	}
+	
+	return
+}
+
+// parseTypeNodeChildren parses child type nodes into a parent type node.
+func (parser *ParsingOperation) parseTypeNodeChildren (
+	parent *TypeNode,
+) (
+	err error,
+) {
+	baseIndent := 0
+	begin      := true
+	
+	for {
+		// if there is no indent we can just stop parsing
+		if !parser.token.Is(lexer.TokenKindIndent) { break }
+		indent := parser.token.Value().(int)
+		
+		if begin == true {
+			baseIndent = indent 
+			begin      = false
+		}
+
+		// do not parse any further if the indent has changed
+		if indent != baseIndent { break }
+
+		// move on to the beginning of the line, which must contain
+		// a type node
+		err = parser.nextToken()
+		if err != nil { return }
+		var child TypeNode
+		child, err = parser.parseTypeNode(baseIndent + 1)
+
+		// if the member has already been listed, throw an error
+		_, exists := parent.children[child.name]
+		if exists {
+			err = parser.token.NewError (
+				"duplicate member \"" + child.name +
+				"\" in object member initialization",
+				infoerr.ErrorKindError)
+			return
+		}
+
+		// store in parent
+		parent.children[child.name] = child
 	}
 	
 	return
