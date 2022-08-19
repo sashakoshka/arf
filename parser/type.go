@@ -14,24 +14,52 @@ func (parser *ParsingOperation) parseTypeSection () (
 	
 	section = &TypeSection { location: parser.token.Location() }
 
-	// get permission
-	err = parser.nextToken(lexer.TokenKindPermission)
+	// parse root node
+	err = parser.nextToken()
 	if err != nil { return }
-	section.root.permission = parser.token.Value().(types.Permission)
+	section.root, err = parser.parseTypeNode(true)
+
+	return
+}
+
+func (parser *ParsingOperation) parseTypeNode (
+	isRoot bool,
+) (
+	node TypeNode,
+	err  error,
+) {
+	node.children = make(map[string] TypeNode)
+
+	// determine the indent level of this type node. if this is the root
+	// node, assume the indent level is zero.
+	baseIndent := 0
+	if !isRoot {
+		err = parser.expect(lexer.TokenKindIndent)
+		if err != nil { return }
+		baseIndent = parser.token.Value().(int)
+		err = parser.nextToken()
+		if err != nil { return }
+	}
+
+	// get permission
+	err = parser.expect(lexer.TokenKindPermission)
+	if err != nil { return }
+	node.permission = parser.token.Value().(types.Permission)
 
 	// get name
 	err = parser.nextToken(lexer.TokenKindName)
 	if err != nil { return }
-	section.root.name = parser.token.Value().(string)
+	node.name = parser.token.Value().(string)
 
 	// get inherited type
 	err = parser.nextToken(lexer.TokenKindColon)
 	if err != nil { return }
 	err = parser.nextToken()
 	if err != nil { return }
-	section.root.what, err = parser.parseType()
+	node.what, err = parser.parseType()
 	if err != nil { return }
 
+	// get value, or child nodes
 	if parser.token.Is(lexer.TokenKindNewline) {
 		err = parser.nextToken()
 		if err != nil { return }
@@ -39,7 +67,7 @@ func (parser *ParsingOperation) parseTypeSection () (
 		// section.value, err = parser.parseInitializationValues(0)
 		// if err != nil { return }
 	} else {
-		section.root.defaultValue, err = parser.parseArgument()
+		node.defaultValue, err = parser.parseArgument()
 		if err != nil { return }
 
 		err = parser.expect(lexer.TokenKindNewline)
