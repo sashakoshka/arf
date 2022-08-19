@@ -267,12 +267,19 @@ func (node TypeNode) ToString (indent int, isRoot bool) (output string) {
 	output += node.name + ":"
 	output += node.what.ToString()
 	
+	isComplexInitialization :=
+		node.defaultValue.kind == ArgumentKindObjectInitializationValues ||
+		node.defaultValue.kind == ArgumentKindArrayInitializationValues
+	
 	if node.defaultValue.value == nil {
 		if len(node.children) > 0 {
 			// TODO: print out members
 		} else {
 			output += "\n"
 		}
+	} else if isComplexInitialization {
+		output += "\n"
+		output += node.defaultValue.ToString(indent + 1, true)
 	} else {
 		output += " " + node.defaultValue.ToString(0, false)
 		output += "\n"	
