@@ -261,7 +261,11 @@ func (section *TypeSection) ToString (indent int) (output string) {
 		section.inherits.ToString())
 	
 	if section.defaultValue.value == nil {
-		// TODO: print out members
+		if len(section.members) > 0 {
+			// TODO: print out members
+		} else {
+			output += "\n"
+		}
 	} else {
 		output += " " + section.defaultValue.ToString(0, false)
 		output += "\n"	
