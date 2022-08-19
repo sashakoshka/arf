@@ -111,8 +111,7 @@ data ro object:Obj
 
 func TestType (test *testing.T) {
 	checkTree ("../tests/parser/type",
-`
-:arf
+`:arf
 ---
 type ro Basic:Int
 type ro BasicInit:Int 6

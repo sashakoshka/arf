@@ -147,7 +147,7 @@ func (parser *ParsingOperation) parseTypeNodeChildren (
 		err = parser.nextToken()
 		if err != nil { return }
 		var child TypeNode
-		child, err = parser.parseTypeNode(baseIndent + 1)
+		child, err = parser.parseTypeNode(baseIndent)
 
 		// if the member has already been listed, throw an error
 		_, exists := parent.children[child.name]
