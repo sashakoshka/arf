@@ -258,7 +258,7 @@ func (section *TypeSection) ToString (indent int) (output string) {
 }
 
 func (node TypeNode) ToString (indent int, isRoot bool) (output string) {
-	doIndent(indent)
+	output += doIndent(indent)
 	if isRoot {
 		output += "type "
 	}
@@ -272,10 +272,12 @@ func (node TypeNode) ToString (indent int, isRoot bool) (output string) {
 		node.defaultValue.kind == ArgumentKindArrayInitializationValues
 	
 	if node.defaultValue.value == nil {
+		output += "\n"
 		if len(node.children) > 0 {
-			// TODO: print out members
-		} else {
-			output += "\n"
+			for _, name := range sortMapKeysAlphabetically(node.children) {
+				child := node.children[name]
+				output += child.ToString(indent + 1, false)
+			}
 		}
 	} else if isComplexInitialization {
 		output += "\n"
