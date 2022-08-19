@@ -94,9 +94,6 @@ func (parser *ParsingOperation) parseObjectInitializationValues () (
 	initializationValues ObjectInitializationValues,
 	err                  error,
 ) {
-	println("BEGIN")
-	defer println("END")
-	
 	initializationValues.attributes = make(map[string] Argument)
 
 	baseIndent := 0
@@ -115,8 +112,6 @@ func (parser *ParsingOperation) parseObjectInitializationValues () (
 
 		// do not parse any further if the indent has changed
 		if indent != baseIndent { break }
-
-		println("HIT")
 
 		// move on to the beginning of the line, which must contain
 		// a member initialization value
