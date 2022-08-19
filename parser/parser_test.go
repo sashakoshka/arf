@@ -121,7 +121,7 @@ type ro Complex:Obj
 type ro ComplexInit:Obj
 	ro that:BasicInit
 	ro this:Basic 23
-type ro ComplexWithComplexInit
+type ro ComplexWithComplexInit:Obj
 	ro basic:Basic 87
 	ro complex0:Complex
 		.that 98
