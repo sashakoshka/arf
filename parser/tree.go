@@ -12,6 +12,7 @@ type SyntaxTree struct {
 
 	requires     []string
 	typeSections map[string] *TypeSection
+	objtSections map[string] *ObjtSection
 	dataSections map[string] *DataSection
 }
 
