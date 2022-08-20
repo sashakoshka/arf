@@ -1,6 +1,7 @@
 package parser
 
 import "io"
+import "strings"
 import "testing"
 // import "git.tebibyte.media/sashakoshka/arf/types"
 
@@ -10,9 +11,9 @@ func checkTree (modulePath string, correct string, test *testing.T) {
 	treeRunes  := []rune(treeString)
 	
 	test.Log("CORRECT TREE:")
-	test.Log(correct)
+	logWithLineNumbers(correct, test)
 	test.Log("WHAT WAS PARSED:")
-	test.Log(treeString)
+	logWithLineNumbers(treeString, test)
 	
 	if err != io.EOF && err != nil {
 		test.Log("returned error:")
@@ -60,6 +61,15 @@ func checkTree (modulePath string, correct string, test *testing.T) {
 
 	if !equal {
 		return
+	}
+}
+
+func logWithLineNumbers (bigString string, test *testing.T) {
+	lines := strings.Split (
+		strings.Replace(bigString, "\t", "        ", -1), "\n")
+
+	for index, line := range lines {
+		test.Logf("%3d | %s", index + 1, line)
 	}
 }
 
@@ -115,25 +125,36 @@ func TestType (test *testing.T) {
 ---
 type ro Basic:Int
 type ro BasicInit:Int 6
-type ro Complex:Obj
-	ro that:Basic
-	ro this:Basic
-type ro ComplexInit:Obj
-	ro that:BasicInit
-	ro this:Basic 23
-type ro ComplexWithComplexInit:Obj
-	ro basic:Basic 87
-	ro complex0:Complex
-		.that 98
-		.this 2
-	ro complex1:Complex
-		.that 98902
-		.this 235
 type ro IntArray:{Int ..}
 type ro IntArrayInit:{Int 3}
 	3298
 	923
 	92
+`, test)
+}
+
+func TestObjt (test *testing.T) {
+	checkTree ("../tests/parser/objt",
+`:arf
+---
+objt ro Basic:Obj
+	ro that:Basic
+	ro this:Basic
+objt ro ComplexInit:Obj
+	ro basic:Int 87
+	ro complex0:Bird
+		.that 98
+		.this 2
+	ro complex1:Bird
+		.that 98902
+		.this 235
+	ro whatever:{Int 3}
+		230984
+		849
+		394580
+objt ro Init:Obj
+	ro that:String "hello world"
+	ro this:Int 23
 `, test)
 }
 

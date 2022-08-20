@@ -12,6 +12,7 @@ type SyntaxTree struct {
 
 	requires     []string
 	typeSections map[string] *TypeSection
+	objtSections map[string] *ObjtSection
 	dataSections map[string] *DataSection
 }
 
@@ -161,19 +162,32 @@ type DataSection struct {
 	value      Argument
 }
 
-// TypeNode represents a part of a type.  
-type TypeNode struct {
+// TypeSection represents a blind type definition.
+type TypeSection struct {
+	location file.Location
+	name     string
+	
+	inherits     Type
+	permission   types.Permission
+	defaultValue Argument
+}
+
+// ObjtMember represents a part of an object type definition.
+type ObjtMember struct {
 	location file.Location
 	name     string
 	
 	what         Type
 	permission   types.Permission
 	defaultValue Argument
-	children     map[string] TypeNode
 }
 
-// TypeSection represents a type definition.
-type TypeSection struct {
+// ObjtSection represents an object type definition
+type ObjtSection struct {
 	location file.Location
-	root     TypeNode
+	name     string
+	
+	inherits     Type
+	permission   types.Permission
+	members      map[string] ObjtMember
 }
