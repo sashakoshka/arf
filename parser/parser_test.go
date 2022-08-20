@@ -127,10 +127,10 @@ func TestObjt (test *testing.T) {
 	checkTree ("../tests/parser/objt",
 `:arf
 ---
-type ro Basic:Obj
+objt ro Basic:Obj
 	ro that:Basic
 	ro this:Basic
-type ro ComplexInit:Obj
+objt ro ComplexInit:Obj
 	ro basic:Int 87
 	ro complex0:Bird
 		.that 98
@@ -142,7 +142,7 @@ type ro ComplexInit:Obj
 		230984
 		849
 		394580
-type ro Init:Obj
+objt ro Init:Obj
 	ro that:String "hello world"
 	ro this:Int
 `, test)
