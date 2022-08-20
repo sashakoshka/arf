@@ -166,19 +166,9 @@ type TypeSection struct {
 	location file.Location
 	name     string
 	
-	what         Type
+	inherits     Type
 	permission   types.Permission
 	defaultValue Argument
-}
-
-// ObjtSection represents an object type definition
-type ObjtSection struct {
-	location file.Location
-	name     string
-	
-	what         Type
-	permission   types.Permission
-	children  map[string] ObjtMember
 }
 
 // ObjtMember represents a part of an object type definition.
@@ -189,4 +179,14 @@ type ObjtMember struct {
 	what         Type
 	permission   types.Permission
 	defaultValue Argument
+}
+
+// ObjtSection represents an object type definition
+type ObjtSection struct {
+	location file.Location
+	name     string
+	
+	inherits     Type
+	permission   types.Permission
+	members      map[string] ObjtMember
 }

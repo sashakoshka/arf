@@ -253,39 +253,64 @@ func (section *DataSection) ToString (indent int) (output string) {
 }
 
 func (section *TypeSection) ToString (indent int) (output string) {
-	output += section.root.ToString(indent, true)
-	return
-}
+	output += doIndent (
+		indent,
+		"type ",
+		section.permission.ToString(), " ",
+		section.name, ":",
+		section.inherits.ToString())
 
-func (node TypeNode) ToString (indent int, isRoot bool) (output string) {
-	output += doIndent(indent)
-	if isRoot {
-		output += "type "
-	}
-	
-	output += node.permission.ToString() + " "
-	output += node.name + ":"
-	output += node.what.ToString()
-	
 	isComplexInitialization :=
-		node.defaultValue.kind == ArgumentKindObjectInitializationValues ||
-		node.defaultValue.kind == ArgumentKindArrayInitializationValues
-	
-	if node.defaultValue.value == nil {
+		section.defaultValue.kind == ArgumentKindObjectInitializationValues ||
+		section.defaultValue.kind == ArgumentKindArrayInitializationValues
+
+	if section.defaultValue.value == nil {
 		output += "\n"
-		if len(node.children) > 0 {
-			for _, name := range sortMapKeysAlphabetically(node.children) {
-				child := node.children[name]
-				output += child.ToString(indent + 1, false)
-			}
-		}
 	} else if isComplexInitialization {
 		output += "\n"
-		output += node.defaultValue.ToString(indent + 1, true)
+		output += section.defaultValue.ToString(indent + 1, true)
 	} else {
-		output += " " + node.defaultValue.ToString(0, false)
-		output += "\n"	
+		output += " " + section.defaultValue.ToString(0, false)
+		output += "\n"
+	}
+	return
+}
+
+func (member *ObjtMember) ToString (indent int) (output string) {
+	output += doIndent(indent)
+	
+	output += member.permission.ToString() + " "
+	output += member.name + ":"
+	output += member.what.ToString()
+	
+	isComplexInitialization :=
+		member.defaultValue.kind == ArgumentKindObjectInitializationValues ||
+		member.defaultValue.kind == ArgumentKindArrayInitializationValues
+	
+	if member.defaultValue.value == nil {
+		output += "\n"
+	} else if isComplexInitialization {
+		output += "\n"
+		output += member.defaultValue.ToString(indent + 1, true)
+	} else {
+		output += " " + member.defaultValue.ToString(0, false)
+		output += "\n"
 	}
 
 	return
 }
+
+func (section *ObjtSection) ToString (indent int) (output string) {
+	output += doIndent (
+		indent,
+		"objt ",
+		section.permission.ToString(), " ",
+		section.name, ":",
+		section.inherits.ToString(), "\n")
+
+	for _, member := range section.members {
+		output += member.ToString(indent + 1)
+	}
+	return
+}
+
