@@ -42,6 +42,7 @@ func (parser *ParsingOperation) parseObjtSection () (
 
 	// parse members
 	err = parser.parseObjtMembers(section)
+	if err != nil { return }
 	
 	if len(section.members) == 0 {
 		infoerr.NewError (
@@ -52,6 +53,8 @@ func (parser *ParsingOperation) parseObjtSection () (
 	return
 }
 
+// parseObjtMembers parses a list of members for an object section. Indentation
+// level is assumed.
 func (parser *ParsingOperation) parseObjtMembers (
 	into *ObjtSection,
 ) (
@@ -61,45 +64,56 @@ func (parser *ParsingOperation) parseObjtMembers (
 		// if we've left the block, stop parsing
 		if !parser.token.Is(lexer.TokenKindIndent) { return }
 		if parser.token.Value().(int) != 1         { return }
-
-		// get permission
-		err = parser.nextToken(lexer.TokenKindPermission)
+		
+		// add member to object section
+		var member ObjtMember
+		member, err = parser.parseObjtMember()
+		into.members[member.name] = member
 		if err != nil { return }
-		member := ObjtMember { }
-		member.permission = parser.token.Value().(types.Permission)
+	}
+}
 
-		// get name
-		err = parser.nextToken(lexer.TokenKindName)
+// parseObjtMember parses a single member of an object section. Indentation
+// level is assumed.
+func (parser *ParsingOperation) parseObjtMember () (
+	member ObjtMember,
+	err    error,
+) {
+	// get permission
+	err = parser.nextToken(lexer.TokenKindPermission)
+	if err != nil { return }
+	member.permission = parser.token.Value().(types.Permission)
+
+	// get name
+	err = parser.nextToken(lexer.TokenKindName)
+	if err != nil { return }
+	member.name = parser.token.Value().(string)
+
+	// get type
+	err = parser.nextToken(lexer.TokenKindColon)
+	if err != nil { return }
+	err = parser.nextToken()
+	if err != nil { return }
+	member.what, err = parser.parseType()
+	if err != nil { return }
+	
+	// parse default value
+	if parser.token.Is(lexer.TokenKindNewline) {
+		err = parser.nextToken()
 		if err != nil { return }
-		member.name = parser.token.Value().(string)
 
-		// get type
-		err = parser.nextToken(lexer.TokenKindColon)
+		member.defaultValue,
+		err = parser.parseInitializationValues(1)
+		if err != nil { return }
+	} else {
+		member.defaultValue, err = parser.parseArgument()
+		if err != nil { return }
+
+		err = parser.expect(lexer.TokenKindNewline)
 		if err != nil { return }
 		err = parser.nextToken()
 		if err != nil { return }
-		member.what, err = parser.parseType()
-		if err != nil { return }
-		
-		// parse default value
-		if parser.token.Is(lexer.TokenKindNewline) {
-			err = parser.nextToken()
-			if err != nil { return }
-
-			member.defaultValue,
-			err = parser.parseInitializationValues(1)
-			if err != nil { return }
-		} else {
-			member.defaultValue, err = parser.parseArgument()
-			if err != nil { return }
-
-			err = parser.expect(lexer.TokenKindNewline)
-			if err != nil { return }
-			err = parser.nextToken()
-			if err != nil { return }
-		}
-
-		// add member to object section
-		into.members[member.name] = member
 	}
+
+	return 
 }
