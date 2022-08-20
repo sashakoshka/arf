@@ -51,6 +51,11 @@ func (tree *SyntaxTree) ToString (indent int) (output string) {
 		output += tree.typeSections[name].ToString(indent)
 	}
 
+	objtSectionKeys := sortMapKeysAlphabetically(tree.objtSections)
+	for _, name := range objtSectionKeys {
+		output += tree.objtSections[name].ToString(indent)
+	}
+
 	dataSectionKeys := sortMapKeysAlphabetically(tree.dataSections)
 	for _, name := range dataSectionKeys {
 		output += tree.dataSections[name].ToString(indent)
@@ -276,7 +281,7 @@ func (section *TypeSection) ToString (indent int) (output string) {
 	return
 }
 
-func (member *ObjtMember) ToString (indent int) (output string) {
+func (member ObjtMember) ToString (indent int) (output string) {
 	output += doIndent(indent)
 	
 	output += member.permission.ToString() + " "
@@ -308,8 +313,8 @@ func (section *ObjtSection) ToString (indent int) (output string) {
 		section.name, ":",
 		section.inherits.ToString(), "\n")
 
-	for _, member := range section.members {
-		output += member.ToString(indent + 1)
+	for _, name := range sortMapKeysAlphabetically(section.members) {
+		output += section.members[name].ToString(indent + 1)
 	}
 	return
 }
