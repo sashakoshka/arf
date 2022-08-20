@@ -5,37 +5,31 @@ require "io"
 ---
 
 # this is a global variable
-data wn helloText:String "Hello, world!"
+data pv helloText:String "Hello, world!"
 
 # this is a struct definition
-type rr Greeter:Obj
-        # "Hi." is a string constant. all Greeters will be initialized with a
-        # pointer to it. I don't know really it depends on what I decide that
-        # a String type even is.
-        wr text:String "Hi."
-                "sdfdsf" "ahh"
-                "asdf"
+objt ro Greeter:Obj
+	wr text:String "Hi."
 
 # this is a function
-func rr main
-        > argc:Int
-        > argv:{String}
-        < status:Int 0
-        ---
-        let greeter:Greeter:mut
-        greeter.setText helloText
-        greeter.greet
+func ro main
+	> arguments:{String}
+	< status:Int 0
+	---
+	set greeter:Greeter:mut
+	greeter.setText helloText
+	greeter.greet
 
 # this is a member function
-func rr greet
-        @ greeter:{Greeter}
-        ---
-        io.println greeter.text
+func ro greet
+	@ greeter:{Greeter}
+	---
+	io.println greeter.text
 
 # this is mutator member function
-func rr setText
-        @ greeter:{Greeter}
-        > text:String
-        ---
-        greeter.text.set text
+func ro setText
+	@ greeter:{Greeter}
+	> text:String
+	---
+	greeter.text.set text
 

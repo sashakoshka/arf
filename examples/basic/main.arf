@@ -1,3 +1,9 @@
 :arf
+require "io"
+---
 
-func rr main
+func ro main
+	> arguments:{String}
+	< status:Int 0
+	---
+	io.println "hello world"
