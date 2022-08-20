@@ -123,7 +123,7 @@ type ro IntArrayInit:{Int 3}
 `, test)
 }
 
-func TestType (test *testing.T) {
+func TestObjt (test *testing.T) {
 	checkTree ("../tests/parser/objt",
 `:arf
 ---
@@ -144,7 +144,7 @@ type ro ComplexInit:Obj
 		394580
 type ro Init:Obj
 	ro that:String "hello world"
-	ro this:Int 
+	ro this:Int
 `, test)
 }
 

@@ -1,14 +1,14 @@
 :arf
 ---
-type ro Basic:Obj
+objt ro Basic:Obj
 	ro that:Basic
 	ro this:Basic
 
-type ro Init:Obj
+objt ro Init:Obj
 	ro that:String "hello world"
 	ro this:Int 23
 
-type ro ComplexInit:Obj
+objt ro ComplexInit:Obj
 	ro whatever:{Int 3}
 		230984
 		849 394580
