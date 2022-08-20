@@ -1,6 +1,7 @@
 package parser
 
 import "io"
+import "strings"
 import "testing"
 // import "git.tebibyte.media/sashakoshka/arf/types"
 
@@ -10,9 +11,9 @@ func checkTree (modulePath string, correct string, test *testing.T) {
 	treeRunes  := []rune(treeString)
 	
 	test.Log("CORRECT TREE:")
-	test.Log(correct)
+	logWithLineNumbers(correct, test)
 	test.Log("WHAT WAS PARSED:")
-	test.Log(treeString)
+	logWithLineNumbers(treeString, test)
 	
 	if err != io.EOF && err != nil {
 		test.Log("returned error:")
@@ -60,6 +61,15 @@ func checkTree (modulePath string, correct string, test *testing.T) {
 
 	if !equal {
 		return
+	}
+}
+
+func logWithLineNumbers (bigString string, test *testing.T) {
+	lines := strings.Split (
+		strings.Replace(bigString, "\t", "        ", -1), "\n")
+
+	for index, line := range lines {
+		test.Logf("%3d | %s", index + 1, line)
 	}
 }
 
