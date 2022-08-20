@@ -154,7 +154,7 @@ objt ro ComplexInit:Obj
 		394580
 objt ro Init:Obj
 	ro that:String "hello world"
-	ro this:Int
+	ro this:Int 23
 `, test)
 }
 
