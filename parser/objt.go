@@ -13,7 +13,10 @@ func (parser *ParsingOperation) parseObjtSection () (
 	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
 	
-	section = &ObjtSection { location: parser.token.Location() }
+	section = &ObjtSection {
+		location: parser.token.Location(),
+		members:  make(map[string] ObjtMember),
+	}
 
 	// get permission
 	err = parser.nextToken(lexer.TokenKindPermission)
@@ -32,7 +35,9 @@ func (parser *ParsingOperation) parseObjtSection () (
 	if err != nil { return }
 	section.inherits, err = parser.parseType()
 	if err != nil { return }
-	err = parser.nextToken(lexer.TokenKindNewline)
+	err = parser.expect(lexer.TokenKindNewline)
+	if err != nil { return }
+	err = parser.nextToken()
 	if err != nil { return }
 
 	// parse members
@@ -94,10 +99,7 @@ func (parser *ParsingOperation) parseObjtMembers (
 			if err != nil { return }
 		}
 
-		// go onto the next line
-		err = parser.nextToken(lexer.TokenKindNewline)
-		if err != nil { return }
-		err = parser.nextToken()
-		if err != nil { return }
+		// add member to object section
+		into.members[member.name] = member
 	}
 }
