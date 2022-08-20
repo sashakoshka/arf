@@ -11,6 +11,7 @@ type SyntaxTree struct {
 	author  string
 
 	requires     []string
+	typeSections map[string] *TypeSection
 	dataSections map[string] *DataSection
 }
 
@@ -156,6 +157,23 @@ type DataSection struct {
 	name     string
 	
 	what       Type
-	value      Argument
 	permission types.Permission
+	value      Argument
+}
+
+// TypeNode represents a part of a type.  
+type TypeNode struct {
+	location file.Location
+	name     string
+	
+	what         Type
+	permission   types.Permission
+	defaultValue Argument
+	children     map[string] TypeNode
+}
+
+// TypeSection represents a type definition.
+type TypeSection struct {
+	location file.Location
+	root     TypeNode
 }

@@ -46,6 +46,11 @@ func (tree *SyntaxTree) ToString (indent int) (output string) {
 	
 	output += doIndent(indent, "---\n")
 
+	typeSectionKeys := sortMapKeysAlphabetically(tree.typeSections)
+	for _, name := range typeSectionKeys {
+		output += tree.typeSections[name].ToString(indent)
+	}
+
 	dataSectionKeys := sortMapKeysAlphabetically(tree.dataSections)
 	for _, name := range dataSectionKeys {
 		output += tree.dataSections[name].ToString(indent)
@@ -244,5 +249,43 @@ func (section *DataSection) ToString (indent int) (output string) {
 		output += " " + section.value.ToString(0, false)
 		output += "\n"
 	}
+	return
+}
+
+func (section *TypeSection) ToString (indent int) (output string) {
+	output += section.root.ToString(indent, true)
+	return
+}
+
+func (node TypeNode) ToString (indent int, isRoot bool) (output string) {
+	output += doIndent(indent)
+	if isRoot {
+		output += "type "
+	}
+	
+	output += node.permission.ToString() + " "
+	output += node.name + ":"
+	output += node.what.ToString()
+	
+	isComplexInitialization :=
+		node.defaultValue.kind == ArgumentKindObjectInitializationValues ||
+		node.defaultValue.kind == ArgumentKindArrayInitializationValues
+	
+	if node.defaultValue.value == nil {
+		output += "\n"
+		if len(node.children) > 0 {
+			for _, name := range sortMapKeysAlphabetically(node.children) {
+				child := node.children[name]
+				output += child.ToString(indent + 1, false)
+			}
+		}
+	} else if isComplexInitialization {
+		output += "\n"
+		output += node.defaultValue.ToString(indent + 1, true)
+	} else {
+		output += " " + node.defaultValue.ToString(0, false)
+		output += "\n"	
+	}
+
 	return
 }
