@@ -32,9 +32,9 @@ func (parser *ParsingOperation) parseBody () (err error) {
 		case "objt":
 			var section *ObjtSection
 			section, err = parser.parseObjtSection()
-			if parser.tree.typeSections == nil {
-				parser.tree.typeSections =
-					make(map[string] *TypeSection)
+			if parser.tree.objtSections == nil {
+				parser.tree.objtSections =
+					make(map[string] *ObjtSection)
 			}
 			parser.tree.objtSections[section.name] = section
 			if err != nil { return }
