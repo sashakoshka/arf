@@ -50,3 +50,43 @@ func (parser *ParsingOperation) parseEnumSection () (
 	}
 	return
 }
+
+// parseEnumMembers parses a list of members for an enum section. Indentation
+// level is assumed.
+func (parser *ParsingOperation) parseEnumMembers (
+	into *EnumSection,
+) (
+	err error,
+) {
+	
+	for {
+		// if we've left the block, stop parsing
+		if !parser.token.Is(lexer.TokenKindIndent) { return }
+		if parser.token.Value().(int) != 1         { return }
+		
+		// get name
+		err = parser.nextToken(lexer.TokenKindName)
+		if err != nil { return }
+		name := parser.token.Value().(string)
+	
+		// parse default value
+		var argument Argument
+		if parser.token.Is(lexer.TokenKindNewline) {
+			err = parser.nextToken()
+			if err != nil { return }
+
+			argument, err = parser.parseInitializationValues(1)
+			into.members[name] = argument
+			if err != nil { return }
+		} else {
+			argument, err = parser.parseArgument()
+			into.members[name] = argument
+			if err != nil { return }
+
+			err = parser.expect(lexer.TokenKindNewline)
+			if err != nil { return }
+			err = parser.nextToken()
+			if err != nil { return }
+		}
+	}
+}
