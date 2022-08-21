@@ -200,5 +200,6 @@ type EnumSection struct {
 	
 	what       Type
 	permission types.Permission
+	// TODO: order matters here we need to store these in an array
 	members    map[string] Argument
 }
