@@ -13,6 +13,7 @@ type SyntaxTree struct {
 	requires     []string
 	typeSections map[string] *TypeSection
 	objtSections map[string] *ObjtSection
+	enumSections map[string] *EnumSection
 	dataSections map[string] *DataSection
 }
 
@@ -190,4 +191,14 @@ type ObjtSection struct {
 	inherits     Type
 	permission   types.Permission
 	members      map[string] ObjtMember
+}
+
+// EnumSection represents an enumerated type section.
+type EnumSection struct {
+	location file.Location
+	name     string
+	
+	what       Type
+	permission types.Permission
+	members    map[string] Argument
 }
