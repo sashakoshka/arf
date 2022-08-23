@@ -353,3 +353,32 @@ func (section *EnumSection) ToString (indent int) (output string) {
 	}
 	return
 }
+
+func (section *FaceSection) ToString (indent int) (output string) {
+	output += doIndent (
+		indent,
+		"face ",
+		section.permission.ToString(), " ",
+		section.name, ":",
+		section.inherits, "\n")
+
+	for _, name := range sortMapKeysAlphabetically(section.behaviors) {
+		behavior := section.behaviors[name]
+		output += behavior.ToString(indent + 1)
+	}
+	return
+}
+
+func (behavior *FaceBehavior) ToString (indent int) (output string) {
+	output += doIndent(indent, behavior.name, "\n")
+	
+	for _, inputItem := range behavior.inputs {
+		output += doIndent(indent, "> ", inputItem.ToString(), "\n")
+	}
+	
+	for _, outputItem := range behavior.outputs {
+		output += doIndent(indent, "< ", outputItem.ToString(), "\n")
+	}
+
+	return
+}
