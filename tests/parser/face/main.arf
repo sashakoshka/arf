@@ -1,7 +1,7 @@
 :arf
 ---
 
-face ro ReadWriter
+face ro ReadWriter:Face
 	write
 		> data:{Byte ..}
 		< wrote:Int
@@ -11,5 +11,5 @@ face ro ReadWriter
 		< read:Int
 		< err:Error
 
-face ro Destroyer
+face ro Destroyer:Face
 	destroy

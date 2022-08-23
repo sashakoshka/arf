@@ -197,9 +197,9 @@ func Test (test *testing.T) {
 	checkTree ("../tests/parser/face",
 `:arf
 ---
-face ro Destroyer
+face ro Destroyer:Face
 	destroy
-face ro ReadWriter
+face ro ReadWriter:Face
 	read
 		> into:{Byte ..}
 		< read:Int
