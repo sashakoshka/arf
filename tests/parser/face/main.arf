@@ -1,0 +1,15 @@
+:arf
+---
+
+face ro ReadWriter
+	write
+		> data:{Byte ..}
+		< wrote:Int
+		< err:Error
+	read
+		> into:{Byte ..}
+		< read:Int
+		< err:Error
+
+face ro Destroyer
+	destroy
