@@ -14,6 +14,7 @@ type SyntaxTree struct {
 	typeSections map[string] *TypeSection
 	objtSections map[string] *ObjtSection
 	enumSections map[string] *EnumSection
+	faceSections map[string] *FaceSection
 	dataSections map[string] *DataSection
 }
 
@@ -202,4 +203,23 @@ type EnumSection struct {
 	permission types.Permission
 	// TODO: order matters here we need to store these in an array
 	members    map[string] Argument
+}
+
+// FaceBehavior represents a behavior of an interface section.
+type FaceBehavior struct {
+	location file.Location
+	name string
+
+	inputs  []Declaration
+	outputs []Declaration
+}
+
+// FaceSection represents an interface type section.
+type FaceSection struct {
+	location file.Location
+	name     string
+	
+	what       Type
+	permission types.Permission
+	behaviors  map[string] FaceBehavior
 }
