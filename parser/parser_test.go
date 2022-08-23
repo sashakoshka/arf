@@ -192,3 +192,21 @@ enum ro Weekday:Int
 	wednesday
 `, test)
 }
+
+func Test (test *testing.T) {
+	checkTree ("../tests/parser/face",
+`:arf
+---
+face ro Destroyer
+	destroy
+face ro ReadWriter
+	read
+		> into:{Byte ..}
+		< read:Int
+		< err:Error
+	write
+		> data:{Byte ..}
+		< wrote:Int
+		< err:Error
+`, test)
+}
