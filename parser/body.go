@@ -39,6 +39,14 @@ func (parser *ParsingOperation) parseBody () (err error) {
 			parser.tree.objtSections[section.name] = section
 			if err != nil { return }
 		case "face":
+			var section *FaceSection
+			section, err = parser.parseFaceSection()
+			if parser.tree.faceSections == nil {
+				parser.tree.faceSections =
+					make(map[string] *FaceSection)
+			}
+			parser.tree.faceSections[section.name] = section
+			if err != nil { return }
 		case "enum":
 			var section *EnumSection
 			section, err = parser.parseEnumSection()
