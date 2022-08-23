@@ -68,6 +68,8 @@ func (parser *ParsingOperation) parseEnumMembers (
 		err = parser.nextToken(lexer.TokenKindName)
 		if err != nil { return }
 		name := parser.token.Value().(string)
+		err = parser.nextToken()
+		if err != nil { return }
 	
 		// parse default value
 		var argument Argument
