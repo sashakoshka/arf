@@ -333,7 +333,7 @@ func (section *EnumSection) ToString (indent int) (output string) {
 		section.what.ToString(), "\n")
 
 	for _, name := range sortMapKeysAlphabetically(section.members) {
-		output += doIndent(indent, name, " ")
+		output += doIndent(indent + 1, name)
 
 		defaultValue := section.members[name]
 	
@@ -345,7 +345,7 @@ func (section *EnumSection) ToString (indent int) (output string) {
 			output += "\n"
 		} else if isComplexInitialization {
 			output += "\n"
-			output += defaultValue.ToString(indent + 1, true)
+			output += defaultValue.ToString(indent + 2, true)
 		} else {
 			output += " " + defaultValue.ToString(0, false)
 			output += "\n"
