@@ -218,8 +218,8 @@ type FaceBehavior struct {
 type FaceSection struct {
 	location file.Location
 	name     string
+	inherits string
 	
-	what       Type
 	permission types.Permission
 	behaviors  map[string] FaceBehavior
 }
