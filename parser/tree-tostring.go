@@ -56,6 +56,11 @@ func (tree *SyntaxTree) ToString (indent int) (output string) {
 		output += tree.objtSections[name].ToString(indent)
 	}
 
+	enumSectionKeys := sortMapKeysAlphabetically(tree.enumSections)
+	for _, name := range enumSectionKeys {
+		output += tree.enumSections[name].ToString(indent)
+	}
+
 	dataSectionKeys := sortMapKeysAlphabetically(tree.dataSections)
 	for _, name := range dataSectionKeys {
 		output += tree.dataSections[name].ToString(indent)
@@ -319,3 +324,32 @@ func (section *ObjtSection) ToString (indent int) (output string) {
 	return
 }
 
+func (section *EnumSection) ToString (indent int) (output string) {
+	output += doIndent (
+		indent,
+		"enum ",
+		section.permission.ToString(), " ",
+		section.name, ":",
+		section.what.ToString(), "\n")
+
+	for _, name := range sortMapKeysAlphabetically(section.members) {
+		output += doIndent(indent + 1, name)
+
+		defaultValue := section.members[name]
+	
+		isComplexInitialization :=
+			defaultValue.kind == ArgumentKindObjectInitializationValues ||
+			defaultValue.kind == ArgumentKindArrayInitializationValues
+		
+		if defaultValue.value == nil {
+			output += "\n"
+		} else if isComplexInitialization {
+			output += "\n"
+			output += defaultValue.ToString(indent + 2, true)
+		} else {
+			output += " " + defaultValue.ToString(0, false)
+			output += "\n"
+		}
+	}
+	return
+}

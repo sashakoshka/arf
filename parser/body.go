@@ -40,6 +40,14 @@ func (parser *ParsingOperation) parseBody () (err error) {
 			if err != nil { return }
 		case "face":
 		case "enum":
+			var section *EnumSection
+			section, err = parser.parseEnumSection()
+			if parser.tree.enumSections == nil {
+				parser.tree.enumSections =
+					make(map[string] *EnumSection)
+			}
+			parser.tree.enumSections[section.name] = section
+			if err != nil { return }
 		case "func":
 		default:
 			err = parser.token.NewError (
