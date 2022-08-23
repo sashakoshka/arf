@@ -179,16 +179,16 @@ enum ro AffrontToGod:{Int 4}
 		3
 		4
 enum ro NamedColor:U32
-	red 16711680
-	green 65280
 	blue 255
+	green 65280
+	red 16711680
 enum ro Weekday:Int
-	sunday
+	friday
 	monday
+	saturday
+	sunday
+	thursday
 	tuesday
 	wednesday
-	thursday
-	friday
-	saturday
 `, test)
 }
