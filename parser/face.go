@@ -34,7 +34,7 @@ func (parser *ParsingOperation) parseFaceSection () (
 	if err != nil { return }
 	section.inherits = parser.token.Value().(string)
 	if err != nil { return }
-	err = parser.expect(lexer.TokenKindNewline)
+	err = parser.nextToken(lexer.TokenKindNewline)
 	if err != nil { return }
 	err = parser.nextToken()
 	if err != nil { return }
@@ -46,8 +46,6 @@ func (parser *ParsingOperation) parseFaceSection () (
 		if parser.token.Value().(int) != 1         { return }
 
 		// parse behavior
-		err = parser.nextToken(lexer.TokenKindName)
-		if err != nil { return }
 		behaviorBeginning := parser.token.Location()
 		var behavior FaceBehavior
 		behavior, err = parser.parseFaceBehavior()
@@ -74,18 +72,21 @@ func (parser *ParsingOperation) parseFaceBehavior () (
 	behavior FaceBehavior,
 	err      error,
 ) {
+	err = parser.expect(lexer.TokenKindIndent)
+	if err != nil { return }
+
 	// get name
 	err = parser.nextToken(lexer.TokenKindName)
 	if err != nil { return }
 	behavior.name = parser.token.Value().(string)
 
+	err = parser.nextToken(lexer.TokenKindNewline)
+	if err != nil { return }
+	err = parser.nextToken()
+	if err != nil { return }
+	
 	for {
-		err = parser.nextToken(lexer.TokenKindNewline)
-		if err != nil { return }
-		
 		// if we've left the block, stop parsing
-		err = parser.nextToken()
-		if err != nil { return }
 		if !parser.token.Is(lexer.TokenKindIndent) { return }
 		if parser.token.Value().(int) != 2         { return }
 
