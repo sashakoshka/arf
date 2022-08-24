@@ -61,6 +61,11 @@ func (tree *SyntaxTree) ToString (indent int) (output string) {
 		output += tree.enumSections[name].ToString(indent)
 	}
 
+	faceSectionKeys := sortMapKeysAlphabetically(tree.faceSections)
+	for _, name := range faceSectionKeys {
+		output += tree.faceSections[name].ToString(indent)
+	}
+
 	dataSectionKeys := sortMapKeysAlphabetically(tree.dataSections)
 	for _, name := range dataSectionKeys {
 		output += tree.dataSections[name].ToString(indent)
@@ -351,5 +356,34 @@ func (section *EnumSection) ToString (indent int) (output string) {
 			output += "\n"
 		}
 	}
+	return
+}
+
+func (section *FaceSection) ToString (indent int) (output string) {
+	output += doIndent (
+		indent,
+		"face ",
+		section.permission.ToString(), " ",
+		section.name, ":",
+		section.inherits, "\n")
+
+	for _, name := range sortMapKeysAlphabetically(section.behaviors) {
+		behavior := section.behaviors[name]
+		output += behavior.ToString(indent + 1)
+	}
+	return
+}
+
+func (behavior *FaceBehavior) ToString (indent int) (output string) {
+	output += doIndent(indent, behavior.name, "\n")
+	
+	for _, inputItem := range behavior.inputs {
+		output += doIndent(indent + 1, "> ", inputItem.ToString(), "\n")
+	}
+	
+	for _, outputItem := range behavior.outputs {
+		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
+	}
+
 	return
 }

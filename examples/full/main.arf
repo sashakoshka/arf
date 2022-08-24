@@ -9,7 +9,7 @@ data pv helloText:String "Hello, world!"
 
 # this is a struct definition
 objt ro Greeter:Obj
-	wr text:String "Hi."
+	rw text:String "Hi."
 
 # this is a function
 func ro main
