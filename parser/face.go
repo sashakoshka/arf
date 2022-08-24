@@ -32,7 +32,7 @@ func (parser *ParsingOperation) parseFaceSection () (
 	if err != nil { return }
 	err = parser.nextToken(lexer.TokenKindName)
 	if err != nil { return }
-	section.inherits = parser.token.Value().(string)
+	section.inherits, err = parser.parseIdentifier()
 	if err != nil { return }
 	err = parser.nextToken(lexer.TokenKindNewline)
 	if err != nil { return }

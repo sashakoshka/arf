@@ -367,7 +367,7 @@ func (section *FaceSection) ToString (indent int) (output string) {
 		"face ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.inherits, "\n")
+		section.inherits.ToString(), "\n")
 
 	for _, name := range sortMapKeysAlphabetically(section.behaviors) {
 		behavior := section.behaviors[name]
