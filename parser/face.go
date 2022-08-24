@@ -60,6 +60,7 @@ func (parser *ParsingOperation) parseFaceSection () (
 				infoerr.ErrorKindError)
 			return
 		}
+		section.behaviors[behavior.name] = behavior
 		
 		if err != nil { return }
 	}
@@ -121,8 +122,8 @@ func (parser *ParsingOperation) parseFaceBehavior () (
 				behavior.inputs,
 				declaration)
 		} else {
-			behavior.inputs = append (
-				behavior.inputs,
+			behavior.outputs = append (
+				behavior.outputs,
 				declaration)
 		}
 	}
