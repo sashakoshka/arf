@@ -378,11 +378,11 @@ func (behavior *FaceBehavior) ToString (indent int) (output string) {
 	output += doIndent(indent, behavior.name, "\n")
 	
 	for _, inputItem := range behavior.inputs {
-		output += doIndent(indent, "> ", inputItem.ToString(), "\n")
+		output += doIndent(indent + 1, "> ", inputItem.ToString(), "\n")
 	}
 	
 	for _, outputItem := range behavior.outputs {
-		output += doIndent(indent, "< ", outputItem.ToString(), "\n")
+		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
 	}
 
 	return
