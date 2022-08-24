@@ -180,7 +180,7 @@ type ObjtMember struct {
 	name     string
 
 	what         Type
-	bitWidth     int
+	bitWidth     uint64
 	permission   types.Permission
 	defaultValue Argument
 }

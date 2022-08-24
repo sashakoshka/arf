@@ -96,6 +96,15 @@ func (parser *ParsingOperation) parseObjtMember () (
 	if err != nil { return }
 	member.what, err = parser.parseType()
 	if err != nil { return }
+
+	// if there is a bit width, get it
+	if parser.token.Is(lexer.TokenKindColon) {
+		err = parser.nextToken(lexer.TokenKindUInt)
+		if err != nil { return }
+		member.bitWidth = parser.token.Value().(uint64)
+		err = parser.nextToken()
+		if err != nil { return }
+	}
 	
 	// parse default value
 	if parser.token.Is(lexer.TokenKindNewline) {
