@@ -191,7 +191,15 @@ type ObjtSection struct {
 	
 	inherits     Type
 	permission   types.Permission
+	// TODO: order matters here we need to store these in an array
+	// TODO: add bitfield support (:n)
 	members      map[string] ObjtMember
+}
+
+type EnumMember struct {
+	location file.Location
+	name     string
+	value    Argument
 }
 
 // EnumSection represents an enumerated type section.
@@ -201,8 +209,7 @@ type EnumSection struct {
 	
 	what       Type
 	permission types.Permission
-	// TODO: order matters here we need to store these in an array
-	members    map[string] Argument
+	members    []EnumMember
 }
 
 // FaceBehavior represents a behavior of an interface section.

@@ -337,22 +337,20 @@ func (section *EnumSection) ToString (indent int) (output string) {
 		section.name, ":",
 		section.what.ToString(), "\n")
 
-	for _, name := range sortMapKeysAlphabetically(section.members) {
-		output += doIndent(indent + 1, name)
-
-		defaultValue := section.members[name]
+	for _, member := range section.members {
+		output += doIndent(indent + 1, member.name)
 	
 		isComplexInitialization :=
-			defaultValue.kind == ArgumentKindObjectInitializationValues ||
-			defaultValue.kind == ArgumentKindArrayInitializationValues
+			member.value.kind == ArgumentKindObjectInitializationValues ||
+			member.value.kind == ArgumentKindArrayInitializationValues
 		
-		if defaultValue.value == nil {
+		if member.value.value == nil {
 			output += "\n"
 		} else if isComplexInitialization {
 			output += "\n"
-			output += defaultValue.ToString(indent + 2, true)
+			output += member.value.ToString(indent + 2, true)
 		} else {
-			output += " " + defaultValue.ToString(0, false)
+			output += " " + member.value.ToString(0, false)
 			output += "\n"
 		}
 	}

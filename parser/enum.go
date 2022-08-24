@@ -11,10 +11,7 @@ func (parser *ParsingOperation) parseEnumSection () (
 	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
 	
-	section = &EnumSection {
-		location: parser.token.Location(),
-		members:  make(map[string] Argument),
-	}
+	section = &EnumSection { location: parser.token.Location() }
 
 	// get permission
 	err = parser.nextToken(lexer.TokenKindPermission)
@@ -63,26 +60,28 @@ func (parser *ParsingOperation) parseEnumMembers (
 		// if we've left the block, stop parsing
 		if !parser.token.Is(lexer.TokenKindIndent) { return }
 		if parser.token.Value().(int) != 1         { return }
+
+		member := EnumMember { }
 		
 		// get name
 		err = parser.nextToken(lexer.TokenKindName)
 		if err != nil { return }
-		name := parser.token.Value().(string)
+		member.location = parser.token.Location()
+		member.name = parser.token.Value().(string)
 		err = parser.nextToken()
 		if err != nil { return }
 	
 		// parse default value
-		var argument Argument
 		if parser.token.Is(lexer.TokenKindNewline) {
 			err = parser.nextToken()
 			if err != nil { return }
 
-			argument, err = parser.parseInitializationValues(1)
-			into.members[name] = argument
+			member.value, err = parser.parseInitializationValues(1)
+			into.members = append(into.members, member)
 			if err != nil { return }
 		} else {
-			argument, err = parser.parseArgument()
-			into.members[name] = argument
+			member.value, err = parser.parseArgument()
+			into.members = append(into.members, member)
 			if err != nil { return }
 
 			err = parser.expect(lexer.TokenKindNewline)
