@@ -61,6 +61,11 @@ func (tree *SyntaxTree) ToString (indent int) (output string) {
 		output += tree.enumSections[name].ToString(indent)
 	}
 
+	faceSectionKeys := sortMapKeysAlphabetically(tree.faceSections)
+	for _, name := range faceSectionKeys {
+		output += tree.faceSections[name].ToString(indent)
+	}
+
 	dataSectionKeys := sortMapKeysAlphabetically(tree.dataSections)
 	for _, name := range dataSectionKeys {
 		output += tree.dataSections[name].ToString(indent)
