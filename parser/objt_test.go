@@ -9,6 +9,9 @@ func TestObjt (test *testing.T) {
 objt ro Basic:Obj
 	ro that:Basic
 	ro this:Basic
+objt ro BitFields:Obj
+	ro that:Int & 1
+	ro this:Int & 24 298
 objt ro ComplexInit:Obj
 	ro basic:Int 87
 	ro complex0:Bird

@@ -4,6 +4,10 @@ objt ro Basic:Obj
 	ro that:Basic
 	ro this:Basic
 
+objt ro BitFields:Obj
+	ro that:Int & 1
+	ro this:Int & 24 298
+
 objt ro Init:Obj
 	ro that:String "hello world"
 	ro this:Int 23
