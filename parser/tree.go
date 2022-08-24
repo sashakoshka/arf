@@ -191,10 +191,9 @@ type ObjtSection struct {
 	name     string
 
 	// TODO: make this Identifier instead of Type
-	inherits     Type
+	inherits     Identifier
 	permission   types.Permission
 	// TODO: order matters here we need to store these in an array
-	// TODO: add bitfield support (:n)
 	members      map[string] ObjtMember
 }
 

@@ -33,7 +33,7 @@ func (parser *ParsingOperation) parseObjtSection () (
 	if err != nil { return }
 	err = parser.nextToken()
 	if err != nil { return }
-	section.inherits, err = parser.parseType()
+	section.inherits, err = parser.parseIdentifier()
 	if err != nil { return }
 	err = parser.expect(lexer.TokenKindNewline)
 	if err != nil { return }
