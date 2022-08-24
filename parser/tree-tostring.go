@@ -299,7 +299,7 @@ func (member ObjtMember) ToString (indent int) (output string) {
 	output += member.what.ToString()
 
 	if member.bitWidth > 0 {
-		output += fmt.Sprint(":", member.bitWidth)
+		output += fmt.Sprint(" & ", member.bitWidth)
 	}
 	
 	isComplexInitialization :=
