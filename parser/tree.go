@@ -178,8 +178,9 @@ type TypeSection struct {
 type ObjtMember struct {
 	location file.Location
 	name     string
-	
+
 	what         Type
+	bitWidth     int
 	permission   types.Permission
 	defaultValue Argument
 }
@@ -188,7 +189,8 @@ type ObjtMember struct {
 type ObjtSection struct {
 	location file.Location
 	name     string
-	
+
+	// TODO: make this Identifier instead of Type
 	inherits     Type
 	permission   types.Permission
 	// TODO: order matters here we need to store these in an array
@@ -225,6 +227,7 @@ type FaceBehavior struct {
 type FaceSection struct {
 	location file.Location
 	name     string
+	// TODO: make this Identifier instead of string
 	inherits string
 	
 	permission types.Permission
