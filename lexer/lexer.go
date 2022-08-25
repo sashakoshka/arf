@@ -242,9 +242,15 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		err = lexer.nextRune()
 	case '!':
 		token := lexer.newToken()
-		token.kind = TokenKindExclamation
-		lexer.addToken(token)
 		err = lexer.nextRune()
+		if err != nil { return }
+		token.kind = TokenKindExclamation
+		if lexer.char == '=' {
+			token.kind = TokenKindNotEqualTo
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
+		}
+		lexer.addToken(token)
 	case '%':
 		token := lexer.newToken()
 		token.kind = TokenKindPercent
@@ -253,6 +259,11 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 	case '~':
 		token := lexer.newToken()
 		token.kind = TokenKindTilde
+		lexer.addToken(token)
+		err = lexer.nextRune()
+	case '=':
+		token := lexer.newToken()
+		token.kind = TokenKindEqualTo
 		lexer.addToken(token)
 		err = lexer.nextRune()
 	case '<':
@@ -264,6 +275,10 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			token.kind = TokenKindLShift
 			err = lexer.nextRune()
 			token.location.SetWidth(2)
+		} else if lexer.char == '=' {
+			token.kind = TokenKindLessThanEqualTo
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
 		}
 		lexer.addToken(token)
 	case '>':
@@ -273,6 +288,10 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		token.kind = TokenKindGreaterThan
 		if lexer.char == '>' {
 			token.kind = TokenKindRShift
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
+		} else if lexer.char == '=' {
+			token.kind = TokenKindGreaterThanEqualTo
 			err = lexer.nextRune()
 			token.location.SetWidth(2)
 		}
