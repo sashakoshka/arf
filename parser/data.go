@@ -289,8 +289,6 @@ func (parser *ParsingOperation) parseIdentifier () (
 	identifier.location = parser.token.Location()
 
 	for {
-		// TODO: eat up newlines and tabs after the dot, but not before
-		// it.
 		if !parser.token.Is(lexer.TokenKindName) { break }
 
 		identifier.trail = append (
@@ -301,6 +299,18 @@ func (parser *ParsingOperation) parseIdentifier () (
 		if err != nil { return }
 		
 		if !parser.token.Is(lexer.TokenKindDot) { break }
+
+		err = parser.nextToken()
+		if err != nil { return }
+
+		// allow the identifier to continue on to the next line if there
+		// is a line break right after the dot
+		for parser.token.Is(lexer.TokenKindNewline) ||
+			parser.token.Is(lexer.TokenKindIndent) {
+
+			err = parser.nextToken()
+			if err != nil { return }
+		}
 	}
 
 	return
