@@ -1,0 +1,18 @@
+:arf
+---
+func ro basicExternal
+	> someInput:Int:mut
+	< someOutput:Int 4
+	---
+	external
+
+func ro method
+	@ bird:{Bird}
+	> someInput:Int:mut
+	< someOutput:Int 4
+	---
+	external
+
+func ro basicPhrases
+	---
+	
