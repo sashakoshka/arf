@@ -47,9 +47,13 @@ const (
 
 	// TODO: add equal to, less than or equal to, greater than or equal to,
 	// not equal to
+        TokenKindEqualTo
+        TokenKindNotEqualTo
+        TokenKindLessThanEqualTo
         TokenKindLessThan
         TokenKindLShift
         TokenKindGreaterThan
+        TokenKindGreaterThanEqualTo
         TokenKindRShift
         TokenKindBinaryOr
         TokenKindLogicalOr
