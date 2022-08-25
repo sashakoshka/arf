@@ -31,7 +31,7 @@ data ro nestedObject:Obj
 	.this
 		.bird0 324
 		.bird1 "hello world"
-data ro object:Obj
+data ro object:thing.thing.thing.thing
 	.that 2139
 	.this 324
 `, test)

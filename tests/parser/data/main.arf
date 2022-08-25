@@ -22,7 +22,8 @@ data ro integerArrayInitialized:{Int 16}
 
 # data wr mutIntegerPointerInit:{Int}:mut [& integer]
 
-data ro object:Obj
+# TODO: maybe test identifiers somewhere else?
+data ro object:thing.thing.thing.thing
 	.this 324
 	.that 2139
 
