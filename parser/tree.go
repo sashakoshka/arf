@@ -192,8 +192,7 @@ type ObjtSection struct {
 
 	inherits     Identifier
 	permission   types.Permission
-	// TODO: order matters here we need to store these in an array
-	members      map[string] ObjtMember
+	members      []ObjtMember
 }
 
 type EnumMember struct {
