@@ -16,7 +16,7 @@ A directory of ARF files is called a module, and modules will compile to object
 files (one per module) using C as an intermediate language (maybe LLVM IR in the
 future).
 
-## Design aspects
+## Design Aspects
 
 These are some design goals that I have followed/am following:
 
@@ -32,7 +32,7 @@ These are some design goals that I have followed/am following:
 - One line at a time - the language's syntax should encourage writing code that
   flows vertically and not horizontally, with minimal nesting
 
-## Planned features
+## Planned Features
 
 - Type definition through inheritence
 - Struct member functions
@@ -49,3 +49,11 @@ These are some design goals that I have followed/am following:
 - [ ] Semantic tree -> C -> object file
 - [ ] Figure out HOW to implement generics
 - [ ] Create a standard library
+
+## Compiler Progress
+
+<img src="assets/heatmap.png" alt="Progress heatmap" width="400">
+
+- Yellow: needs to be completed for the MVP
+- Lime: ongoing progress in this area
+- Green: Already completed
