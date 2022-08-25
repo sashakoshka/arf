@@ -16,6 +16,7 @@ type SyntaxTree struct {
 	enumSections map[string] *EnumSection
 	faceSections map[string] *FaceSection
 	dataSections map[string] *DataSection
+	funcSections map[string] *FuncSection
 }
 
 // Identifier represents a chain of arguments separated by a dot.
@@ -228,4 +229,21 @@ type FaceSection struct {
 	
 	permission types.Permission
 	behaviors  map[string] FaceBehavior
+}
+
+// Block represents a scoped/indented block of code.
+// TODO: blocks will not directly nest. nested blocks will be stored as a part
+// of certain control flow statements.
+type Block []Phrase
+
+// FuncSection represents a function section.
+type FuncSection struct {
+	location   file.Location
+	name       string
+	permission types.Permission
+	
+	receiver *Declaration
+	inputs   []Declaration
+	outputs  []Declaration
+	root     *Block
 }
