@@ -45,8 +45,6 @@ const (
         TokenKindPercent
         TokenKindTilde
 
-	// TODO: add equal to, less than or equal to, greater than or equal to,
-	// not equal to
         TokenKindEqualTo
         TokenKindNotEqualTo
         TokenKindLessThanEqualTo
@@ -179,12 +177,20 @@ func (tokenKind TokenKind) Describe () (description string) {
 		description = "Percent"
 	case TokenKindTilde:
 		description = "Tilde"
+	case TokenKindEqualTo:
+		description = "EqualTo"
+	case TokenKindNotEqualTo:
+		description = "NotEqualTo"
 	case TokenKindLessThan:
 		description = "LessThan"
+	case TokenKindLessThanEqualTo:
+		description = "LessThanEqualTo"
 	case TokenKindLShift:
 		description = "LShift"
 	case TokenKindGreaterThan:
 		description = "GreaterThan"
+	case TokenKindGreaterThanEqualTo:
+		description = "GreaterThanEqualTo"
 	case TokenKindRShift:
 		description = "RShift"
 	case TokenKindBinaryOr:
