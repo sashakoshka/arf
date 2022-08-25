@@ -327,8 +327,8 @@ func (section *ObjtSection) ToString (indent int) (output string) {
 		section.name, ":",
 		section.inherits.ToString(), "\n")
 
-	for _, name := range sortMapKeysAlphabetically(section.members) {
-		output += section.members[name].ToString(indent + 1)
+	for _, member := range section.members {
+		output += member.ToString(indent + 1)
 	}
 	return
 }
@@ -367,7 +367,7 @@ func (section *FaceSection) ToString (indent int) (output string) {
 		"face ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.inherits, "\n")
+		section.inherits.ToString(), "\n")
 
 	for _, name := range sortMapKeysAlphabetically(section.behaviors) {
 		behavior := section.behaviors[name]

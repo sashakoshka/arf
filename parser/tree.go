@@ -190,12 +190,9 @@ type ObjtSection struct {
 	location file.Location
 	name     string
 
-	// TODO: make this Identifier instead of Type
-	inherits     Type
+	inherits     Identifier
 	permission   types.Permission
-	// TODO: order matters here we need to store these in an array
-	// TODO: add bitfield support (:n)
-	members      map[string] ObjtMember
+	members      []ObjtMember
 }
 
 type EnumMember struct {
@@ -227,8 +224,7 @@ type FaceBehavior struct {
 type FaceSection struct {
 	location file.Location
 	name     string
-	// TODO: make this Identifier instead of string
-	inherits string
+	inherits Identifier
 	
 	permission types.Permission
 	behaviors  map[string] FaceBehavior

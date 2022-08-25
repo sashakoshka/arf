@@ -45,6 +45,8 @@ const (
         TokenKindPercent
         TokenKindTilde
 
+	// TODO: add equal to, less than or equal to, greater than or equal to,
+	// not equal to
         TokenKindLessThan
         TokenKindLShift
         TokenKindGreaterThan
