@@ -183,8 +183,12 @@ func (tokenKind TokenKind) Describe () (description string) {
 		description = "Exclamation"
 	case TokenKindPercent:
 		description = "Percent"
+	case TokenKindPercentAssignment:
+		description = "PercentAssignment"
 	case TokenKindTilde:
 		description = "Tilde"
+	case TokenKindTildeAssignment:
+		description = "TildeAssignment"
 	case TokenKindEqualTo:
 		description = "EqualTo"
 	case TokenKindNotEqualTo:
@@ -195,20 +199,32 @@ func (tokenKind TokenKind) Describe () (description string) {
 		description = "LessThanEqualTo"
 	case TokenKindLShift:
 		description = "LShift"
+	case TokenKindLShiftAssignment:
+		description = "LShiftAssignment"
 	case TokenKindGreaterThan:
 		description = "GreaterThan"
 	case TokenKindGreaterThanEqualTo:
 		description = "GreaterThanEqualTo"
 	case TokenKindRShift:
 		description = "RShift"
+	case TokenKindRShiftAssignment:
+		description = "RShiftAssignment"
 	case TokenKindBinaryOr:
 		description = "BinaryOr"
+	case TokenKindBinaryOrAssignment:
+		description = "BinaryOrAssignment"
 	case TokenKindLogicalOr:
 		description = "LogicalOr"
 	case TokenKindBinaryAnd:
 		description = "BinaryAnd"
+	case TokenKindBinaryAndAssignment:
+		description = "BinaryAndAssignment"
 	case TokenKindLogicalAnd:
 		description = "LogicalAnd"
+	case TokenKindBinaryXor:
+		description = "BinaryXor"
+	case TokenKindBinaryXorAssignment:
+		description = "BinaryXorAssignment"
 	}
 
 	return
