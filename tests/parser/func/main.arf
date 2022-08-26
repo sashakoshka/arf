@@ -39,7 +39,7 @@ func ro eMath
 	-- y
 	set z [+ [* 0392 00] 98 x [/ 9832 y] 930]
 
-	# TODO: need tokens |= &= ~= <<= >>=
+	# TODO: need tokens ~=
 	
 	! true
 	~ 0b01

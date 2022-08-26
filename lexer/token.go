@@ -43,20 +43,28 @@ const (
         TokenKindAt
         TokenKindExclamation
         TokenKindPercent
+        TokenKindPercentAssignment
         TokenKindTilde
+        TokenKindTildeAssignment
 
         TokenKindEqualTo
         TokenKindNotEqualTo
         TokenKindLessThanEqualTo
         TokenKindLessThan
         TokenKindLShift
+        TokenKindLShiftAssignment
         TokenKindGreaterThan
         TokenKindGreaterThanEqualTo
         TokenKindRShift
+        TokenKindRShiftAssignment
         TokenKindBinaryOr
+        TokenKindBinaryOrAssignment
         TokenKindLogicalOr
         TokenKindBinaryAnd
+        TokenKindBinaryAndAssignment
         TokenKindLogicalAnd
+        TokenKindBinaryXor
+        TokenKindBinaryXorAssignment
 )
 
 // Token represents a single token. It holds its location in the file, as well
