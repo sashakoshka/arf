@@ -2,7 +2,7 @@ package parser
 
 import "testing"
 
-func TestData (test *testing.T) {
+func TestFunc (test *testing.T) {
 	checkTree ("../tests/parser/func",
 `:arf
 ---
