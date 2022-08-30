@@ -290,7 +290,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			if lexer.char == '=' {
 				token.kind = TokenKindLShiftAssignment
 				err = lexer.nextRune()
-				token.location.SetWidth(2)
+				token.location.SetWidth(3)
 			}
 		} else if lexer.char == '=' {
 			token.kind = TokenKindLessThanEqualTo
@@ -310,7 +310,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			if lexer.char == '=' {
 				token.kind = TokenKindRShiftAssignment
 				err = lexer.nextRune()
-				token.location.SetWidth(2)
+				token.location.SetWidth(3)
 			}
 		} else if lexer.char == '=' {
 			token.kind = TokenKindGreaterThanEqualTo
