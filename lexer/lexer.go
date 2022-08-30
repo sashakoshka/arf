@@ -253,14 +253,26 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		lexer.addToken(token)
 	case '%':
 		token := lexer.newToken()
-		token.kind = TokenKindPercent
-		lexer.addToken(token)
 		err = lexer.nextRune()
+		if err != nil { return }
+		token.kind = TokenKindPercent
+		if lexer.char == '=' {
+			token.kind = TokenKindPercentAssignment
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
+		}
+		lexer.addToken(token)
 	case '~':
 		token := lexer.newToken()
-		token.kind = TokenKindTilde
-		lexer.addToken(token)
 		err = lexer.nextRune()
+		if err != nil { return }
+		token.kind = TokenKindTilde
+		if lexer.char == '=' {
+			token.kind = TokenKindTildeAssignment
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
+		}
+		lexer.addToken(token)
 	case '=':
 		token := lexer.newToken()
 		token.kind = TokenKindEqualTo
@@ -275,6 +287,11 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			token.kind = TokenKindLShift
 			err = lexer.nextRune()
 			token.location.SetWidth(2)
+			if lexer.char == '=' {
+				token.kind = TokenKindLShiftAssignment
+				err = lexer.nextRune()
+				token.location.SetWidth(2)
+			}
 		} else if lexer.char == '=' {
 			token.kind = TokenKindLessThanEqualTo
 			err = lexer.nextRune()
@@ -290,6 +307,11 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			token.kind = TokenKindRShift
 			err = lexer.nextRune()
 			token.location.SetWidth(2)
+			if lexer.char == '=' {
+				token.kind = TokenKindRShiftAssignment
+				err = lexer.nextRune()
+				token.location.SetWidth(2)
+			}
 		} else if lexer.char == '=' {
 			token.kind = TokenKindGreaterThanEqualTo
 			err = lexer.nextRune()
@@ -305,6 +327,10 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			token.kind = TokenKindLogicalOr
 			err = lexer.nextRune()
 			token.location.SetWidth(2)
+		} else if lexer.char == '=' {
+			token.kind = TokenKindBinaryOrAssignment
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
 		}
 		lexer.addToken(token)
 	case '&':
@@ -314,6 +340,10 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		token.kind = TokenKindBinaryAnd
 		if lexer.char == '&' {
 			token.kind = TokenKindLogicalAnd
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
+		} else if lexer.char == '=' {
+			token.kind = TokenKindBinaryAndAssignment
 			err = lexer.nextRune()
 			token.location.SetWidth(2)
 		}
