@@ -1,9 +1,9 @@
 package lexer
 
 import "io"
-import "git.tebibyte.media/sashakoshka/arf/file"
-import "git.tebibyte.media/sashakoshka/arf/types"
-import "git.tebibyte.media/sashakoshka/arf/infoerr"
+import "git.tebibyte.media/arf/arf/file"
+import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // LexingOperation holds information about an ongoing lexing operataion.
 type LexingOperation struct {

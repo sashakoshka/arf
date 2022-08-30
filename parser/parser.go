@@ -3,9 +3,9 @@ package parser
 import "io"
 import "os"
 import "path/filepath"
-import "git.tebibyte.media/sashakoshka/arf/file"
-import "git.tebibyte.media/sashakoshka/arf/lexer"
-import "git.tebibyte.media/sashakoshka/arf/infoerr"
+import "git.tebibyte.media/arf/arf/file"
+import "git.tebibyte.media/arf/arf/lexer"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // ParsingOperation holds information about an ongoing parsing operation.
 type ParsingOperation struct {

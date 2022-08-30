@@ -1,9 +1,9 @@
 package lexer
 
 import "testing"
-import "git.tebibyte.media/sashakoshka/arf/file"
-import "git.tebibyte.media/sashakoshka/arf/types"
-import "git.tebibyte.media/sashakoshka/arf/infoerr"
+import "git.tebibyte.media/arf/arf/file"
+import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 func quickToken (width int, kind TokenKind, value any) (token Token) {
 	token.location.SetWidth(width)

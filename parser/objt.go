@@ -1,8 +1,8 @@
 package parser
 
-import "git.tebibyte.media/sashakoshka/arf/types"
-import "git.tebibyte.media/sashakoshka/arf/lexer"
-import "git.tebibyte.media/sashakoshka/arf/infoerr"
+import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/lexer"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // parseObjtSection parses an object type definition. This allows for structured
 // types to be defined, and for member variables to be added and overridden.

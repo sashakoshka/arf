@@ -3,7 +3,7 @@ package parser
 import "io"
 import "strings"
 import "testing"
-// import "git.tebibyte.media/sashakoshka/arf/types"
+// import "git.tebibyte.media/arf/arf/types"
 
 func checkTree (modulePath string, correct string, test *testing.T) {
 	tree, err  := Parse(modulePath)

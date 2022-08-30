@@ -2,7 +2,7 @@ package infoerr
 
 import "os"
 import "fmt"
-import "git.tebibyte.media/sashakoshka/arf/file"
+import "git.tebibyte.media/arf/arf/file"
 
 type ErrorKind int
 
