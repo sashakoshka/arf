@@ -348,6 +348,17 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			token.location.SetWidth(2)
 		}
 		lexer.addToken(token)
+	case '^':
+		token := lexer.newToken()
+		err = lexer.nextRune()
+		if err != nil { return }
+		token.kind = TokenKindBinaryXor
+		if lexer.char == '=' {
+			token.kind = TokenKindBinaryXorAssignment
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
+		}
+		lexer.addToken(token)
 	default:
 		err = infoerr.NewError (
 			lexer.file.Location(1),
