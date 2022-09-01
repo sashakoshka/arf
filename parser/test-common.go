@@ -7,6 +7,12 @@ import "testing"
 
 func checkTree (modulePath string, correct string, test *testing.T) {
 	tree, err  := Parse(modulePath)
+	if tree == nil {
+		test.Log("TREE IS NIL!")
+		test.Fail()
+		return
+	}
+	
 	treeString := tree.ToString(0)
 	treeRunes  := []rune(treeString)
 	
