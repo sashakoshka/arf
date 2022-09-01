@@ -186,7 +186,7 @@ type ObjtMember struct {
 	defaultValue Argument
 }
 
-// ObjtSection represents an object type definition
+// ObjtSection represents an object type definition.
 type ObjtSection struct {
 	location file.Location
 	name     string
@@ -196,6 +196,7 @@ type ObjtSection struct {
 	members      []ObjtMember
 }
 
+// EnumMember represents a member of an enum section.
 type EnumMember struct {
 	location file.Location
 	name     string
@@ -236,6 +237,13 @@ type FaceSection struct {
 // of certain control flow statements.
 type Block []Phrase
 
+// FuncOutput represents an input a function section. It is unlike an input in
+// that it can have a default value.
+type FuncOutput struct {
+	Declaration
+	defaultValue Argument
+}
+
 // FuncSection represents a function section.
 type FuncSection struct {
 	location   file.Location
@@ -244,6 +252,6 @@ type FuncSection struct {
 	
 	receiver *Declaration
 	inputs   []Declaration
-	outputs  []Declaration
+	outputs  []FuncOutput
 	root     *Block
 }
