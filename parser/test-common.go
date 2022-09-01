@@ -6,7 +6,7 @@ import "testing"
 // import "git.tebibyte.media/arf/arf/types"
 
 func checkTree (modulePath string, correct string, test *testing.T) {
-	tree, err  := Parse(modulePath)
+	tree, err := Parse(modulePath)
 	if tree == nil {
 		test.Log("TREE IS NIL!")
 		test.Fail()

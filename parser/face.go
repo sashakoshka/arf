@@ -64,7 +64,6 @@ func (parser *ParsingOperation) parseFaceSection () (
 		
 		if err != nil { return }
 	}
-	return
 }
 
 // parseFaceBehavior parses a single interface behavior. Indentation level is
@@ -127,6 +126,4 @@ func (parser *ParsingOperation) parseFaceBehavior () (
 				declaration)
 		}
 	}
-	
-	return
 }
