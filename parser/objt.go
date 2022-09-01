@@ -94,8 +94,6 @@ func (parser *ParsingOperation) parseObjtMember () (
 	member.what, err = parser.parseType()
 	if err != nil { return }
 
-	println(parser.token.Describe())
-	
 	// if there is a bit width, get it
 	if parser.token.Is(lexer.TokenKindBinaryAnd) {
 		err = parser.nextToken(lexer.TokenKindUInt)
