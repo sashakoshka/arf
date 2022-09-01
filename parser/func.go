@@ -37,10 +37,17 @@ func (parser *ParsingOperation) parseFuncArguments (
 ) {
 	for {
 		// if we've left the block, stop parsing
-		// TODO: throw error here, function arguments should only end
-		// on separator
-		if !parser.token.Is(lexer.TokenKindIndent) { return }
-		if parser.token.Value().(int) != 1         { return }
+		if !parser.token.Is(lexer.TokenKindIndent) ||
+			parser.token.Value().(int) != 1 {
+			
+			if into.receiver != nil {
+				err = parser.token.NewError (
+					"func section terminated without a " +
+					"separator token",
+					infoerr.ErrorKindError)
+			}
+			return
+		}
 
 		// determine whether this is an input, output, or the method
 		// reciever
