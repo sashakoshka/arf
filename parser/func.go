@@ -14,15 +14,22 @@ func (parser *ParsingOperation) parseFuncSection () (
 	
 	section = &FuncSection { location: parser.token.Location() }
 
+	// get permission
 	err = parser.nextToken(lexer.TokenKindPermission)
 	if err != nil { return }
 	section.permission = parser.token.Value().(types.Permission)
 
+	// get name
 	err = parser.nextToken(lexer.TokenKindName)
 	if err != nil { return }
 	section.name = parser.token.Value().(string)
 
+	// get arguments
 	err = parser.nextToken(lexer.TokenKindNewline)
+	if err != nil { return }
+	err = parser.nextToken()
+	if err != nil { return }
+	err = parser.parseFuncArguments(section)
 	if err != nil { return }
 	
 	return
