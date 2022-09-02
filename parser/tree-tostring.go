@@ -70,6 +70,11 @@ func (tree *SyntaxTree) ToString (indent int) (output string) {
 	for _, name := range dataSectionKeys {
 		output += tree.dataSections[name].ToString(indent)
 	}
+
+	funcSectionKeys := sortMapKeysAlphabetically(tree.funcSections)
+	for _, name := range funcSectionKeys {
+		output += tree.funcSections[name].ToString(indent)
+	}
 	return
 }
 
@@ -386,6 +391,38 @@ func (behavior *FaceBehavior) ToString (indent int) (output string) {
 	for _, outputItem := range behavior.outputs {
 		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
 	}
+
+	return
+}
+
+func (section *FuncSection) ToString (indent int) (output string) {
+	output += doIndent (
+		indent,
+		"func ",
+		section.permission.ToString(), " ",
+		section.name, "\n")
+	
+	if section.receiver != nil {
+		output += doIndent (
+			indent + 1,
+			"@ ", section.receiver.ToString(), "\n")
+	}
+	
+	for _, inputItem := range section.inputs {
+		output += doIndent(indent + 1, "> ", inputItem.ToString(), "\n")
+	}
+	
+	for _, outputItem := range section.outputs {
+		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
+	}
+
+	output += doIndent(indent + 1, "---\n")
+
+	if section.external {
+		output += doIndent(indent + 1, "external\n")
+	}
+	
+	// TODO: print out root block
 
 	return
 }
