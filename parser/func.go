@@ -69,7 +69,9 @@ func (parser *ParsingOperation) parseFuncArguments (
 		if parser.token.Is(lexer.TokenKindSeparator) {
 			// if we have encountered a separator, that means our
 			// work is done here.
-			err = parser.expect(lexer.TokenKindNewline)
+			err = parser.nextToken(lexer.TokenKindNewline)
+			if err != nil { return }
+			err = parser.nextToken()
 			return
 		}
 		
@@ -82,7 +84,13 @@ func (parser *ParsingOperation) parseFuncArguments (
 			err = parser.nextToken(lexer.TokenKindName)
 			if err != nil { return }
 			reciever.name = parser.token.Value().(string)
+			
+			// get type
+			err = parser.nextToken(lexer.TokenKindColon)
+			if err != nil { return }
 			err = parser.nextToken()
+			if err != nil { return }
+			reciever.what, err = parser.parseType()
 			if err != nil { return }
 			
 			if into.receiver != nil {
@@ -108,7 +116,13 @@ func (parser *ParsingOperation) parseFuncArguments (
 			err = parser.nextToken(lexer.TokenKindName)
 			if err != nil { return }
 			input.name = parser.token.Value().(string)
+			
+			// get type
+			err = parser.nextToken(lexer.TokenKindColon)
+			if err != nil { return }
 			err = parser.nextToken()
+			if err != nil { return }
+			input.what, err = parser.parseType()
 			if err != nil { return }
 
 			into.inputs = append(into.inputs, input)
@@ -126,7 +140,13 @@ func (parser *ParsingOperation) parseFuncArguments (
 			err = parser.nextToken(lexer.TokenKindName)
 			if err != nil { return }
 			output.name = parser.token.Value().(string)
+			
+			// get type
+			err = parser.nextToken(lexer.TokenKindColon)
+			if err != nil { return }
 			err = parser.nextToken()
+			if err != nil { return }
+			output.what, err = parser.parseType()
 			if err != nil { return }
 			
 			// parse default value
