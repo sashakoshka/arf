@@ -253,5 +253,7 @@ type FuncSection struct {
 	receiver *Declaration
 	inputs   []Declaration
 	outputs  []FuncOutput
-	root     *Block
+	root     Block
+
+	external bool
 }

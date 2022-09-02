@@ -31,6 +31,39 @@ func (parser *ParsingOperation) parseFuncSection () (
 	if err != nil { return }
 	err = parser.parseFuncArguments(section)
 	if err != nil { return }
+
+	// check to see if the function is external
+	if !parser.token.Is(lexer.TokenKindIndent) { return }
+	if parser.token.Value().(int) != 1         { return }
+	err = parser.nextToken()
+	if err != nil { return }
+
+	if parser.token.Is(lexer.TokenKindName) &&
+		parser.token.Value().(string) == "external" {
+		
+		section.external = true
+		err = parser.nextToken(lexer.TokenKindNewline)
+		if err != nil { return }
+		if err != nil { return }
+		err = parser.nextToken()
+		
+		return
+	}
+
+	// if it isn't, backtrack to the start of the line
+	parser.previousToken()
+
+	// parse root block
+	section.root, err = parser.parseBlock(1)
+	if err != nil { return }
+
+	if len(section.root) == 0 {
+		infoerr.NewError (section.location,
+			"this function has nothing in it",
+			infoerr.ErrorKindWarn).Print()
+	}
+
+	// TODO: if function is empty, warn.
 	
 	return
 }
@@ -172,4 +205,14 @@ func (parser *ParsingOperation) parseFuncArguments (
 		}
 	
 	}
+}
+
+// parseBlock parses an indented block of 
+func (parser *ParsingOperation) parseBlock (
+	indent int,
+) (
+	block Block,
+	err error,
+) {
+	return
 }
