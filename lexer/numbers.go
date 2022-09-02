@@ -36,10 +36,17 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 			isFloat, amountRead,
 			err = lexer.tokenizeNumber(10)
 			
-		} else if lexer.char >= '0' && lexer.char <= '9' {
+		} else if lexer.char >= '0' && lexer.char <= '8' {
 			intNumber, floatNumber,
 			isFloat, amountRead,
 			err = lexer.tokenizeNumber(8)
+		} else if lexer.char != ' ' {    // a space should correctly
+			err = infoerr.NewError ( // terminate this
+				lexer.file.Location(1),
+				"unexpected rune '" + string(lexer.char) +
+				"' in integer literal",
+				infoerr.ErrorKindError)
+			return
 		}
 	} else {
 		intNumber, floatNumber,

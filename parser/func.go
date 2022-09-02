@@ -62,8 +62,6 @@ func (parser *ParsingOperation) parseFuncSection () (
 			"this function has nothing in it",
 			infoerr.ErrorKindWarn).Print()
 	}
-
-	// TODO: if function is empty, warn.
 	
 	return
 }
