@@ -15,15 +15,15 @@ func ro bMethod
 
 func ro cBasicPhrases
 	---
-	fn 329 983 09
-	[fn 329 983 09]
+	fn 329 983 07
+	[fn 329 983 07]
 	[fn
 		329
 		983
-		091]
+		071]
 	fn [gn
 		329 983
-		091] 123
+		071] 123
 
 func ro dArgumentTypes
 	---
@@ -74,7 +74,7 @@ func ro fReturnDirection
 	[fn
 		329
 		983
-		091] -> thing:Int err
+		071] -> thing:Int err
 
 func ro gControlFlow
 	---

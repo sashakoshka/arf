@@ -36,7 +36,7 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 			isFloat, amountRead,
 			err = lexer.tokenizeNumber(10)
 			
-		} else if lexer.char >= '0' && lexer.char <= '8' {
+		} else if lexer.char >= '0' && lexer.char <= '7' {
 			intNumber, floatNumber,
 			isFloat, amountRead,
 			err = lexer.tokenizeNumber(8)
