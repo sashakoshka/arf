@@ -39,11 +39,9 @@ func ro eMath
 	-- y
 	set z [+ [* 0392 00] 98 x [/ 9832 y] 930]
 
-	# TODO: need tokens ~=
-	
 	! true
 	~ 0b01
-	# ~= x
+	~= x
 	% 873 32
 
 	=  5 5
@@ -52,17 +50,17 @@ func ro eMath
 	<=  4 98
 	<   4 98
 	<<  0x0F 4
-	# <<= x 4
+	<<= x 4
 
 	>=  98 4
 	>   98 4
 	>>  0xF0 4
-	# >>= x 4
+	>>= x 4
 
 	|  0b01 0b10
-	# |= x 0b10
+	|= x 0b10
 	& 0b110 0b011
-	# &= x 0b011
+	&= x 0b011
 
 	&& true true
 	|| true false
