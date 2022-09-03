@@ -469,6 +469,14 @@ func (block Block) ToString (indent int) (output string) {
 	return
 }
 
+func (funcOutput FuncOutput) ToString () (output string) {
+	output += funcOutput.Declaration.ToString()
+	if funcOutput.defaultValue.kind != ArgumentKindNil {
+		output += " " + funcOutput.defaultValue.ToString(0, false)
+	}
+	return
+}
+
 func (section *FuncSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
