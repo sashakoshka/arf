@@ -2,6 +2,7 @@ package parser
 
 import "fmt"
 import "sort"
+import "git.tebibyte.media/arf/arf/lexer"
 
 func doIndent (indent int, input ...string) (output string) {
 	for index := 0; index < indent; index ++ {
@@ -230,10 +231,70 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 		if breakLine { output += "\n" }
 		
 	case ArgumentKindOperator:
-		// TODO
-		// also when parsing this argument kind, don't do it in the
-		// argument parsing function. do it specifically when parsing a
-		// phrase command.
+		var stringValue string
+		switch argument.value.(lexer.TokenKind) {
+	        case lexer.TokenKindPlus:
+	        	stringValue = "+"
+	        case lexer.TokenKindMinus:
+	        	stringValue = "-"
+	        case lexer.TokenKindIncrement:
+	        	stringValue = "++"
+	        case lexer.TokenKindDecrement:
+	        	stringValue = "--"
+	        case lexer.TokenKindAsterisk:
+	        	stringValue = "*"
+	        case lexer.TokenKindSlash:
+	        	stringValue = "/"
+	        case lexer.TokenKindExclamation:
+	        	stringValue = "!"
+	        case lexer.TokenKindPercent:
+	        	stringValue = "%"
+	        case lexer.TokenKindPercentAssignment:
+	        	stringValue = "%="
+	        case lexer.TokenKindTilde:
+	        	stringValue = "~"
+	        case lexer.TokenKindTildeAssignment:
+	        	stringValue = "~="
+	        case lexer.TokenKindEqualTo:
+	        	stringValue = "="
+	        case lexer.TokenKindNotEqualTo:
+	        	stringValue = "!="
+	        case lexer.TokenKindLessThanEqualTo:
+	        	stringValue = "<="
+	        case lexer.TokenKindLessThan:
+	        	stringValue = "<"
+	        case lexer.TokenKindLShift:
+	        	stringValue = "<<"
+	        case lexer.TokenKindLShiftAssignment:
+	        	stringValue = "<<="
+	        case lexer.TokenKindGreaterThan:
+	        	stringValue = ">"
+	        case lexer.TokenKindGreaterThanEqualTo:
+	        	stringValue = ">="
+	        case lexer.TokenKindRShift:
+	        	stringValue = ">>"
+	        case lexer.TokenKindRShiftAssignment:
+	        	stringValue = ">>="
+	        case lexer.TokenKindBinaryOr:
+	        	stringValue = "|"
+	        case lexer.TokenKindBinaryOrAssignment:
+	        	stringValue = "|="
+	        case lexer.TokenKindLogicalOr:
+	        	stringValue = "||"
+	        case lexer.TokenKindBinaryAnd:
+	        	stringValue = "&"
+	        case lexer.TokenKindBinaryAndAssignment:
+	        	stringValue = "&="
+	        case lexer.TokenKindLogicalAnd:
+	        	stringValue = "&&"
+	        case lexer.TokenKindBinaryXor:
+	        	stringValue = "^"
+	        case lexer.TokenKindBinaryXorAssignment:
+	        	stringValue = "^="
+
+		}
+		output += doIndent(indent, stringValue)
+		if breakLine { output += "\n" }
 	}
 
 	return
