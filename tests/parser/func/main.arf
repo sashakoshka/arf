@@ -124,9 +124,8 @@ func ro gControlFlow
 func ro hSetPhrase
 	---
 	set x:Int 3
-	# TODO: this should be the "location of" phrase. update other things to
-	# match.
-	set y:{Int} [. x]
+	# loc is a reference, similar to * in C
+	set y:{Int} [loc x]
 	set z:{Int 8}
 		398 9 2309 983 -2387
 		478 555 123

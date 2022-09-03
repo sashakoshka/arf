@@ -328,6 +328,8 @@ func (parser *ParsingOperation) parsePhraseCommand () (
 			switch identifier.trail[0] {
 			case "set":
 				kind = PhraseKindSet
+			case "loc":
+				kind = PhraseKindReference
 			case "defer":
 				kind = PhraseKindDefer
 			case "if":

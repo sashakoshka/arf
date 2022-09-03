@@ -231,6 +231,7 @@ const (
 	PhraseKindCallExternal
 	PhraseKindOperator
 	PhraseKindSet
+	PhraseKindReference
 	PhraseKindDefer
 	PhraseKindIf
 	PhraseKindElseIf
