@@ -4,15 +4,6 @@ import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
-// controlFlowNames contains a list of all command names that must have a block
-// underneath them.
-var controlFlowNames = []string {
-	"if", "else", "elseif",
-	"for", "while",
-	"switch",
-	"defer",
-}
-
 // parseFunc parses a function section.
 func (parser *ParsingOperation) parseFuncSection () (
 	section *FuncSection,

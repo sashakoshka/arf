@@ -154,30 +154,6 @@ func (values ArrayInitializationValues) ToString (
 	return
 }
 
-func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
-	if ownLine {
-		output += doIndent(indent)
-	}
-	
-	output += "[" + phrase.command.ToString(0, false)
-	for _, argument := range phrase.arguments {
-		output += " " + argument.ToString(0, false)
-	}
-	output += "]"
-
-	if len(phrase.returnsTo) > 0 {
-		output += " ->"
-		for _, returnItem := range phrase.returnsTo {
-			output += " " + returnItem.ToString(0, false)
-		}
-	}
-
-	if ownLine {
-		output += "\n"
-	}
-	return
-}
-
 func (argument *Argument) ToString (indent int, breakLine bool) (output string) {
 	if !breakLine { indent = 0 }
 	if argument.kind == ArgumentKindNil {
@@ -443,6 +419,31 @@ func (behavior *FaceBehavior) ToString (indent int) (output string) {
 		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
 	}
 
+	return
+}
+
+func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
+	if ownLine {
+		output += doIndent(indent)
+	}
+	
+	output += "[" + phrase.command.ToString(0, false)
+	for _, argument := range phrase.arguments {
+		output += " " + argument.ToString(0, false)
+	}
+	output += "]"
+
+	if len(phrase.returnsTo) > 0 {
+		output += " ->"
+		for _, returnItem := range phrase.returnsTo {
+			output += " " + returnItem.ToString(0, false)
+		}
+	}
+
+	if ownLine {
+		output += "\n"
+		output += phrase.block.ToString(indent + 1)
+	}
 	return
 }
 

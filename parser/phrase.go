@@ -72,6 +72,14 @@ var validDelimitedPhraseTokens = append (
 	lexer.TokenKindRBracket,
 	lexer.TokenKindReturnDirection)
 
+// controlFlowNames contains a list of all command names that must have a block
+// underneath them.
+var controlFlowNames = []string {
+	"if", "else", "elseif",
+	"for", "while",
+	"defer",
+}
+
 // parseBlock parses an indented block of phrases
 func (parser *ParsingOperation) parseBlock (
 	indent int,
@@ -204,6 +212,23 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 	
 	err = parser.nextToken()
 	if err != nil { return }
+
+	// if this is a control flow statement, parse 
+	if phrase.command.kind != ArgumentKindIdentifier { return }
+	command := phrase.command.value.(Identifier)
+	if len(command.trail) != 1 { return }
+
+	isControlFlow := false
+	for _, name := range controlFlowNames {
+		if command.trail[0] == name {
+			isControlFlow = true
+			break
+		}
+	}
+
+	if isControlFlow {
+		phrase.block, err = parser.parseBlock(indent + 1)
+	}
 
 	return
 }

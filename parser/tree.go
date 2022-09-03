@@ -79,15 +79,6 @@ type ArrayInitializationValues struct {
 	values   []Argument
 }
 
-// Phrase represents a function call or operator. In ARF they are the same
-// syntactical concept.
-type Phrase struct {
-	location  file.Location
-	command   Argument
-	arguments []Argument
-	returnsTo []Argument
-}
-
 // ArgumentKind specifies the type of thing the value of an argument should be
 // cast to.
 type ArgumentKind int
@@ -232,9 +223,19 @@ type FaceSection struct {
 	behaviors  map[string] FaceBehavior
 }
 
+// Phrase represents a function call or operator. In ARF they are the same
+// syntactical concept.
+type Phrase struct {
+	location  file.Location
+	command   Argument
+	arguments []Argument
+	returnsTo []Argument
+
+	// only applicable for 
+	block Block
+}
+
 // Block represents a scoped/indented block of code.
-// TODO: blocks will not directly nest. nested blocks will be stored as a part
-// of certain control flow statements.
 type Block []Phrase
 
 // FuncOutput represents an input a function section. It is unlike an input in
