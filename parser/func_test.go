@@ -27,25 +27,25 @@ func ro dArgumentTypes
 	---
 	[bird tree butterfly.wing "hello world" grass:{Int:mut 8}]
 func ro eMath
-	[> x:Int]
-	[> y:Int]
-	[< z:Int]
-	[---]
+	> x:Int
+	> y:Int
+	< z:Int
+	---
 	[++ x]
 	[-- y]
 	[set z [+ [* 0392 00] 98 x [/ 9832 y] 930]]
 	[! true]
 	[~ 0b01]
 	[% 873 32]
-	[=  5 5]
+	[= 5 5]
 	[!= 4 4]
-	[<=  4 98]
-	[<   4 98]
-	[<<  0x0F 4]
-	[>=  98 4]
-	[>   98 4]
-	[>>  0xF0 4]
-	[|  0b01 0b10]
+	[<= 4 98]
+	[< 4 98]
+	[<< 0x0F 4]
+	[>= 98 4]
+	[> 98 4]
+	[>> 0xF0 4]
+	[| 0b01 0b10]
 	[& 0b110 0b011]
 	[&& true true]
 	[|| true false]
