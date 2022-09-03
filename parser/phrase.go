@@ -2,6 +2,74 @@ package parser
 
 import "git.tebibyte.media/arf/arf/lexer"
 
+// operatorTokens lists all symbolic tokens that can act as a command to a
+// phrase.
+var operatorTokens = []lexer.TokenKind {
+        lexer.TokenKindPlus,
+        lexer.TokenKindMinus,
+        lexer.TokenKindIncrement,
+        lexer.TokenKindDecrement,
+        lexer.TokenKindAsterisk,
+        lexer.TokenKindSlash,
+        lexer.TokenKindExclamation,
+        lexer.TokenKindPercent,
+        lexer.TokenKindPercentAssignment,
+        lexer.TokenKindTilde,
+        lexer.TokenKindTildeAssignment,
+        lexer.TokenKindEqualTo,
+        lexer.TokenKindNotEqualTo,
+        lexer.TokenKindLessThanEqualTo,
+        lexer.TokenKindLessThan,
+        lexer.TokenKindLShift,
+        lexer.TokenKindLShiftAssignment,
+        lexer.TokenKindGreaterThan,
+        lexer.TokenKindGreaterThanEqualTo,
+        lexer.TokenKindRShift,
+        lexer.TokenKindRShiftAssignment,
+        lexer.TokenKindBinaryOr,
+        lexer.TokenKindBinaryOrAssignment,
+        lexer.TokenKindLogicalOr,
+        lexer.TokenKindBinaryAnd,
+        lexer.TokenKindBinaryAndAssignment,
+        lexer.TokenKindLogicalAnd,
+        lexer.TokenKindBinaryXor,
+        lexer.TokenKindBinaryXorAssignment,
+}
+
+// isTokenOperator returns whether or not the token is an operator token.
+func isTokenOperator (token lexer.Token) (isOperator bool) {
+	for _, kind := range operatorTokens {
+		if token.Is(kind) {
+			isOperator = true
+			return
+		}
+	}
+
+	return
+}
+
+// validPhraseStartTokens lists all tokens that are expected when parsing the
+// first part of a phrase.
+var validPhraseStartTokens = append (
+	validArgumentStartTokens,
+	operatorTokens...)
+	
+// validBlockLevelPhraseTokens lists all tokens that are expected when parsing
+// a block level phrase.
+var validBlockLevelPhraseTokens = append (
+	validArgumentStartTokens,
+	lexer.TokenKindNewline,
+	lexer.TokenKindReturnDirection)
+	
+// validDelimitedPhraseTokens is like validBlockLevelPhraseTokens, but it also
+// includes a right brace token.
+var validDelimitedPhraseTokens = append (
+	validArgumentStartTokens,
+	lexer.TokenKindNewline,
+	lexer.TokenKindIndent,
+	lexer.TokenKindRBracket,
+	lexer.TokenKindReturnDirection)
+
 // parseBlock parses an indented block of phrases
 func (parser *ParsingOperation) parseBlock (
 	indent int,
@@ -104,10 +172,34 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 		phrase.arguments = append(phrase.arguments, argument)
 	}
 
-	// TODO: expect return direction, or newline. then go onto the next
-	// line, parsing returnsTo if nescessary.
-	err = parser.expect(lexer.TokenKindNewline)
+	// expect newline or return direction
+	err = parser.expect (
+		lexer.TokenKindNewline,
+		lexer.TokenKindReturnDirection)
 	if err != nil { return }
+	expectReturnDirection := parser.token.Is(lexer.TokenKindReturnDirection)
+
+	// if we have hit a return direction, parse it...
+	if expectReturnDirection {
+		err = parser.nextToken()
+		if err != nil { return }
+		
+		for {
+			err = parser.expect (
+				lexer.TokenKindNewline,
+				lexer.TokenKindName)
+			if err != nil { return }
+			// ...until we hit a newline
+			if parser.token.Is(lexer.TokenKindNewline) { break }
+
+			var returnTo Argument
+			returnTo, err = parser.parseArgument()
+			if err != nil { return }
+
+			phrase.returnsTo = append(phrase.returnsTo, returnTo)
+		}
+	}
+	
 	err = parser.nextToken()
 	if err != nil { return }
 
