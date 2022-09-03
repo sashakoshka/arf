@@ -209,6 +209,8 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 	case ArgumentKindOperator:
 		var stringValue string
 		switch argument.value.(lexer.TokenKind) {
+	        case lexer.TokenKindColon:
+	        	stringValue = ":"
 	        case lexer.TokenKindPlus:
 	        	stringValue = "+"
 	        case lexer.TokenKindMinus:

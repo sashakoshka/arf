@@ -121,7 +121,7 @@ func ro gControlFlow
 		else
 			otherThing
 
-func hSetPhrase
+func ro hSetPhrase
 	---
 	set x:Int 3
 	# TODO: this should be the "location of" phrase. update other things to

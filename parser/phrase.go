@@ -5,6 +5,7 @@ import "git.tebibyte.media/arf/arf/lexer"
 // operatorTokens lists all symbolic tokens that can act as a command to a
 // phrase.
 var operatorTokens = []lexer.TokenKind {
+        lexer.TokenKindColon,
         lexer.TokenKindPlus,
         lexer.TokenKindMinus,
         lexer.TokenKindIncrement,
@@ -213,22 +214,33 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 	err = parser.nextToken()
 	if err != nil { return }
 
-	// if this is a control flow statement, parse 
-	if phrase.command.kind != ArgumentKindIdentifier { return }
-	command := phrase.command.value.(Identifier)
-	if len(command.trail) != 1 { return }
-
-	isControlFlow := false
-	for _, name := range controlFlowNames {
-		if command.trail[0] == name {
-			isControlFlow = true
-			break
+	// if this is a control flow statement, parse block under it
+	if phrase.command.kind == ArgumentKindIdentifier {
+		// perhaps it is a normal control flow statement?
+		command := phrase.command.value.(Identifier)
+		if len(command.trail) != 1 { return }
+		
+		isControlFlow := false
+		for _, name := range controlFlowNames {
+			if command.trail[0] == name {
+				isControlFlow = true
+				break
+			}
 		}
+
+		if !isControlFlow { return }
+		
+	} else if phrase.command.kind == ArgumentKindOperator {
+		// perhaps it is a switch case?
+		command := phrase.command.value.(lexer.TokenKind)
+		if command != lexer.TokenKindColon { return }
+	
+	} else {
+		return
 	}
 
-	if isControlFlow {
-		phrase.block, err = parser.parseBlock(indent + 1)
-	}
+	// if it is any of those, parse the block under it
+	phrase.block, err = parser.parseBlock(indent + 1)
 
 	return
 }

@@ -75,6 +75,14 @@ type Token struct {
 	value    any
 }
 
+// NewToken provides a way for a new token to be created by other modules for
+// comparison purposes.
+func NewToken (kind TokenKind, value any) (token Token) {
+	token.kind = kind
+	token.value = value
+	return
+}
+
 // Kind returns the semantic role of the token.
 func (token Token) Kind () (kind TokenKind) {
 	return token.kind
