@@ -51,8 +51,10 @@ func isTokenOperator (token lexer.Token) (isOperator bool) {
 // validPhraseStartTokens lists all tokens that are expected when parsing the
 // first part of a phrase.
 var validPhraseStartTokens = append (
-	validArgumentStartTokens,
-	operatorTokens...)
+	operatorTokens,
+	lexer.TokenKindLBracket,
+	lexer.TokenKindName,
+	lexer.TokenKindString)
 	
 // validBlockLevelPhraseTokens lists all tokens that are expected when parsing
 // a block level phrase.
