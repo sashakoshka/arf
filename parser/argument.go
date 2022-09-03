@@ -48,7 +48,7 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 			}
 		} else {
 			argument.kind  = ArgumentKindIdentifier
-			argument.value = identifier
+			argument.value = &identifier
 		}
 		
 	case lexer.TokenKindInt:
@@ -77,9 +77,12 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 		parser.nextToken()
 		
 	case lexer.TokenKindLBracket:
-		argument.kind  = ArgumentKindPhrase
-		argument.value, err = parser.parseArgumentLevelPhrase()
+		argument.kind = ArgumentKindPhrase
+		var phrase Phrase
+		phrase, err = parser.parseArgumentLevelPhrase()
+		argument.value = &phrase
 		parser.nextToken()
+		
 
 	default:
 		panic (

@@ -153,24 +153,15 @@ func (values *ArrayInitializationValues) ToString (
 	return
 }
 
-func (phrase *Phrase) ToString (indent int, breakLine bool) (output string) {
-	if breakLine {
-		output += doIndent (
-			indent,
-			"[", phrase.command.ToString(0, false))
-		output += "\n"
-		for _, argument := range phrase.arguments {
-			output += doIndent (
-				indent,
-				argument.ToString(indent + 1, true))
-		}
-	} else {
-		output += "[" + phrase.command.ToString(0, false)
-		for _, argument := range phrase.arguments {
-			output += " " + argument.ToString(0, false)
-		}
+func (phrase *Phrase) ToString (indent int, ownLine bool) (output string) {
+	if ownLine {
+		output += doIndent(indent)
 	}
 	
+	output += "[" + phrase.command.ToString(0, false)
+	for _, argument := range phrase.arguments {
+		output += " " + argument.ToString(0, false)
+	}
 	output += "]"
 
 	if len(phrase.returnsTo) > 0 {
@@ -180,7 +171,7 @@ func (phrase *Phrase) ToString (indent int, breakLine bool) (output string) {
 		}
 	}
 
-	if breakLine {
+	if ownLine {
 		output += "\n"
 	}
 	return
@@ -395,6 +386,14 @@ func (behavior *FaceBehavior) ToString (indent int) (output string) {
 	return
 }
 
+func (block Block) ToString (indent int) (output string) {
+	for _, phrase := range block {
+		output += phrase.ToString(indent, true)
+	}
+
+	return
+}
+
 func (section *FuncSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
@@ -422,7 +421,6 @@ func (section *FuncSection) ToString (indent int) (output string) {
 		output += doIndent(indent + 1, "external\n")
 	}
 	
-	// TODO: print out root block
-
+	output += section.root.ToString(indent + 1)
 	return
 }
