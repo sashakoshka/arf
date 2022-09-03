@@ -213,7 +213,19 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 	err = parser.nextToken()
 	if err != nil { return }
 
-	// if this is a control flow statement, parse block under it
+	// if this is a set phrase, parse initialization values under it
+	if phrase.kind == PhraseKindSet {
+		var values Argument
+		values, err = parser.parseInitializationValues(indent)
+
+		if values.kind != ArgumentKindNil {
+			phrase.arguments = append(phrase.arguments, values)
+		}
+		
+		return
+	}
+
+	// if this is a control flow phrase, parse block under it
 	isControlFlow := false
 	for _, kind := range controlFlowKinds {
 		if phrase.kind == kind {
@@ -221,6 +233,7 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 			break
 		}
 	}
+
 	if !isControlFlow { return }
 
 	// if it is any of those, parse the block under it
