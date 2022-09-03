@@ -311,24 +311,40 @@ func (parser *ParsingOperation) parsePhraseCommand () (
 		}
 		
 		err = parser.nextToken()
-		if err != nil { return }
-	} else {
-		command, err = parser.parseArgument()
-		if err != nil { return }
+		return
+	}
 
-		if command.kind == ArgumentKindString {
-			kind = PhraseKindCallExternal
+	// phrase command is not an operator, it is just a normal argument
+	command, err = parser.parseArgument()
+	if err != nil { return }
+
+	// determine semantic role of phrase
+	if command.kind == ArgumentKindString {
+		kind = PhraseKindCallExternal
+		
+	} else if command.kind == ArgumentKindIdentifier {
+		identifier := command.value.(Identifier)
+		if len(identifier.trail) == 1 {
+			switch identifier.trail[0] {
+			case "set":
+				kind = PhraseKindSet
+			case "defer":
+				kind = PhraseKindDefer
+			case "if":
+				kind = PhraseKindIf
+			case "elseif":
+				kind = PhraseKindElseIf
+			case "else":
+				kind = PhraseKindElse
+			case "switch":
+				kind = PhraseKindSwitch
+			case "while":
+				kind = PhraseKindWhile
+			case "for":
+				kind = PhraseKindFor
+			}
 		}
 	}
 	
 	return
 }
-
-	// PhraseKindSet
-	// PhraseKindDefer
-	// PhraseKindIf
-	// PhraseKindElseIf
-	// PhraseKindElse
-	// PhraseKindSwitch
-	// PhraseKindWhile
-	// PhraseKindFor
