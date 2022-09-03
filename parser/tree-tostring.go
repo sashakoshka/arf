@@ -428,10 +428,19 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 	if ownLine {
 		output += doIndent(indent)
 	}
+
+	var initializationValues Argument
 	
 	output += "[" + phrase.command.ToString(0, false)
 	for _, argument := range phrase.arguments {
-		output += " " + argument.ToString(0, false)
+		isInitializationValue :=
+			argument.kind == ArgumentKindObjectInitializationValues ||
+			argument.kind == ArgumentKindArrayInitializationValues
+		if isInitializationValue {
+			initializationValues = argument
+		} else {
+			output += " " + argument.ToString(0, false)
+		}
 	}
 	output += "]"
 
@@ -444,6 +453,9 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 
 	if ownLine {
 		output += "\n"
+		if initializationValues.kind != ArgumentKindNil {
+			output += initializationValues.ToString(indent + 1, true)
+		}
 		output += phrase.block.ToString(indent + 1)
 	}
 	return
