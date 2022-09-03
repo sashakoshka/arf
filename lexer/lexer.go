@@ -372,11 +372,11 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 }
 
 func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
+	token := lexer.newToken()
 	err = lexer.nextRune()
 	if err != nil { return }
 
 	if lexer.char == '-' {
-		token := lexer.newToken()
 		token.kind = TokenKindDecrement
 		token.location.SetWidth(2)
 
@@ -390,18 +390,16 @@ func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
 		}
 		lexer.addToken(token)
 	} else if lexer.char == '>' {
-		token := lexer.newToken()
 		token.kind = TokenKindReturnDirection
 		token.location.SetWidth(2)
 
-		err = lexer.nextRune() 
+		err = lexer.nextRune()
 		if err != nil { return }
 
 		lexer.addToken(token)
 	} else if lexer.char >= '0' && lexer.char <= '9' {
 		lexer.tokenizeNumberBeginning(true)
 	} else {
-		token := lexer.newToken()
 		token.kind = TokenKindMinus
 		lexer.addToken(token)
 	}
