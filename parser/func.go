@@ -38,18 +38,30 @@ var operatorTokens = []lexer.TokenKind {
         lexer.TokenKindBinaryXorAssignment,
 }
 
+// isTokenOperator returns whether or not the token is an operator token.
+func isTokenOperator (token lexer.Token) (isOperator bool) {
+	for _, kind := range operatorTokens {
+		if token.Is(kind) {
+			isOperator = true
+			return
+		}
+	}
+
+	return
+}
+
+// validPhraseStartTokens lists all tokens that are expected when parsing the
+// first part of a phrase.
+var validPhraseStartTokens = append (
+	validArgumentStartTokens,
+	operatorTokens...)
+	
 // validBlockLevelPhraseTokens lists all tokens that are expected when parsing
 // a block level phrase.
 var validBlockLevelPhraseTokens = append (
 	validArgumentStartTokens,
 	lexer.TokenKindNewline,
 	lexer.TokenKindReturnDirection)
-	
-// validBlockLevelPhraseCommandTokens is like validBlockLevelPhraseTokens, but
-// specifically for the command argument.
-var validBlockLevelPhraseCommandTokens = append (
-	validBlockLevelPhraseTokens,
-	operatorTokens...)
 	
 // validDelimitedPhraseTokens is like validBlockLevelPhraseTokens, but it also
 // includes a right brace token.
@@ -59,12 +71,7 @@ var validDelimitedPhraseTokens = append (
 	lexer.TokenKindIndent,
 	lexer.TokenKindRBracket,
 	lexer.TokenKindReturnDirection)
-	
-// validDelimitedPhraseCommandTokens is like validDelimitedPhraseTokens, but
-// specifically for the command argument.
-var validDelimitedPhraseCommand = append (
-	validDelimitedPhraseTokens,
-	operatorTokens...)
+
 
 // controlFlowNames contains a list of all command names that must have a block
 // underneath them.
@@ -306,7 +313,7 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 ) {
 	if !parser.token.Is(lexer.TokenKindIndent) { return }
 	if parser.token.Value().(int) != indent    { return }
-	err = parser.nextToken(validArgumentStartTokens...)
+	err = parser.nextToken(validPhraseStartTokens...)
 	if err != nil { return }
 
 	expectRightBracket := false
@@ -317,10 +324,15 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 	}
 
 	// get command
-	err = parser.expect(validArgumentStartTokens...)
+	err = parser.expect(validPhraseStartTokens...)
 	if err != nil { return }
-	phrase.command, err = parser.parseArgument()
-	if err != nil { return }
+	if isTokenOperator(parser.token) {
+		phrase.command, err = parser.parseOperatorArgument()
+		if err != nil { return }
+	} else {
+		phrase.command, err = parser.parseArgument()
+		if err != nil { return }
+	}
 
 	for {
 		if expectRightBracket {
@@ -366,7 +378,6 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 			}
 		}
 
-			
 		// this is an argument
 		var argument Argument
 		argument, err = parser.parseArgument()
@@ -394,10 +405,15 @@ func (parser *ParsingOperation) parseArgumentLevelPhrase () (
 	if err != nil { return }
 
 	// get command
-	err = parser.nextToken(validArgumentStartTokens...)
+	err = parser.nextToken(validPhraseStartTokens...)
 	if err != nil { return }
-	phrase.command, err = parser.parseArgument()
-	if err != nil { return }
+	if isTokenOperator(parser.token) {
+		phrase.command, err = parser.parseOperatorArgument()
+		if err != nil { return }
+	} else {
+		phrase.command, err = parser.parseArgument()
+		if err != nil { return }
+	}
 
 	for {
 		// delimited
@@ -431,4 +447,21 @@ func (parser *ParsingOperation) parseArgumentLevelPhrase () (
 		argument, err = parser.parseArgument()
 		phrase.arguments = append(phrase.arguments, argument)
 	}
+}
+
+// parseOperatorArgument parses an operator argument. This is only used to parse
+// operator phrase commands.
+func (parser *ParsingOperation) parseOperatorArgument () (
+	operator Argument,
+	err error,
+) {
+	err = parser.expect(operatorTokens...)
+	if err != nil { return }
+
+	operator.location = parser.token.Location()
+	operator.kind     = ArgumentKindOperator
+	operator.value    = parser.token.Kind()
+	
+	err = parser.nextToken()
+	return
 }
