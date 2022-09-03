@@ -73,7 +73,7 @@ func (parser *ParsingOperation) parseInitializationValues (
 		var initializationValues ObjectInitializationValues
 		initializationValues, err    = parser.parseObjectInitializationValues()
 		initializationArgument.kind  = ArgumentKindObjectInitializationValues
-		initializationArgument.value = &initializationValues
+		initializationArgument.value = initializationValues
 		
 	} else {
 	
@@ -82,7 +82,7 @@ func (parser *ParsingOperation) parseInitializationValues (
 		var initializationValues ArrayInitializationValues
 		initializationValues, err    = parser.parseArrayInitializationValues()
 		initializationArgument.kind  = ArgumentKindArrayInitializationValues
-		initializationArgument.value = &initializationValues
+		initializationArgument.value = initializationValues
 	}
 	
 	return

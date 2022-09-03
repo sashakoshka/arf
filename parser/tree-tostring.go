@@ -78,7 +78,7 @@ func (tree *SyntaxTree) ToString (indent int) (output string) {
 	return
 }
 
-func (identifier *Identifier) ToString () (output string) {
+func (identifier Identifier) ToString () (output string) {
 	for index, trailItem := range identifier.trail {
 		if index > 0 {
 			output += "."
@@ -115,13 +115,13 @@ func (what *Type) ToString () (output string) {
 	return
 }
 
-func (declaration *Declaration) ToString () (output string) {
+func (declaration Declaration) ToString () (output string) {
 	output += declaration.name + ":"
 	output += declaration.what.ToString()
 	return
 }
 
-func (attributes *ObjectInitializationValues) ToString (
+func (attributes ObjectInitializationValues) ToString (
 	indent int,
 ) (
 	output string,
@@ -141,7 +141,7 @@ func (attributes *ObjectInitializationValues) ToString (
 	return
 }
 
-func (values *ArrayInitializationValues) ToString (
+func (values ArrayInitializationValues) ToString (
 	indent int,
 ) (
 	output string,
@@ -153,7 +153,7 @@ func (values *ArrayInitializationValues) ToString (
 	return
 }
 
-func (phrase *Phrase) ToString (indent int, ownLine bool) (output string) {
+func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 	if ownLine {
 		output += doIndent(indent)
 	}
@@ -187,30 +187,30 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 
 	switch argument.kind {
 	case ArgumentKindPhrase:
-		output += argument.value.(*Phrase).ToString (	
+		output += argument.value.(Phrase).ToString (	
 				indent,
 				breakLine)
 	
 	case ArgumentKindObjectInitializationValues:
 		// this should only appear in contexts where breakLine is true
-		output += argument.value.(*ObjectInitializationValues).
+		output += argument.value.(ObjectInitializationValues).
 				ToString(indent)
 	
 	case ArgumentKindArrayInitializationValues:
 		// this should only appear in contexts where breakLine is true
-		output += argument.value.(*ArrayInitializationValues).
+		output += argument.value.(ArrayInitializationValues).
 				ToString(indent)
 	
 	case ArgumentKindIdentifier:
 		output += doIndent (
 			indent,
-			argument.value.(*Identifier).ToString())
+			argument.value.(Identifier).ToString())
 		if breakLine { output += "\n" }
 	
 	case ArgumentKindDeclaration:
 		output += doIndent (
 			indent,
-			argument.value.(*Declaration).ToString())
+			argument.value.(Declaration).ToString())
 		if breakLine { output += "\n" }
 	
 	case ArgumentKindInt, ArgumentKindUInt, ArgumentKindFloat:
