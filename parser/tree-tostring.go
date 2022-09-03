@@ -291,7 +291,6 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 	        	stringValue = "^"
 	        case lexer.TokenKindBinaryXorAssignment:
 	        	stringValue = "^="
-
 		}
 		output += doIndent(indent, stringValue)
 		if breakLine { output += "\n" }

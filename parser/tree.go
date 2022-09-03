@@ -98,7 +98,7 @@ const (
 	// [name argument]
 	// [name argument argument]
 	// etc...
-	ArgumentKindPhrase = iota
+	ArgumentKindPhrase
 
 	// {name}
 	ArgumentKindDereference

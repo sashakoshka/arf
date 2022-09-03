@@ -81,7 +81,6 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 	case lexer.TokenKindLBracket:
 		argument.kind  = ArgumentKindPhrase
 		argument.value, err = parser.parseArgumentLevelPhrase()
-		parser.nextToken()
 
 	default:
 		panic (
