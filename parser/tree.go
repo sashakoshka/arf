@@ -223,6 +223,24 @@ type FaceSection struct {
 	behaviors  map[string] FaceBehavior
 }
 
+// PhraseKind determines what semantic role a phrase plays.
+type PhraseKind int
+
+const (
+	PhraseKindCall = iota
+	PhraseKindCallExternal
+	PhraseKindOperator
+	PhraseKindSet
+	PhraseKindDefer
+	PhraseKindIf
+	PhraseKindElseIf
+	PhraseKindElse
+	PhraseKindSwitch
+	PhraseKindCase
+	PhraseKindWhile
+	PhraseKindFor
+)
+
 // Phrase represents a function call or operator. In ARF they are the same
 // syntactical concept.
 type Phrase struct {
@@ -231,7 +249,9 @@ type Phrase struct {
 	arguments []Argument
 	returnsTo []Argument
 
-	// only applicable for 
+	kind PhraseKind
+
+	// only applicable for control flow phrases
 	block Block
 }
 

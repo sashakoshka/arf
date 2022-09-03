@@ -125,13 +125,8 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 	// get command
 	err = parser.expect(validPhraseStartTokens...)
 	if err != nil { return }
-	if isTokenOperator(parser.token) {
-		phrase.command, err = parser.parseOperatorArgument()
-		if err != nil { return }
-	} else {
-		phrase.command, err = parser.parseArgument()
-		if err != nil { return }
-	}
+	phrase.command, phrase.kind, err = parser.parsePhraseCommand()
+	if err != nil { return }
 
 	for {
 		if expectRightBracket {
@@ -258,13 +253,8 @@ func (parser *ParsingOperation) parseArgumentLevelPhrase () (
 	// get command
 	err = parser.nextToken(validPhraseStartTokens...)
 	if err != nil { return }
-	if isTokenOperator(parser.token) {
-		phrase.command, err = parser.parseOperatorArgument()
-		if err != nil { return }
-	} else {
-		phrase.command, err = parser.parseArgument()
-		if err != nil { return }
-	}
+	phrase.command, phrase.kind, err = parser.parsePhraseCommand()
+	if err != nil { return }
 
 	for {
 		// delimited
@@ -300,19 +290,45 @@ func (parser *ParsingOperation) parseArgumentLevelPhrase () (
 	}
 }
 
-// parseOperatorArgument parses an operator argument. This is only used to parse
-// operator phrase commands.
-func (parser *ParsingOperation) parseOperatorArgument () (
-	operator Argument,
-	err error,
+// parsePhraseCommand parses the command argument of a phrase.
+func (parser *ParsingOperation) parsePhraseCommand () (
+	command Argument,
+	kind    PhraseKind,
+	err     error,
 ) {
-	err = parser.expect(operatorTokens...)
-	if err != nil { return }
+	if isTokenOperator(parser.token) {
+		err = parser.expect(operatorTokens...)
+		if err != nil { return }
 
-	operator.location = parser.token.Location()
-	operator.kind     = ArgumentKindOperator
-	operator.value    = parser.token.Kind()
+		command.location = parser.token.Location()
+		command.kind     = ArgumentKindOperator
+		command.value    = parser.token.Kind()
+
+		if parser.token.Is(lexer.TokenKindColon) {
+			kind = PhraseKindCase
+		} else {
+			kind = PhraseKindOperator
+		}
+		
+		err = parser.nextToken()
+		if err != nil { return }
+	} else {
+		command, err = parser.parseArgument()
+		if err != nil { return }
+
+		if command.kind == ArgumentKindString {
+			kind = PhraseKindCallExternal
+		}
+	}
 	
-	err = parser.nextToken()
 	return
 }
+
+	// PhraseKindSet
+	// PhraseKindDefer
+	// PhraseKindIf
+	// PhraseKindElseIf
+	// PhraseKindElse
+	// PhraseKindSwitch
+	// PhraseKindWhile
+	// PhraseKindFor
