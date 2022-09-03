@@ -28,6 +28,8 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 		if err != nil { return }
 
 		if parser.token.Is(lexer.TokenKindColon) {
+			err = parser.nextToken()
+			if err != nil { return }
 			var what Type
 			what, err = parser.parseType()
 			if err != nil { return }
