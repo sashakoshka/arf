@@ -4,6 +4,40 @@ import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
+// operatorTokens lists all symbolic tokens that can act as a command to a
+// phrase.
+var operatorTokens = []lexer.TokenKind {
+        lexer.TokenKindPlus,
+        lexer.TokenKindMinus,
+        lexer.TokenKindIncrement,
+        lexer.TokenKindDecrement,
+        lexer.TokenKindAsterisk,
+        lexer.TokenKindSlash,
+        lexer.TokenKindExclamation,
+        lexer.TokenKindPercent,
+        lexer.TokenKindPercentAssignment,
+        lexer.TokenKindTilde,
+        lexer.TokenKindTildeAssignment,
+        lexer.TokenKindEqualTo,
+        lexer.TokenKindNotEqualTo,
+        lexer.TokenKindLessThanEqualTo,
+        lexer.TokenKindLessThan,
+        lexer.TokenKindLShift,
+        lexer.TokenKindLShiftAssignment,
+        lexer.TokenKindGreaterThan,
+        lexer.TokenKindGreaterThanEqualTo,
+        lexer.TokenKindRShift,
+        lexer.TokenKindRShiftAssignment,
+        lexer.TokenKindBinaryOr,
+        lexer.TokenKindBinaryOrAssignment,
+        lexer.TokenKindLogicalOr,
+        lexer.TokenKindBinaryAnd,
+        lexer.TokenKindBinaryAndAssignment,
+        lexer.TokenKindLogicalAnd,
+        lexer.TokenKindBinaryXor,
+        lexer.TokenKindBinaryXorAssignment,
+}
+
 // validBlockLevelPhraseTokens lists all tokens that are expected when parsing
 // a block level phrase.
 var validBlockLevelPhraseTokens = append (
@@ -11,14 +45,35 @@ var validBlockLevelPhraseTokens = append (
 	lexer.TokenKindNewline,
 	lexer.TokenKindReturnDirection)
 	
-// validDelimitedBlockLevelPhraseTokens is like validBlockLevelPhraseTokens, but
-// it also includes a right brace token.
-var validDelimitedBlockLevelPhraseTokens = append (
+// validBlockLevelPhraseCommandTokens is like validBlockLevelPhraseTokens, but
+// specifically for the command argument.
+var validBlockLevelPhraseCommandTokens = append (
+	validBlockLevelPhraseTokens,
+	operatorTokens...)
+	
+// validDelimitedPhraseTokens is like validBlockLevelPhraseTokens, but it also
+// includes a right brace token.
+var validDelimitedPhraseTokens = append (
 	validArgumentStartTokens,
 	lexer.TokenKindNewline,
 	lexer.TokenKindIndent,
 	lexer.TokenKindRBracket,
 	lexer.TokenKindReturnDirection)
+	
+// validDelimitedPhraseCommandTokens is like validDelimitedPhraseTokens, but
+// specifically for the command argument.
+var validDelimitedPhraseCommand = append (
+	validDelimitedPhraseTokens,
+	operatorTokens...)
+
+// controlFlowNames contains a list of all command names that must have a block
+// underneath them.
+var controlFlowNames = []string {
+	"if", "else", "elseif",
+	"for", "while",
+	"switch",
+	"defer",
+}
 
 // parseFunc parses a function section.
 func (parser *ParsingOperation) parseFuncSection () (
@@ -271,7 +326,7 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 		if expectRightBracket {
 			// delimited
 			// [someFunc arg1 arg2 arg3] -> someVariable
-			err = parser.expect(validDelimitedBlockLevelPhraseTokens...)
+			err = parser.expect(validDelimitedPhraseTokens...)
 			if err != nil { return }
 
 			if parser.token.Is(lexer.TokenKindRBracket) {
@@ -347,7 +402,7 @@ func (parser *ParsingOperation) parseArgumentLevelPhrase () (
 	for {
 		// delimited
 		// [someFunc arg1 arg2 arg3] -> someVariable
-		err = parser.expect(validDelimitedBlockLevelPhraseTokens...)
+		err = parser.expect(validDelimitedPhraseTokens...)
 		if err != nil { return }
 
 		if parser.token.Is(lexer.TokenKindRBracket) {
