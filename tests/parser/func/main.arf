@@ -78,6 +78,10 @@ func ro fReturnDirection
 
 func ro gControlFlow
 	---
+	defer
+		something
+		otherThing
+	
 	if condition
 		something
 	
