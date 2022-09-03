@@ -325,8 +325,55 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 	err = parser.nextToken()
 	if err != nil { return }
 
-
 	return
 }
 
-// TODO: create parseArgumentLevelPhrase, and call it from parseArgument
+// parseArgumentLevelPhrase parses a phrase that is being used as an argument to
+// something. It is forbidden from using return direction, and it must be
+// delimited by brackets.
+func (parser *ParsingOperation) parseArgumentLevelPhrase () (
+	phrase Phrase,
+	err error,
+) {
+	err = parser.expect(lexer.TokenKindLBracket)
+	if err != nil { return }
+
+	// get command
+	err = parser.nextToken(validArgumentStartTokens...)
+	if err != nil { return }
+	phrase.command, err = parser.parseArgument()
+	if err != nil { return }
+
+	for {
+		// delimited
+		// [someFunc arg1 arg2 arg3] -> someVariable
+		err = parser.expect(validDelimitedBlockLevelPhraseTokens...)
+		if err != nil { return }
+
+		if parser.token.Is(lexer.TokenKindRBracket) {
+			// this is an ending delimiter
+			err = parser.nextToken()
+			if err != nil { return }
+			return
+			
+		} else if parser.token.Is(lexer.TokenKindNewline) {
+			// we are delimited, so we can safely skip
+			// newlines
+			err = parser.nextToken()
+			if err != nil { return }
+			continue
+			
+		} else if parser.token.Is(lexer.TokenKindIndent) {
+			// we are delimited, so we can safely skip
+			// indents
+			err = parser.nextToken()
+			if err != nil { return }
+			continue
+		}
+			
+		// this is an argument
+		var argument Argument
+		argument, err = parser.parseArgument()
+		phrase.arguments = append(phrase.arguments, argument)
+	}
+}
