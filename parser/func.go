@@ -4,6 +4,22 @@ import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
+// validBlockLevelPhraseTokens lists all tokens that are expected when parsing
+// a block level phrase.
+var validBlockLevelPhraseTokens = append (
+	validArgumentStartTokens,
+	lexer.TokenKindNewline,
+	lexer.TokenKindReturnDirection)
+	
+// validDelimitedBlockLevelPhraseTokens is like validBlockLevelPhraseTokens, but
+// it also includes a right brace token.
+var validDelimitedBlockLevelPhraseTokens = append (
+	validArgumentStartTokens,
+	lexer.TokenKindNewline,
+	lexer.TokenKindIndent,
+	lexer.TokenKindRBracket,
+	lexer.TokenKindReturnDirection)
+
 // parseFunc parses a function section.
 func (parser *ParsingOperation) parseFuncSection () (
 	section *FuncSection,
@@ -201,7 +217,6 @@ func (parser *ParsingOperation) parseFuncArguments (
 				if err != nil { return }
 			}
 		}
-	
 	}
 }
 
@@ -212,5 +227,106 @@ func (parser *ParsingOperation) parseBlock (
 	block Block,
 	err error,
 ) {
+	for {
+		// if we've left the block, stop parsing
+		if !parser.token.Is(lexer.TokenKindIndent) { return }
+		if parser.token.Value().(int) != indent    { return }
+
+		var phrase Phrase
+		phrase, err = parser.parseBlockLevelPhrase(indent)
+		block = append(block, phrase)
+		if err != nil { return }
+	}
 	return
 }
+
+// parseBlockLevelPhrase parses a phrase that is not being used as an argument
+// to something else. This method is allowed to do things like parse return
+// directions, and indented blocks beneath the phrase.
+func (parser *ParsingOperation) parseBlockLevelPhrase (
+	indent int,
+) (
+	phrase Phrase,
+	err error,
+) {
+	if !parser.token.Is(lexer.TokenKindIndent) { return }
+	if parser.token.Value().(int) != indent    { return }
+	err = parser.nextToken(validArgumentStartTokens...)
+	if err != nil { return }
+
+	expectRightBracket := false
+	if parser.token.Is(lexer.TokenKindLBracket) {
+		expectRightBracket = true
+		err = parser.nextToken()
+		if err != nil { return }
+	}
+
+	// get command
+	err = parser.expect(validArgumentStartTokens...)
+	if err != nil { return }
+	phrase.command, err = parser.parseArgument()
+	if err != nil { return }
+
+	for {
+		if expectRightBracket {
+			// delimited
+			// [someFunc arg1 arg2 arg3] -> someVariable
+			err = parser.expect(validDelimitedBlockLevelPhraseTokens...)
+			if err != nil { return }
+
+			if parser.token.Is(lexer.TokenKindRBracket) {
+				// this is an ending delimiter
+				err = parser.nextToken()
+				if err != nil { return }
+				break
+				
+			} else if parser.token.Is(lexer.TokenKindNewline) {
+				// we are delimited, so we can safely skip
+				// newlines
+				err = parser.nextToken()
+				if err != nil { return }
+				continue
+				
+			} else if parser.token.Is(lexer.TokenKindIndent) {
+				// we are delimited, so we can safely skip
+				// indents
+				err = parser.nextToken()
+				if err != nil { return }
+				continue
+			}
+		} else {
+			// not delimited
+			// someFunc arg1 arg2 arg3 -> someVariable
+			err = parser.expect(validBlockLevelPhraseTokens...)
+			if err != nil { return }
+
+			if parser.token.Is(lexer.TokenKindReturnDirection) {
+				// we've reached a return direction, so that
+				// means this is the end of the phrase
+				break
+			} else if parser.token.Is(lexer.TokenKindNewline) {
+				// we've reached the end of the line, so that
+				// means this is the end of the phrase.
+				break
+			}
+		}
+
+			
+		// this is an argument
+		var argument Argument
+		argument, err = parser.parseArgument()
+		phrase.arguments = append(phrase.arguments, argument)
+	}
+
+	// TODO: expect return direction, or newline. then go onto the next
+	// line, parsing returnsTo if nescessary.
+	err = parser.expect(lexer.TokenKindNewline)
+	if err != nil { return }
+	err = parser.nextToken()
+	if err != nil { return }
+
+
+	return
+}
+
+// TODO: create parseArgumentLevelPhrase, and call it from parseArgument
