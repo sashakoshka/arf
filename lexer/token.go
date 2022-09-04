@@ -47,6 +47,7 @@ const (
         TokenKindTilde
         TokenKindTildeAssignment
 
+        TokenKindAssignment
         TokenKindEqualTo
         TokenKindNotEqualTo
         TokenKindLessThanEqualTo
@@ -197,6 +198,8 @@ func (tokenKind TokenKind) Describe () (description string) {
 		description = "Tilde"
 	case TokenKindTildeAssignment:
 		description = "TildeAssignment"
+	case TokenKindAssignment:
+		description = "Assignment"
 	case TokenKindEqualTo:
 		description = "EqualTo"
 	case TokenKindNotEqualTo:

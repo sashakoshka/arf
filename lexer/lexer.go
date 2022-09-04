@@ -275,9 +275,15 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		lexer.addToken(token)
 	case '=':
 		token := lexer.newToken()
-		token.kind = TokenKindEqualTo
-		lexer.addToken(token)
 		err = lexer.nextRune()
+		if err != nil { return }
+		token.kind = TokenKindAssignment
+		if lexer.char == '=' {
+			token.kind = TokenKindEqualTo
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
+		}
+		lexer.addToken(token)
 	case '<':
 		token := lexer.newToken()
 		err = lexer.nextRune()
