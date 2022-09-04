@@ -14,11 +14,6 @@ func (trait locatable) Location () (location file.Location) {
 	return
 }
 
-// setLocation sets the location of the node.
-func (trait* locatable) setLocation (location file.Location) {
-	trait.location = location
-}
-
 // NewError creates a new error at the node's location.
 func (trait locatable) NewError (
 	message string,
@@ -39,11 +34,6 @@ func (trait nameable) Name () (name string) {
 	name = trait.name
 	return
 }
-// setName sets the name of the node.
-func (trait *nameable) setName (name string) {
-	trait.name = name
-}
-
 // typeable allows a node to have a type.
 type typeable struct {
 	what Type
@@ -52,9 +42,4 @@ type typeable struct {
 // Type returns the type of the node.
 func (trait typeable) Type () (what Type) {
 	return trait.what
-}
-
-// setType sets the type of the node.
-func (trait *typeable) setType (what Type) () {
-	
 }

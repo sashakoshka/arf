@@ -12,7 +12,7 @@ func (parser *ParsingOperation) parseDataSection () (
 	if err != nil { return }
 	
 	section = &DataSection { }
-	section.setLocation(parser.token.Location())
+	section.location = parser.token.Location()
 
 	err = parser.nextToken(lexer.TokenKindPermission)
 	if err != nil { return }

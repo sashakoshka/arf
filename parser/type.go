@@ -14,7 +14,7 @@ func (parser *ParsingOperation) parseTypeSection () (
 	if err != nil { return }
 	
 	section = &TypeSection { }
-	section.setLocation(parser.token.Location())
+	section.location = parser.token.Location()
 
 	// get permission
 	err = parser.nextToken(lexer.TokenKindPermission)

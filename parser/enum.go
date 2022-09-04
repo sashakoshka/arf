@@ -12,7 +12,7 @@ func (parser *ParsingOperation) parseEnumSection () (
 	if err != nil { return }
 	
 	section = &EnumSection { }
-	section.setLocation(parser.token.Location())
+	section.location = parser.token.Location()
 
 	// get permission
 	err = parser.nextToken(lexer.TokenKindPermission)
