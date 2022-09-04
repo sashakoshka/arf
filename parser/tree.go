@@ -10,7 +10,9 @@ type SyntaxTree struct {
 	license string
 	author  string
 
-	requires     []string
+	requires []string
+	sections map[string] Section
+	
 	typeSections map[string] *TypeSection
 	objtSections map[string] *ObjtSection
 	enumSections map[string] *EnumSection

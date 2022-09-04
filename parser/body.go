@@ -10,8 +10,8 @@ func (parser *ParsingOperation) parseBody () (err error) {
 	for {
 		err = parser.expect(lexer.TokenKindName)
 		if err != nil { return }
-
 		sectionType := parser.token.Value().(string)
+		
 		switch sectionType {
 		case "data":
 			var section *DataSection
@@ -21,7 +21,9 @@ func (parser *ParsingOperation) parseBody () (err error) {
 					make(map[string] *DataSection)
 			}
 			parser.tree.dataSections[section.name] = section
+			parser.tree.sections[section.name] = section
 			if err != nil { return }
+			
 		case "type":
 			var section *TypeSection
 			section, err = parser.parseTypeSection()
@@ -30,7 +32,9 @@ func (parser *ParsingOperation) parseBody () (err error) {
 					make(map[string] *TypeSection)
 			}
 			parser.tree.typeSections[section.name] = section
+			parser.tree.sections[section.name] = section
 			if err != nil { return }
+			
 		case "objt":
 			var section *ObjtSection
 			section, err = parser.parseObjtSection()
@@ -39,7 +43,9 @@ func (parser *ParsingOperation) parseBody () (err error) {
 					make(map[string] *ObjtSection)
 			}
 			parser.tree.objtSections[section.name] = section
+			parser.tree.sections[section.name] = section
 			if err != nil { return }
+			
 		case "face":
 			var section *FaceSection
 			section, err = parser.parseFaceSection()
@@ -48,7 +54,9 @@ func (parser *ParsingOperation) parseBody () (err error) {
 					make(map[string] *FaceSection)
 			}
 			parser.tree.faceSections[section.name] = section
+			parser.tree.sections[section.name] = section
 			if err != nil { return }
+			
 		case "enum":
 			var section *EnumSection
 			section, err = parser.parseEnumSection()
@@ -57,7 +65,9 @@ func (parser *ParsingOperation) parseBody () (err error) {
 					make(map[string] *EnumSection)
 			}
 			parser.tree.enumSections[section.name] = section
+			parser.tree.sections[section.name] = section
 			if err != nil { return }
+			
 		case "func":
 			var section *FuncSection
 			section, err = parser.parseFuncSection()
@@ -66,7 +76,9 @@ func (parser *ParsingOperation) parseBody () (err error) {
 					make(map[string] *FuncSection)
 			}
 			parser.tree.funcSections[section.name] = section
+			parser.tree.sections[section.name] = section
 			if err != nil { return }
+			
 		default:
 			err = parser.token.NewError (
 				"unknown section type \"" + sectionType + "\"",

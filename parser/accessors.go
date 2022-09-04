@@ -1,5 +1,12 @@
 package parser
 
+// LookupSection looks returns the section under the give name. If the section
+// does not exist, nil is returned.
+func (tree *SyntaxTree) LookupSection (name string) (section Section) {
+	section = tree.sections[name]
+	return
+}
+
 // Kind returns the section's kind (SectionKindType).
 func (section TypeSection) Kind () (kind SectionKind) {
 	kind = SectionKindType
