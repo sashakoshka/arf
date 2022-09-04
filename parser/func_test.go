@@ -19,10 +19,10 @@ func ro bMethod
 	external
 func ro cBasicPhrases
 	---
-	[fn 329 983 09]
-	[fn 329 983 09]
-	[fn 329 983 091]
-	[fn [gn 329 983 091] 123]
+	[fn 329 983 7]
+	[fn 329 983 7]
+	[fn 329 983 57]
+	[fn [gn 329 983 57] 123]
 func ro dArgumentTypes
 	---
 	[bird tree butterfly.wing "hello world" grass:{Int:mut 8}]
@@ -33,20 +33,25 @@ func ro eMath
 	---
 	[++ x]
 	[-- y]
-	[set z [+ [* 0392 00] 98 x [/ 9832 y] 930]]
+	[set z [+ [* 250 0] 98 x [/ 9832 y] 930]]
 	[! true]
-	[~ 0b01]
+	[~ 1]
+	[~= x]
 	[% 873 32]
 	[= 5 5]
 	[!= 4 4]
 	[<= 4 98]
 	[< 4 98]
-	[<< 0x0F 4]
+	[<< 15 4]
+	[<<= x 4]
 	[>= 98 4]
 	[> 98 4]
-	[>> 0xF0 4]
-	[| 0b01 0b10]
-	[& 0b110 0b011]
+	[>> 240 4]
+	[>>= x 4]
+	[| 1 2]
+	[|= x 2]
+	[& 6 3]
+	[&= x 3]
 	[&& true true]
 	[|| true false]
 func ro fReturnDirection
@@ -54,9 +59,12 @@ func ro fReturnDirection
 	---
 	[someFunc 498 2980 90] -> thing:Int err
 	[otherFunc] -> thing err:Error
-	[fn 329 983 091] -> thing:Int err
+	[fn 329 983 57] -> thing:Int err
 func ro gControlFlow
 	---
+	[defer]
+		[something]
+		[otherThing]
 	[if condition]
 		[something]
 	[if condition]
@@ -71,9 +79,9 @@ func ro gControlFlow
 	[: 324]
 		[something]
 	[: 93284]
-		otherThing
+		[otherThing]
 	[: 9128 34738 7328]
-		multipleCases
+		[multipleCases]
 	[:]
 		[defaultThing]
 	[for index:Size element:Int someArray]
@@ -90,10 +98,10 @@ func ro gControlFlow
 			[nestedThing]
 		[else]
 			[otherThing]
-func hSetPhrase
+func ro hSetPhrase
 	---
 	[set x:Int 3]
-	[set y:{Int} [. x]]
+	[set y:{Int} [loc x]]
 	[set z:{Int 8}]
 		398
 		9
