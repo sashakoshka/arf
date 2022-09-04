@@ -42,9 +42,8 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 				return
 			}
 			
-			declaration := Declaration {
-				what: what,
-			}
+			declaration := Declaration { }
+			declaration.what = what
 			declaration.setName(identifier.trail[0])
 			declaration.setLocation(argument.Location())
 

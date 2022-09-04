@@ -31,7 +31,7 @@ func (parser *ParsingOperation) parseTypeSection () (
 	if err != nil { return }
 	err = parser.nextToken()
 	if err != nil { return }
-	section.inherits, err = parser.parseType()
+	section.what, err = parser.parseType()
 	if err != nil { return }
 
 	// parse default values

@@ -309,7 +309,7 @@ func (section *TypeSection) ToString (indent int) (output string) {
 		"type ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.inherits.ToString())
+		section.what.ToString())
 
 	isComplexInitialization :=
 		section.defaultValue.kind == ArgumentKindObjectInitializationValues ||

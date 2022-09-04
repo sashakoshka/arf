@@ -43,3 +43,18 @@ func (trait nameable) Name () (name string) {
 func (trait *nameable) setName (name string) {
 	trait.name = name
 }
+
+// typeable allows a node to have a type.
+type typeable struct {
+	what Type
+}
+
+// Type returns the type of the node.
+func (trait typeable) Type () (what Type) {
+	return trait.what
+}
+
+// setType sets the type of the node.
+func (trait *typeable) setType (what Type) () {
+	
+}

@@ -62,7 +62,7 @@ type Type struct {
 type Declaration struct {
 	locatable
 	nameable
-	what Type
+	typeable
 }
 
 // ObjectInitializationValues represents a list of object member initialization
@@ -150,8 +150,8 @@ type Argument struct {
 type DataSection struct {
 	locatable
 	nameable
+	typeable
 	
-	what       Type
 	permission types.Permission
 	value      Argument
 }
@@ -160,8 +160,8 @@ type DataSection struct {
 type TypeSection struct {
 	locatable
 	nameable
+	typeable
 	
-	inherits     Type
 	permission   types.Permission
 	defaultValue Argument
 }
@@ -170,8 +170,8 @@ type TypeSection struct {
 type ObjtMember struct {
 	locatable
 	nameable
-
-	what         Type
+	typeable
+	
 	bitWidth     uint64
 	permission   types.Permission
 	defaultValue Argument
@@ -181,8 +181,8 @@ type ObjtMember struct {
 type ObjtSection struct {
 	locatable
 	nameable
+	inherits Identifier
 
-	inherits     Identifier
 	permission   types.Permission
 	members      []ObjtMember
 }
@@ -198,8 +198,8 @@ type EnumMember struct {
 type EnumSection struct {
 	locatable
 	nameable
-	
-	what       Type
+	typeable
+
 	permission types.Permission
 	members    []EnumMember
 }
