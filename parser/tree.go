@@ -61,7 +61,7 @@ type Type struct {
 // Declaration represents a variable declaration.
 type Declaration struct {
 	locatable
-	name string
+	nameable
 	what Type
 }
 
@@ -149,7 +149,7 @@ type Argument struct {
 // DataSection represents a global variable.
 type DataSection struct {
 	locatable
-	name string
+	nameable
 	
 	what       Type
 	permission types.Permission
@@ -159,7 +159,7 @@ type DataSection struct {
 // TypeSection represents a blind type definition.
 type TypeSection struct {
 	locatable
-	name string
+	nameable
 	
 	inherits     Type
 	permission   types.Permission
@@ -169,7 +169,7 @@ type TypeSection struct {
 // ObjtMember represents a part of an object type definition.
 type ObjtMember struct {
 	locatable
-	name string
+	nameable
 
 	what         Type
 	bitWidth     uint64
@@ -180,7 +180,7 @@ type ObjtMember struct {
 // ObjtSection represents an object type definition.
 type ObjtSection struct {
 	locatable
-	name string
+	nameable
 
 	inherits     Identifier
 	permission   types.Permission
@@ -190,14 +190,14 @@ type ObjtSection struct {
 // EnumMember represents a member of an enum section.
 type EnumMember struct {
 	locatable
-	name  string
+	nameable
 	value Argument
 }
 
 // EnumSection represents an enumerated type section.
 type EnumSection struct {
 	locatable
-	name string
+	nameable
 	
 	what       Type
 	permission types.Permission
@@ -207,7 +207,7 @@ type EnumSection struct {
 // FaceBehavior represents a behavior of an interface section.
 type FaceBehavior struct {
 	locatable
-	name string
+	nameable
 
 	inputs  []Declaration
 	outputs []Declaration
@@ -216,7 +216,7 @@ type FaceBehavior struct {
 // FaceSection represents an interface type section.
 type FaceSection struct {
 	locatable
-	name     string
+	nameable
 	inherits Identifier
 	
 	permission types.Permission
@@ -269,7 +269,7 @@ type FuncOutput struct {
 // FuncSection represents a function section.
 type FuncSection struct {
 	locatable
-	name       string
+	nameable
 	permission types.Permission
 	
 	receiver *Declaration

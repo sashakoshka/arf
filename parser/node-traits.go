@@ -9,13 +9,13 @@ type locatable struct {
 }
 
 // Location returns the location of the node.
-func (trait locatable) Location (location file.Location) {
+func (trait locatable) Location () (location file.Location) {
 	location = trait.location
 	return
 }
 
 // setLocation sets the location of the node.
-func (trait locatable) setLocation (location file.Location) {
+func (trait* locatable) setLocation (location file.Location) {
 	trait.location = location
 }
 
@@ -27,4 +27,19 @@ func (trait locatable) NewError (
 	err infoerr.Error,
 ) {
 	return infoerr.NewError(trait.location, message, kind)
+}
+
+// nameable allows a tree node to have a name.
+type nameable struct {
+	name string
+}
+
+// Name returns the name of the node.
+func (trait nameable) Name () (name string) {
+	name = trait.name
+	return
+}
+// setName sets the name of the node.
+func (trait *nameable) setName (name string) {
+	trait.name = name
 }
