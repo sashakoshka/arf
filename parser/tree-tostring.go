@@ -47,35 +47,11 @@ func (tree *SyntaxTree) ToString (indent int) (output string) {
 	
 	output += doIndent(indent, "---\n")
 
-	typeSectionKeys := sortMapKeysAlphabetically(tree.typeSections)
-	for _, name := range typeSectionKeys {
-		output += tree.typeSections[name].ToString(indent)
+	sectionKeys := sortMapKeysAlphabetically(tree.sections)
+	for _, name := range sectionKeys {
+		output += tree.sections[name].ToString(indent)
 	}
 
-	objtSectionKeys := sortMapKeysAlphabetically(tree.objtSections)
-	for _, name := range objtSectionKeys {
-		output += tree.objtSections[name].ToString(indent)
-	}
-
-	enumSectionKeys := sortMapKeysAlphabetically(tree.enumSections)
-	for _, name := range enumSectionKeys {
-		output += tree.enumSections[name].ToString(indent)
-	}
-
-	faceSectionKeys := sortMapKeysAlphabetically(tree.faceSections)
-	for _, name := range faceSectionKeys {
-		output += tree.faceSections[name].ToString(indent)
-	}
-
-	dataSectionKeys := sortMapKeysAlphabetically(tree.dataSections)
-	for _, name := range dataSectionKeys {
-		output += tree.dataSections[name].ToString(indent)
-	}
-
-	funcSectionKeys := sortMapKeysAlphabetically(tree.funcSections)
-	for _, name := range funcSectionKeys {
-		output += tree.funcSections[name].ToString(indent)
-	}
 	return
 }
 

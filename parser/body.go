@@ -11,73 +11,43 @@ func (parser *ParsingOperation) parseBody () (err error) {
 		err = parser.expect(lexer.TokenKindName)
 		if err != nil { return }
 		sectionType := parser.token.Value().(string)
-		
+
 		switch sectionType {
 		case "data":
-			var section *DataSection
-			section, err = parser.parseDataSection()
-			if parser.tree.dataSections == nil {
-				parser.tree.dataSections =
-					make(map[string] *DataSection)
-			}
-			parser.tree.dataSections[section.name] = section
-			parser.tree.sections[section.name] = section
-			if err != nil { return }
+			section, parseErr := parser.parseDataSection()
+			err = parser.tree.addSection(section)
+			if err      != nil { return }
+			if parseErr != nil { return }
 			
 		case "type":
-			var section *TypeSection
-			section, err = parser.parseTypeSection()
-			if parser.tree.typeSections == nil {
-				parser.tree.typeSections =
-					make(map[string] *TypeSection)
-			}
-			parser.tree.typeSections[section.name] = section
-			parser.tree.sections[section.name] = section
-			if err != nil { return }
+			section, parseErr := parser.parseTypeSection()
+			err = parser.tree.addSection(section)
+			if err      != nil { return }
+			if parseErr != nil { return }
 			
 		case "objt":
-			var section *ObjtSection
-			section, err = parser.parseObjtSection()
-			if parser.tree.objtSections == nil {
-				parser.tree.objtSections =
-					make(map[string] *ObjtSection)
-			}
-			parser.tree.objtSections[section.name] = section
-			parser.tree.sections[section.name] = section
-			if err != nil { return }
+			section, parseErr := parser.parseObjtSection()
+			err = parser.tree.addSection(section)
+			if err      != nil { return }
+			if parseErr != nil { return }
 			
 		case "face":
-			var section *FaceSection
-			section, err = parser.parseFaceSection()
-			if parser.tree.faceSections == nil {
-				parser.tree.faceSections =
-					make(map[string] *FaceSection)
-			}
-			parser.tree.faceSections[section.name] = section
-			parser.tree.sections[section.name] = section
-			if err != nil { return }
+			section, parseErr := parser.parseFaceSection()
+			err = parser.tree.addSection(section)
+			if err      != nil { return }
+			if parseErr != nil { return }
 			
 		case "enum":
-			var section *EnumSection
-			section, err = parser.parseEnumSection()
-			if parser.tree.enumSections == nil {
-				parser.tree.enumSections =
-					make(map[string] *EnumSection)
-			}
-			parser.tree.enumSections[section.name] = section
-			parser.tree.sections[section.name] = section
-			if err != nil { return }
+			section, parseErr := parser.parseEnumSection()
+			err = parser.tree.addSection(section)
+			if err      != nil { return }
+			if parseErr != nil { return }
 			
 		case "func":
-			var section *FuncSection
-			section, err = parser.parseFuncSection()
-			if parser.tree.funcSections == nil {
-				parser.tree.funcSections =
-					make(map[string] *FuncSection)
-			}
-			parser.tree.funcSections[section.name] = section
-			parser.tree.sections[section.name] = section
-			if err != nil { return }
+			section, parseErr := parser.parseFuncSection()
+			err = parser.tree.addSection(section)
+			if err      != nil { return }
+			if parseErr != nil { return }
 			
 		default:
 			err = parser.token.NewError (
@@ -86,4 +56,19 @@ func (parser *ParsingOperation) parseBody () (err error) {
 			return
 		}
 	}
+}
+
+// addSection adds a section to the tree, ensuring it has a unique name within
+// the module.
+func (tree *SyntaxTree) addSection (section Section) (err error) {
+	_, exists := tree.sections[section.Name()]
+	if exists {
+		err = section.NewError (
+			"cannot have multiple sections with the same name",
+			infoerr.ErrorKindError)
+		return
+	}
+
+	tree.sections[section.Name()] = section
+	return
 }

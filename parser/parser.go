@@ -20,7 +20,12 @@ type ParsingOperation struct {
 // Parse reads the files located in the module specified by modulePath, and
 // converts them into an abstract syntax tree.
 func Parse (modulePath string) (tree *SyntaxTree, err error) {
-	parser := ParsingOperation { modulePath: modulePath }
+	parser := ParsingOperation {
+		modulePath: modulePath,
+		tree: &SyntaxTree {
+			sections: make(map[string] Section),			
+		},
+	}
 
 	if parser.modulePath[len(parser.modulePath) - 1] != '/' {
 		parser.modulePath += "/"
@@ -54,9 +59,6 @@ func (parser *ParsingOperation) parse (sourceFile *file.File) (err error) {
 	if err != nil { return }
 
 	// reset the parser
-	if parser.tree == nil {
-		parser.tree = &SyntaxTree { }
-	}
 	if len(tokens) == 0 { return }
 	parser.tokens = tokens
 	parser.token  = tokens[0]

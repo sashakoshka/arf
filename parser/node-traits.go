@@ -20,7 +20,7 @@ func (trait locatable) NewError (
 	message string,
 	kind    infoerr.ErrorKind,
 ) (
-	err infoerr.Error,
+	err error,
 ) {
 	err = infoerr.NewError(trait.location, message, kind)
 	return

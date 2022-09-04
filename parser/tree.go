@@ -2,6 +2,7 @@ package parser
 
 import "git.tebibyte.media/arf/arf/file"
 import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // SyntaxTree represents an abstract syntax tree. It covers an entire module. It
 // can be expected to be syntactically correct, but it might not be semantically
@@ -12,13 +13,6 @@ type SyntaxTree struct {
 
 	requires []string
 	sections map[string] Section
-	
-	typeSections map[string] *TypeSection
-	objtSections map[string] *ObjtSection
-	enumSections map[string] *EnumSection
-	faceSections map[string] *FaceSection
-	dataSections map[string] *DataSection
-	funcSections map[string] *FuncSection
 }
 
 // SectionKind differentiates Section interfaces.
@@ -40,6 +34,8 @@ type Section interface {
 	Kind       () (kind SectionKind)
 	Permission () (permission types.Permission)
 	Name       () (name string)
+	NewError   (message string, kind infoerr.ErrorKind) (err error)
+	ToString   (indent int) (output string)
 }
 
 // Identifier represents a chain of arguments separated by a dot.
