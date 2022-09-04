@@ -1,8 +1,8 @@
 package parser
 
-import "git.tebibyte.media/sashakoshka/arf/types"
-import "git.tebibyte.media/sashakoshka/arf/lexer"
-import "git.tebibyte.media/sashakoshka/arf/infoerr"
+import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/lexer"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // parseData parses a data section.
 func (parser *ParsingOperation) parseDataSection () (
@@ -73,7 +73,7 @@ func (parser *ParsingOperation) parseInitializationValues (
 		var initializationValues ObjectInitializationValues
 		initializationValues, err    = parser.parseObjectInitializationValues()
 		initializationArgument.kind  = ArgumentKindObjectInitializationValues
-		initializationArgument.value = &initializationValues
+		initializationArgument.value = initializationValues
 		
 	} else {
 	
@@ -82,7 +82,7 @@ func (parser *ParsingOperation) parseInitializationValues (
 		var initializationValues ArrayInitializationValues
 		initializationValues, err    = parser.parseArrayInitializationValues()
 		initializationArgument.kind  = ArgumentKindArrayInitializationValues
-		initializationArgument.value = &initializationValues
+		initializationArgument.value = initializationValues
 	}
 	
 	return

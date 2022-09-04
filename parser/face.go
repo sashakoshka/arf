@@ -1,8 +1,8 @@
 package parser
 
-import "git.tebibyte.media/sashakoshka/arf/types"
-import "git.tebibyte.media/sashakoshka/arf/lexer"
-import "git.tebibyte.media/sashakoshka/arf/infoerr"
+import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/lexer"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // parseFaceSection parses an interface section.
 func (parser *ParsingOperation) parseFaceSection () (
@@ -64,7 +64,6 @@ func (parser *ParsingOperation) parseFaceSection () (
 		
 		if err != nil { return }
 	}
-	return
 }
 
 // parseFaceBehavior parses a single interface behavior. Indentation level is
@@ -127,6 +126,4 @@ func (parser *ParsingOperation) parseFaceBehavior () (
 				declaration)
 		}
 	}
-	
-	return
 }

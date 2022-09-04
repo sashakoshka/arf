@@ -1,7 +1,7 @@
 package lexer
 
 import "strconv"
-import "git.tebibyte.media/sashakoshka/arf/infoerr"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // tokenizeSymbolBeginning lexes a token that starts with a number.
 func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error) {
@@ -36,10 +36,17 @@ func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error
 			isFloat, amountRead,
 			err = lexer.tokenizeNumber(10)
 			
-		} else if lexer.char >= '0' && lexer.char <= '9' {
+		} else if lexer.char >= '0' && lexer.char <= '7' {
 			intNumber, floatNumber,
 			isFloat, amountRead,
 			err = lexer.tokenizeNumber(8)
+		} else if lexer.char != ' ' {    // a space should correctly
+			err = infoerr.NewError ( // terminate this
+				lexer.file.Location(1),
+				"unexpected rune '" + string(lexer.char) +
+				"' in integer literal",
+				infoerr.ErrorKindError)
+			return
 		}
 	} else {
 		intNumber, floatNumber,

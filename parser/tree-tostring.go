@@ -2,6 +2,7 @@ package parser
 
 import "fmt"
 import "sort"
+import "git.tebibyte.media/arf/arf/lexer"
 
 func doIndent (indent int, input ...string) (output string) {
 	for index := 0; index < indent; index ++ {
@@ -70,10 +71,15 @@ func (tree *SyntaxTree) ToString (indent int) (output string) {
 	for _, name := range dataSectionKeys {
 		output += tree.dataSections[name].ToString(indent)
 	}
+
+	funcSectionKeys := sortMapKeysAlphabetically(tree.funcSections)
+	for _, name := range funcSectionKeys {
+		output += tree.funcSections[name].ToString(indent)
+	}
 	return
 }
 
-func (identifier *Identifier) ToString () (output string) {
+func (identifier Identifier) ToString () (output string) {
 	for index, trailItem := range identifier.trail {
 		if index > 0 {
 			output += "."
@@ -110,13 +116,13 @@ func (what *Type) ToString () (output string) {
 	return
 }
 
-func (declaration *Declaration) ToString () (output string) {
+func (declaration Declaration) ToString () (output string) {
 	output += declaration.name + ":"
 	output += declaration.what.ToString()
 	return
 }
 
-func (attributes *ObjectInitializationValues) ToString (
+func (attributes ObjectInitializationValues) ToString (
 	indent int,
 ) (
 	output string,
@@ -136,7 +142,7 @@ func (attributes *ObjectInitializationValues) ToString (
 	return
 }
 
-func (values *ArrayInitializationValues) ToString (
+func (values ArrayInitializationValues) ToString (
 	indent int,
 ) (
 	output string,
@@ -145,39 +151,6 @@ func (values *ArrayInitializationValues) ToString (
 		output += value.ToString(indent, true)
 	}
 	
-	return
-}
-
-func (phrase *Phrase) ToString (indent int, breakLine bool) (output string) {
-	if breakLine {
-		output += doIndent (
-			indent,
-			"[", phrase.command.ToString(0, false))
-		output += "\n"
-		for _, argument := range phrase.arguments {
-			output += doIndent (
-				indent,
-				argument.ToString(indent + 1, true))
-		}
-	} else {
-		output += "[" + phrase.command.ToString(0, false)
-		for _, argument := range phrase.arguments {
-			output += " " + argument.ToString(0, false)
-		}
-	}
-	
-	output += "]"
-
-	if len(phrase.returnsTo) > 0 {
-		output += " ->"
-		for _, returnItem := range phrase.returnsTo {
-			output += " " + returnItem.ToString(0, false)
-		}
-	}
-
-	if breakLine {
-		output += "\n"
-	}
 	return
 }
 
@@ -191,30 +164,30 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 
 	switch argument.kind {
 	case ArgumentKindPhrase:
-		output += argument.value.(*Phrase).ToString (	
+		output += argument.value.(Phrase).ToString (	
 				indent,
 				breakLine)
 	
 	case ArgumentKindObjectInitializationValues:
 		// this should only appear in contexts where breakLine is true
-		output += argument.value.(*ObjectInitializationValues).
+		output += argument.value.(ObjectInitializationValues).
 				ToString(indent)
 	
 	case ArgumentKindArrayInitializationValues:
 		// this should only appear in contexts where breakLine is true
-		output += argument.value.(*ArrayInitializationValues).
+		output += argument.value.(ArrayInitializationValues).
 				ToString(indent)
 	
 	case ArgumentKindIdentifier:
 		output += doIndent (
 			indent,
-			argument.value.(*Identifier).ToString())
+			argument.value.(Identifier).ToString())
 		if breakLine { output += "\n" }
 	
 	case ArgumentKindDeclaration:
 		output += doIndent (
 			indent,
-			argument.value.(*Declaration).ToString())
+			argument.value.(Declaration).ToString())
 		if breakLine { output += "\n" }
 	
 	case ArgumentKindInt, ArgumentKindUInt, ArgumentKindFloat:
@@ -234,10 +207,71 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 		if breakLine { output += "\n" }
 		
 	case ArgumentKindOperator:
-		// TODO
-		// also when parsing this argument kind, don't do it in the
-		// argument parsing function. do it specifically when parsing a
-		// phrase command.
+		var stringValue string
+		switch argument.value.(lexer.TokenKind) {
+	        case lexer.TokenKindColon:
+	        	stringValue = ":"
+	        case lexer.TokenKindPlus:
+	        	stringValue = "+"
+	        case lexer.TokenKindMinus:
+	        	stringValue = "-"
+	        case lexer.TokenKindIncrement:
+	        	stringValue = "++"
+	        case lexer.TokenKindDecrement:
+	        	stringValue = "--"
+	        case lexer.TokenKindAsterisk:
+	        	stringValue = "*"
+	        case lexer.TokenKindSlash:
+	        	stringValue = "/"
+	        case lexer.TokenKindExclamation:
+	        	stringValue = "!"
+	        case lexer.TokenKindPercent:
+	        	stringValue = "%"
+	        case lexer.TokenKindPercentAssignment:
+	        	stringValue = "%="
+	        case lexer.TokenKindTilde:
+	        	stringValue = "~"
+	        case lexer.TokenKindTildeAssignment:
+	        	stringValue = "~="
+	        case lexer.TokenKindEqualTo:
+	        	stringValue = "="
+	        case lexer.TokenKindNotEqualTo:
+	        	stringValue = "!="
+	        case lexer.TokenKindLessThanEqualTo:
+	        	stringValue = "<="
+	        case lexer.TokenKindLessThan:
+	        	stringValue = "<"
+	        case lexer.TokenKindLShift:
+	        	stringValue = "<<"
+	        case lexer.TokenKindLShiftAssignment:
+	        	stringValue = "<<="
+	        case lexer.TokenKindGreaterThan:
+	        	stringValue = ">"
+	        case lexer.TokenKindGreaterThanEqualTo:
+	        	stringValue = ">="
+	        case lexer.TokenKindRShift:
+	        	stringValue = ">>"
+	        case lexer.TokenKindRShiftAssignment:
+	        	stringValue = ">>="
+	        case lexer.TokenKindBinaryOr:
+	        	stringValue = "|"
+	        case lexer.TokenKindBinaryOrAssignment:
+	        	stringValue = "|="
+	        case lexer.TokenKindLogicalOr:
+	        	stringValue = "||"
+	        case lexer.TokenKindBinaryAnd:
+	        	stringValue = "&"
+	        case lexer.TokenKindBinaryAndAssignment:
+	        	stringValue = "&="
+	        case lexer.TokenKindLogicalAnd:
+	        	stringValue = "&&"
+	        case lexer.TokenKindBinaryXor:
+	        	stringValue = "^"
+	        case lexer.TokenKindBinaryXorAssignment:
+	        	stringValue = "^="
+		}
+		output += doIndent(indent, stringValue)
+		if breakLine { output += "\n" }
 	}
 
 	return
@@ -387,5 +421,89 @@ func (behavior *FaceBehavior) ToString (indent int) (output string) {
 		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
 	}
 
+	return
+}
+
+func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
+	if ownLine {
+		output += doIndent(indent)
+	}
+
+	var initializationValues Argument
+	
+	output += "[" + phrase.command.ToString(0, false)
+	for _, argument := range phrase.arguments {
+		isInitializationValue :=
+			argument.kind == ArgumentKindObjectInitializationValues ||
+			argument.kind == ArgumentKindArrayInitializationValues
+		if isInitializationValue {
+			initializationValues = argument
+		} else {
+			output += " " + argument.ToString(0, false)
+		}
+	}
+	output += "]"
+
+	if len(phrase.returnsTo) > 0 {
+		output += " ->"
+		for _, returnItem := range phrase.returnsTo {
+			output += " " + returnItem.ToString(0, false)
+		}
+	}
+
+	if ownLine {
+		output += "\n"
+		if initializationValues.kind != ArgumentKindNil {
+			output += initializationValues.ToString(indent + 1, true)
+		}
+		output += phrase.block.ToString(indent + 1)
+	}
+	return
+}
+
+func (block Block) ToString (indent int) (output string) {
+	for _, phrase := range block {
+		output += phrase.ToString(indent, true)
+	}
+
+	return
+}
+
+func (funcOutput FuncOutput) ToString () (output string) {
+	output += funcOutput.Declaration.ToString()
+	if funcOutput.defaultValue.kind != ArgumentKindNil {
+		output += " " + funcOutput.defaultValue.ToString(0, false)
+	}
+	return
+}
+
+func (section *FuncSection) ToString (indent int) (output string) {
+	output += doIndent (
+		indent,
+		"func ",
+		section.permission.ToString(), " ",
+		section.name, "\n")
+	
+	if section.receiver != nil {
+		output += doIndent (
+			indent + 1,
+			"@ ", section.receiver.ToString(), "\n")
+	}
+	
+	for _, inputItem := range section.inputs {
+		output += doIndent(indent + 1, "> ", inputItem.ToString(), "\n")
+	}
+	
+	for _, outputItem := range section.outputs {
+		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
+	}
+
+	output += doIndent(indent + 1, "---\n")
+
+	if section.external {
+		output += doIndent(indent + 1, "external\n")
+	}
+	
+	output += section.root.ToString(indent + 1)
 	return
 }

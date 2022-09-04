@@ -1,7 +1,7 @@
 package parser
 
-import "git.tebibyte.media/sashakoshka/arf/file"
-import "git.tebibyte.media/sashakoshka/arf/types"
+import "git.tebibyte.media/arf/arf/file"
+import "git.tebibyte.media/arf/arf/types"
 
 // SyntaxTree represents an abstract syntax tree. It covers an entire module. It
 // can be expected to be syntactically correct, but it might not be semantically
@@ -16,6 +16,7 @@ type SyntaxTree struct {
 	enumSections map[string] *EnumSection
 	faceSections map[string] *FaceSection
 	dataSections map[string] *DataSection
+	funcSections map[string] *FuncSection
 }
 
 // Identifier represents a chain of arguments separated by a dot.
@@ -78,15 +79,6 @@ type ArrayInitializationValues struct {
 	values   []Argument
 }
 
-// Phrase represents a function call or operator. In ARF they are the same
-// syntactical concept.
-type Phrase struct {
-	location  file.Location
-	command   Argument
-	arguments []Argument
-	returnsTo []Argument
-}
-
 // ArgumentKind specifies the type of thing the value of an argument should be
 // cast to.
 type ArgumentKind int
@@ -97,7 +89,7 @@ const (
 	// [name argument]
 	// [name argument argument]
 	// etc...
-	ArgumentKindPhrase = iota
+	ArgumentKindPhrase
 
 	// {name}
 	ArgumentKindDereference
@@ -185,7 +177,7 @@ type ObjtMember struct {
 	defaultValue Argument
 }
 
-// ObjtSection represents an object type definition
+// ObjtSection represents an object type definition.
 type ObjtSection struct {
 	location file.Location
 	name     string
@@ -195,6 +187,7 @@ type ObjtSection struct {
 	members      []ObjtMember
 }
 
+// EnumMember represents a member of an enum section.
 type EnumMember struct {
 	location file.Location
 	name     string
@@ -228,4 +221,61 @@ type FaceSection struct {
 	
 	permission types.Permission
 	behaviors  map[string] FaceBehavior
+}
+
+// PhraseKind determines what semantic role a phrase plays.
+type PhraseKind int
+
+const (
+	PhraseKindCall = iota
+	PhraseKindCallExternal
+	PhraseKindOperator
+	PhraseKindSet
+	PhraseKindReference
+	PhraseKindDefer
+	PhraseKindIf
+	PhraseKindElseIf
+	PhraseKindElse
+	PhraseKindSwitch
+	PhraseKindCase
+	PhraseKindWhile
+	PhraseKindFor
+)
+
+// Phrase represents a function call or operator. In ARF they are the same
+// syntactical concept.
+type Phrase struct {
+	location  file.Location
+	command   Argument
+	arguments []Argument
+	returnsTo []Argument
+
+	kind PhraseKind
+
+	// only applicable for control flow phrases
+	block Block
+}
+
+// Block represents a scoped/indented block of code.
+type Block []Phrase
+
+// FuncOutput represents an input a function section. It is unlike an input in
+// that it can have a default value.
+type FuncOutput struct {
+	Declaration
+	defaultValue Argument
+}
+
+// FuncSection represents a function section.
+type FuncSection struct {
+	location   file.Location
+	name       string
+	permission types.Permission
+	
+	receiver *Declaration
+	inputs   []Declaration
+	outputs  []FuncOutput
+	root     Block
+
+	external bool
 }

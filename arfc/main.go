@@ -2,7 +2,7 @@ package arfc
 
 import "os"
 import "fmt"
-import "git.tebibyte.media/sashakoshka/arf"
+import "git.tebibyte.media/arf/arf"
 
 func main () {
 	if len(os.Args) != 2 {

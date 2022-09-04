@@ -1,7 +1,7 @@
 package parser
 
-import "git.tebibyte.media/sashakoshka/arf/lexer"
-import "git.tebibyte.media/sashakoshka/arf/infoerr"
+import "git.tebibyte.media/arf/arf/lexer"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 var validArgumentStartTokens = []lexer.TokenKind {
 	lexer.TokenKindName,
@@ -12,7 +12,6 @@ var validArgumentStartTokens = []lexer.TokenKind {
 	lexer.TokenKindString,
 	lexer.TokenKindRune,
 	
-	lexer.TokenKindLBrace,
 	lexer.TokenKindLBracket,
 }
 
@@ -29,6 +28,8 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 		if err != nil { return }
 
 		if parser.token.Is(lexer.TokenKindColon) {
+			err = parser.nextToken()
+			if err != nil { return }
 			var what Type
 			what, err = parser.parseType()
 			if err != nil { return }
@@ -77,9 +78,9 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 		argument.value = parser.token.Value().(rune)
 		parser.nextToken()
 		
-	// case lexer.TokenKindLBrace:
-		
-	// case lexer.TokenKindLBracket:
+	case lexer.TokenKindLBracket:
+		argument.kind  = ArgumentKindPhrase
+		argument.value, err = parser.parseArgumentLevelPhrase()
 
 	default:
 		panic (

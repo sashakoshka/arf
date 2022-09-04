@@ -1,3 +1,3 @@
-module git.tebibyte.media/sashakoshka/arf
+module git.tebibyte.media/arf/arf
 
 go 1.18

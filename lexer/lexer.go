@@ -1,9 +1,9 @@
 package lexer
 
 import "io"
-import "git.tebibyte.media/sashakoshka/arf/file"
-import "git.tebibyte.media/sashakoshka/arf/types"
-import "git.tebibyte.media/sashakoshka/arf/infoerr"
+import "git.tebibyte.media/arf/arf/file"
+import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // LexingOperation holds information about an ongoing lexing operataion.
 type LexingOperation struct {
@@ -253,14 +253,26 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		lexer.addToken(token)
 	case '%':
 		token := lexer.newToken()
-		token.kind = TokenKindPercent
-		lexer.addToken(token)
 		err = lexer.nextRune()
+		if err != nil { return }
+		token.kind = TokenKindPercent
+		if lexer.char == '=' {
+			token.kind = TokenKindPercentAssignment
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
+		}
+		lexer.addToken(token)
 	case '~':
 		token := lexer.newToken()
-		token.kind = TokenKindTilde
-		lexer.addToken(token)
 		err = lexer.nextRune()
+		if err != nil { return }
+		token.kind = TokenKindTilde
+		if lexer.char == '=' {
+			token.kind = TokenKindTildeAssignment
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
+		}
+		lexer.addToken(token)
 	case '=':
 		token := lexer.newToken()
 		token.kind = TokenKindEqualTo
@@ -275,6 +287,11 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			token.kind = TokenKindLShift
 			err = lexer.nextRune()
 			token.location.SetWidth(2)
+			if lexer.char == '=' {
+				token.kind = TokenKindLShiftAssignment
+				err = lexer.nextRune()
+				token.location.SetWidth(3)
+			}
 		} else if lexer.char == '=' {
 			token.kind = TokenKindLessThanEqualTo
 			err = lexer.nextRune()
@@ -290,6 +307,11 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			token.kind = TokenKindRShift
 			err = lexer.nextRune()
 			token.location.SetWidth(2)
+			if lexer.char == '=' {
+				token.kind = TokenKindRShiftAssignment
+				err = lexer.nextRune()
+				token.location.SetWidth(3)
+			}
 		} else if lexer.char == '=' {
 			token.kind = TokenKindGreaterThanEqualTo
 			err = lexer.nextRune()
@@ -305,6 +327,10 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 			token.kind = TokenKindLogicalOr
 			err = lexer.nextRune()
 			token.location.SetWidth(2)
+		} else if lexer.char == '=' {
+			token.kind = TokenKindBinaryOrAssignment
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
 		}
 		lexer.addToken(token)
 	case '&':
@@ -314,6 +340,21 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		token.kind = TokenKindBinaryAnd
 		if lexer.char == '&' {
 			token.kind = TokenKindLogicalAnd
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
+		} else if lexer.char == '=' {
+			token.kind = TokenKindBinaryAndAssignment
+			err = lexer.nextRune()
+			token.location.SetWidth(2)
+		}
+		lexer.addToken(token)
+	case '^':
+		token := lexer.newToken()
+		err = lexer.nextRune()
+		if err != nil { return }
+		token.kind = TokenKindBinaryXor
+		if lexer.char == '=' {
+			token.kind = TokenKindBinaryXorAssignment
 			err = lexer.nextRune()
 			token.location.SetWidth(2)
 		}
@@ -331,11 +372,11 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 }
 
 func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
+	token := lexer.newToken()
 	err = lexer.nextRune()
 	if err != nil { return }
 
 	if lexer.char == '-' {
-		token := lexer.newToken()
 		token.kind = TokenKindDecrement
 		token.location.SetWidth(2)
 
@@ -349,18 +390,16 @@ func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
 		}
 		lexer.addToken(token)
 	} else if lexer.char == '>' {
-		token := lexer.newToken()
 		token.kind = TokenKindReturnDirection
 		token.location.SetWidth(2)
 
-		err = lexer.nextRune() 
+		err = lexer.nextRune()
 		if err != nil { return }
 
 		lexer.addToken(token)
 	} else if lexer.char >= '0' && lexer.char <= '9' {
 		lexer.tokenizeNumberBeginning(true)
 	} else {
-		token := lexer.newToken()
 		token.kind = TokenKindMinus
 		lexer.addToken(token)
 	}

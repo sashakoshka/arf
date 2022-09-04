@@ -1,8 +1,8 @@
 package lexer
 
 import "fmt"
-import "git.tebibyte.media/sashakoshka/arf/file"
-import "git.tebibyte.media/sashakoshka/arf/infoerr"
+import "git.tebibyte.media/arf/arf/file"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // TokenKind is an enum represzenting what role a token has.
 type TokenKind int
@@ -43,20 +43,28 @@ const (
         TokenKindAt
         TokenKindExclamation
         TokenKindPercent
+        TokenKindPercentAssignment
         TokenKindTilde
+        TokenKindTildeAssignment
 
         TokenKindEqualTo
         TokenKindNotEqualTo
         TokenKindLessThanEqualTo
         TokenKindLessThan
         TokenKindLShift
+        TokenKindLShiftAssignment
         TokenKindGreaterThan
         TokenKindGreaterThanEqualTo
         TokenKindRShift
+        TokenKindRShiftAssignment
         TokenKindBinaryOr
+        TokenKindBinaryOrAssignment
         TokenKindLogicalOr
         TokenKindBinaryAnd
+        TokenKindBinaryAndAssignment
         TokenKindLogicalAnd
+        TokenKindBinaryXor
+        TokenKindBinaryXorAssignment
 )
 
 // Token represents a single token. It holds its location in the file, as well
@@ -65,6 +73,14 @@ type Token struct {
 	kind     TokenKind
 	location file.Location
 	value    any
+}
+
+// NewToken provides a way for a new token to be created by other modules for
+// comparison purposes.
+func NewToken (kind TokenKind, value any) (token Token) {
+	token.kind = kind
+	token.value = value
+	return
 }
 
 // Kind returns the semantic role of the token.
@@ -175,8 +191,12 @@ func (tokenKind TokenKind) Describe () (description string) {
 		description = "Exclamation"
 	case TokenKindPercent:
 		description = "Percent"
+	case TokenKindPercentAssignment:
+		description = "PercentAssignment"
 	case TokenKindTilde:
 		description = "Tilde"
+	case TokenKindTildeAssignment:
+		description = "TildeAssignment"
 	case TokenKindEqualTo:
 		description = "EqualTo"
 	case TokenKindNotEqualTo:
@@ -187,20 +207,32 @@ func (tokenKind TokenKind) Describe () (description string) {
 		description = "LessThanEqualTo"
 	case TokenKindLShift:
 		description = "LShift"
+	case TokenKindLShiftAssignment:
+		description = "LShiftAssignment"
 	case TokenKindGreaterThan:
 		description = "GreaterThan"
 	case TokenKindGreaterThanEqualTo:
 		description = "GreaterThanEqualTo"
 	case TokenKindRShift:
 		description = "RShift"
+	case TokenKindRShiftAssignment:
+		description = "RShiftAssignment"
 	case TokenKindBinaryOr:
 		description = "BinaryOr"
+	case TokenKindBinaryOrAssignment:
+		description = "BinaryOrAssignment"
 	case TokenKindLogicalOr:
 		description = "LogicalOr"
 	case TokenKindBinaryAnd:
 		description = "BinaryAnd"
+	case TokenKindBinaryAndAssignment:
+		description = "BinaryAndAssignment"
 	case TokenKindLogicalAnd:
 		description = "LogicalAnd"
+	case TokenKindBinaryXor:
+		description = "BinaryXor"
+	case TokenKindBinaryXorAssignment:
+		description = "BinaryXorAssignment"
 	}
 
 	return
