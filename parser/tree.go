@@ -171,8 +171,7 @@ type DataSection struct {
 	nameable
 	typeable
 	permissionable
-	
-	value Argument
+	valuable
 }
 
 // TypeSection represents a blind type definition.
@@ -202,7 +201,7 @@ type ObjtSection struct {
 	permissionable
 	inherits Identifier
 
-	members      []ObjtMember
+	members []ObjtMember
 }
 
 // EnumMember represents a member of an enum section.

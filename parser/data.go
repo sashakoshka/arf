@@ -5,13 +5,12 @@ import "git.tebibyte.media/arf/arf/lexer"
 
 // parseData parses a data section.
 func (parser *ParsingOperation) parseDataSection () (
-	section *DataSection,
+	section DataSection,
 	err     error,
 ) {
 	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
 	
-	section = &DataSection { }
 	section.location = parser.token.Location()
 
 	err = parser.nextToken(lexer.TokenKindPermission)

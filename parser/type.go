@@ -6,13 +6,12 @@ import "git.tebibyte.media/arf/arf/lexer"
 // parseTypeSection parses a blind type definition, meaning it can inherit from
 // anything including primitives, but cannot define structure.
 func (parser *ParsingOperation) parseTypeSection () (
-	section *TypeSection,
+	section TypeSection,
 	err     error,
 ) {
 	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
 	
-	section = &TypeSection { }
 	section.location = parser.token.Location()
 
 	// get permission

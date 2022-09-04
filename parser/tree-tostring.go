@@ -30,7 +30,7 @@ func sortMapKeysAlphabetically[KEY_TYPE any] (
 	return
 }
 
-func (tree *SyntaxTree) ToString (indent int) (output string) {
+func (tree SyntaxTree) ToString (indent int) (output string) {
 	output += doIndent(indent, ":arf\n")
 
 	if tree.author != "" {
@@ -66,7 +66,7 @@ func (identifier Identifier) ToString () (output string) {
 	return
 }
 
-func (what *Type) ToString () (output string) {
+func (what Type) ToString () (output string) {
 	if what.kind == TypeKindBasic {
 		output += what.name.ToString()
 	} else {
@@ -130,7 +130,7 @@ func (values ArrayInitializationValues) ToString (
 	return
 }
 
-func (argument *Argument) ToString (indent int, breakLine bool) (output string) {
+func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 	if !breakLine { indent = 0 }
 	if argument.kind == ArgumentKindNil {
 		output += "NIL-ARGUMENT"
@@ -255,7 +255,7 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 	return
 }
 
-func (section *DataSection) ToString (indent int) (output string) {
+func (section DataSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
 		"data ",
@@ -279,7 +279,7 @@ func (section *DataSection) ToString (indent int) (output string) {
 	return
 }
 
-func (section *TypeSection) ToString (indent int) (output string) {
+func (section TypeSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
 		"type ",
@@ -331,7 +331,7 @@ func (member ObjtMember) ToString (indent int) (output string) {
 	return
 }
 
-func (section *ObjtSection) ToString (indent int) (output string) {
+func (section ObjtSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
 		"objt ",
@@ -345,7 +345,7 @@ func (section *ObjtSection) ToString (indent int) (output string) {
 	return
 }
 
-func (section *EnumSection) ToString (indent int) (output string) {
+func (section EnumSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
 		"enum ",
@@ -373,7 +373,7 @@ func (section *EnumSection) ToString (indent int) (output string) {
 	return
 }
 
-func (section *FaceSection) ToString (indent int) (output string) {
+func (section FaceSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
 		"face ",
@@ -388,7 +388,7 @@ func (section *FaceSection) ToString (indent int) (output string) {
 	return
 }
 
-func (behavior *FaceBehavior) ToString (indent int) (output string) {
+func (behavior FaceBehavior) ToString (indent int) (output string) {
 	output += doIndent(indent, behavior.name, "\n")
 	
 	for _, inputItem := range behavior.inputs {
@@ -455,7 +455,7 @@ func (funcOutput FuncOutput) ToString () (output string) {
 	return
 }
 
-func (section *FuncSection) ToString (indent int) (output string) {
+func (section FuncSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
 		"func ",

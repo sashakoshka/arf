@@ -7,13 +7,12 @@ import "git.tebibyte.media/arf/arf/infoerr"
 // parseObjtSection parses an object type definition. This allows for structured
 // types to be defined, and for member variables to be added and overridden.
 func (parser *ParsingOperation) parseObjtSection () (
-	section *ObjtSection,
+	section ObjtSection,
 	err     error,
 ) {
 	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
 	
-	section = &ObjtSection { }
 	section.location = parser.token.Location()
 
 	// get permission
@@ -39,7 +38,7 @@ func (parser *ParsingOperation) parseObjtSection () (
 	if err != nil { return }
 
 	// parse members
-	err = parser.parseObjtMembers(section)
+	err = parser.parseObjtMembers(&section)
 	if err != nil { return }
 	
 	if len(section.members) == 0 {
