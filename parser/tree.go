@@ -18,6 +18,24 @@ type SyntaxTree struct {
 	funcSections map[string] *FuncSection
 }
 
+// SectionKind differentiates Section interfaces.
+type SectionKind int
+
+const (
+	SectionKindType = iota
+	SectionKindObjt
+	SectionKindEnum
+	SectionKindFace
+	SectionKindData
+	SectionKindFunc
+)
+
+// Section can be any kind of section. You can find out what type of section it
+// is with the Kind method.
+type Section interface {
+	Kind () (kind SectionKind)
+}
+
 // Identifier represents a chain of arguments separated by a dot.
 type Identifier struct {
 	locatable

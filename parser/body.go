@@ -3,6 +3,8 @@ package parser
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
+// TODO: parser must ensure that these names are unique
+
 // parse body parses the body of an arf file, after the metadata header.
 func (parser *ParsingOperation) parseBody () (err error) {
 	for {
