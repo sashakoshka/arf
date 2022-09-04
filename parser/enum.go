@@ -4,6 +4,7 @@ import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
+// parseEnumSection parses an enumerated type section.
 func (parser *ParsingOperation) parseEnumSection () (
 	section *EnumSection,
 	err     error,

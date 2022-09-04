@@ -1,7 +1,6 @@
 package parser
 
 import "git.tebibyte.media/arf/arf/file"
-import "git.tebibyte.media/arf/arf/types"
 
 // SyntaxTree represents an abstract syntax tree. It covers an entire module. It
 // can be expected to be syntactically correct, but it might not be semantically
@@ -151,9 +150,9 @@ type DataSection struct {
 	locatable
 	nameable
 	typeable
+	permissionable
 	
-	permission types.Permission
-	value      Argument
+	value Argument
 }
 
 // TypeSection represents a blind type definition.
@@ -161,8 +160,8 @@ type TypeSection struct {
 	locatable
 	nameable
 	typeable
+	permissionable
 	
-	permission   types.Permission
 	defaultValue Argument
 }
 
@@ -171,9 +170,9 @@ type ObjtMember struct {
 	locatable
 	nameable
 	typeable
+	permissionable
 	
 	bitWidth     uint64
-	permission   types.Permission
 	defaultValue Argument
 }
 
@@ -181,9 +180,9 @@ type ObjtMember struct {
 type ObjtSection struct {
 	locatable
 	nameable
+	permissionable
 	inherits Identifier
 
-	permission   types.Permission
 	members      []ObjtMember
 }
 
@@ -199,9 +198,9 @@ type EnumSection struct {
 	locatable
 	nameable
 	typeable
+	permissionable
 
-	permission types.Permission
-	members    []EnumMember
+	members []EnumMember
 }
 
 // FaceBehavior represents a behavior of an interface section.
@@ -217,9 +216,9 @@ type FaceBehavior struct {
 type FaceSection struct {
 	locatable
 	nameable
+	permissionable
 	inherits Identifier
 	
-	permission types.Permission
 	behaviors  map[string] FaceBehavior
 }
 
@@ -270,7 +269,7 @@ type FuncOutput struct {
 type FuncSection struct {
 	locatable
 	nameable
-	permission types.Permission
+	permissionable
 	
 	receiver *Declaration
 	inputs   []Declaration

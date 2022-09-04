@@ -2,7 +2,6 @@ package parser
 
 import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/lexer"
-// import "git.tebibyte.media/arf/arf/infoerr"
 
 // parseTypeSection parses a blind type definition, meaning it can inherit from
 // anything including primitives, but cannot define structure.

@@ -1,6 +1,7 @@
 package parser
 
 import "git.tebibyte.media/arf/arf/file"
+import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // locatable allows a tree node to have a location.
@@ -21,7 +22,8 @@ func (trait locatable) NewError (
 ) (
 	err infoerr.Error,
 ) {
-	return infoerr.NewError(trait.location, message, kind)
+	err = infoerr.NewError(trait.location, message, kind)
+	return
 }
 
 // nameable allows a tree node to have a name.
@@ -41,5 +43,16 @@ type typeable struct {
 
 // Type returns the type of the node.
 func (trait typeable) Type () (what Type) {
-	return trait.what
+	what =  trait.what
+	return
+}
+
+// permissionable allows a node to have a permission.
+type permissionable struct {
+	permission types.Permission
+}
+
+func (trait permissionable) Permission () (permission types.Permission) {
+	permission = trait.permission
+	return
 }
