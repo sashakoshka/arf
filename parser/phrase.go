@@ -17,6 +17,7 @@ var operatorTokens = []lexer.TokenKind {
         lexer.TokenKindPercentAssignment,
         lexer.TokenKindTilde,
         lexer.TokenKindTildeAssignment,
+        lexer.TokenKindAssignment,
         lexer.TokenKindEqualTo,
         lexer.TokenKindNotEqualTo,
         lexer.TokenKindLessThanEqualTo,
@@ -102,7 +103,6 @@ func (parser *ParsingOperation) parseBlock (
 		block = append(block, phrase)
 		if err != nil { return }
 	}
-	return
 }
 
 // parseBlockLevelPhrase parses a phrase that is not being used as an argument
@@ -214,7 +214,7 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 	if err != nil { return }
 
 	// if this is a set phrase, parse initialization values under it
-	if phrase.kind == PhraseKindSet {
+	if phrase.kind == PhraseKindAssign {
 		var values Argument
 		values, err = parser.parseInitializationValues(indent)
 
@@ -308,6 +308,8 @@ func (parser *ParsingOperation) parsePhraseCommand () (
 
 		if parser.token.Is(lexer.TokenKindColon) {
 			kind = PhraseKindCase
+		} else if parser.token.Is(lexer.TokenKindAssignment) {
+			kind = PhraseKindAssign
 		} else {
 			kind = PhraseKindOperator
 		}
@@ -328,8 +330,6 @@ func (parser *ParsingOperation) parsePhraseCommand () (
 		identifier := command.value.(Identifier)
 		if len(identifier.trail) == 1 {
 			switch identifier.trail[0] {
-			case "set":
-				kind = PhraseKindSet
 			case "loc":
 				kind = PhraseKindReference
 			case "defer":

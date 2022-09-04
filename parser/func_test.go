@@ -33,7 +33,8 @@ func ro eMath
 	---
 	[++ x]
 	[-- y]
-	[set z [+ [* 250 0] 98 x [/ 9832 y] 930]]
+	[= z [+ [* 250 0] 98 x [/ 9832 y] 930]]
+	[== 4 4]
 	[! true]
 	[~ 1]
 	[~= x]
@@ -100,9 +101,9 @@ func ro gControlFlow
 			[otherThing]
 func ro hSetPhrase
 	---
-	[set x:Int 3]
-	[set y:{Int} [loc x]]
-	[set z:{Int 8}]
+	[= x:Int 3]
+	[= y:{Int} [loc x]]
+	[= z:{Int 8}]
 		398
 		9
 		2309
@@ -111,7 +112,7 @@ func ro hSetPhrase
 		478
 		555
 		123
-	[set bird:Bird]
+	[= bird:Bird]
 		.that
 			.whenYou 99999
 		.this 324

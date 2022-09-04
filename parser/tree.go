@@ -230,7 +230,7 @@ const (
 	PhraseKindCall = iota
 	PhraseKindCallExternal
 	PhraseKindOperator
-	PhraseKindSet
+	PhraseKindAssign
 	PhraseKindReference
 	PhraseKindDefer
 	PhraseKindIf

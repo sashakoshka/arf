@@ -233,8 +233,10 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 	        	stringValue = "~"
 	        case lexer.TokenKindTildeAssignment:
 	        	stringValue = "~="
-	        case lexer.TokenKindEqualTo:
+	        case lexer.TokenKindAssignment:
 	        	stringValue = "="
+	        case lexer.TokenKindEqualTo:
+	        	stringValue = "=="
 	        case lexer.TokenKindNotEqualTo:
 	        	stringValue = "!="
 	        case lexer.TokenKindLessThanEqualTo:
