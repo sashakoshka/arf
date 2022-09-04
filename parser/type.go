@@ -38,10 +38,10 @@ func (parser *ParsingOperation) parseTypeSection () (
 		err = parser.nextToken()
 		if err != nil { return }
 
-		section.defaultValue, err = parser.parseInitializationValues(0)
+		section.value, err = parser.parseInitializationValues(0)
 		if err != nil { return }
 	} else {
-		section.defaultValue, err = parser.parseArgument()
+		section.value, err = parser.parseArgument()
 		if err != nil { return }
 
 		err = parser.expect(lexer.TokenKindNewline)

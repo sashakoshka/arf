@@ -312,16 +312,16 @@ func (section *TypeSection) ToString (indent int) (output string) {
 		section.what.ToString())
 
 	isComplexInitialization :=
-		section.defaultValue.kind == ArgumentKindObjectInitializationValues ||
-		section.defaultValue.kind == ArgumentKindArrayInitializationValues
+		section.value.kind == ArgumentKindObjectInitializationValues ||
+		section.value.kind == ArgumentKindArrayInitializationValues
 
-	if section.defaultValue.value == nil {
+	if section.value.value == nil {
 		output += "\n"
 	} else if isComplexInitialization {
 		output += "\n"
-		output += section.defaultValue.ToString(indent + 1, true)
+		output += section.value.ToString(indent + 1, true)
 	} else {
-		output += " " + section.defaultValue.ToString(0, false)
+		output += " " + section.value.ToString(0, false)
 		output += "\n"
 	}
 	return
@@ -339,16 +339,16 @@ func (member ObjtMember) ToString (indent int) (output string) {
 	}
 	
 	isComplexInitialization :=
-		member.defaultValue.kind == ArgumentKindObjectInitializationValues ||
-		member.defaultValue.kind == ArgumentKindArrayInitializationValues
+		member.value.kind == ArgumentKindObjectInitializationValues ||
+		member.value.kind == ArgumentKindArrayInitializationValues
 	
-	if member.defaultValue.value == nil {
+	if member.value.value == nil {
 		output += "\n"
 	} else if isComplexInitialization {
 		output += "\n"
-		output += member.defaultValue.ToString(indent + 1, true)
+		output += member.value.ToString(indent + 1, true)
 	} else {
-		output += " " + member.defaultValue.ToString(0, false)
+		output += " " + member.value.ToString(0, false)
 		output += "\n"
 	}
 
@@ -473,8 +473,8 @@ func (block Block) ToString (indent int) (output string) {
 
 func (funcOutput FuncOutput) ToString () (output string) {
 	output += funcOutput.Declaration.ToString()
-	if funcOutput.defaultValue.kind != ArgumentKindNil {
-		output += " " + funcOutput.defaultValue.ToString(0, false)
+	if funcOutput.value.kind != ArgumentKindNil {
+		output += " " + funcOutput.value.ToString(0, false)
 	}
 	return
 }

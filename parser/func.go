@@ -186,12 +186,12 @@ func (parser *ParsingOperation) parseFuncArguments (
 				err = parser.nextToken()
 				if err != nil { return }
 
-				output.defaultValue, err =
+				output.value, err =
 					parser.parseInitializationValues(1)
 				into.outputs = append(into.outputs, output)
 				if err != nil { return }
 			} else {
-				output.defaultValue, err =
+				output.value, err =
 					parser.parseArgument()
 				into.outputs = append(into.outputs, output)
 				if err != nil { return }

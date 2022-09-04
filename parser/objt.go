@@ -109,11 +109,11 @@ func (parser *ParsingOperation) parseObjtMember () (
 		err = parser.nextToken()
 		if err != nil { return }
 
-		member.defaultValue,
+		member.value,
 		err = parser.parseInitializationValues(1)
 		if err != nil { return }
 	} else {
-		member.defaultValue, err = parser.parseArgument()
+		member.value, err = parser.parseArgument()
 		if err != nil { return }
 
 		err = parser.expect(lexer.TokenKindNewline)

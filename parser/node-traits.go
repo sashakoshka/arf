@@ -52,7 +52,19 @@ type permissionable struct {
 	permission types.Permission
 }
 
+// Permission returns the permision of the node.
 func (trait permissionable) Permission () (permission types.Permission) {
 	permission = trait.permission
+	return
+}
+
+// valuable allows a node to have an argument value.
+type valuable struct {
+	value Argument
+}
+
+// Value returns the value argument of the node.
+func (trait valuable) Value () (value Argument) {
+	value = trait.value
 	return
 }

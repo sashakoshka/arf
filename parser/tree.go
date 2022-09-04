@@ -161,8 +161,7 @@ type TypeSection struct {
 	nameable
 	typeable
 	permissionable
-	
-	defaultValue Argument
+	valuable
 }
 
 // ObjtMember represents a part of an object type definition.
@@ -171,9 +170,9 @@ type ObjtMember struct {
 	nameable
 	typeable
 	permissionable
+	valuable
 	
 	bitWidth     uint64
-	defaultValue Argument
 }
 
 // ObjtSection represents an object type definition.
@@ -190,7 +189,7 @@ type ObjtSection struct {
 type EnumMember struct {
 	locatable
 	nameable
-	value Argument
+	valuable
 }
 
 // EnumSection represents an enumerated type section.
@@ -262,7 +261,7 @@ type Block []Phrase
 // that it can have a default value.
 type FuncOutput struct {
 	Declaration
-	defaultValue Argument
+	valuable
 }
 
 // FuncSection represents a function section.
