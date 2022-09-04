@@ -1,6 +1,7 @@
 package parser
 
 import "git.tebibyte.media/arf/arf/file"
+import "git.tebibyte.media/arf/arf/types"
 
 // SyntaxTree represents an abstract syntax tree. It covers an entire module. It
 // can be expected to be syntactically correct, but it might not be semantically
@@ -33,7 +34,10 @@ const (
 // Section can be any kind of section. You can find out what type of section it
 // is with the Kind method.
 type Section interface {
-	Kind () (kind SectionKind)
+	Location   () (location file.Location)
+	Kind       () (kind SectionKind)
+	Permission () (permission types.Permission)
+	Name       () (name string)
 }
 
 // Identifier represents a chain of arguments separated by a dot.
