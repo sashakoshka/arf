@@ -11,7 +11,8 @@ func (parser *ParsingOperation) parseDataSection () (
 	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
 	
-	section = &DataSection { location: parser.token.Location() }
+	section = &DataSection { }
+	section.setLocation(parser.token.Location())
 
 	err = parser.nextToken(lexer.TokenKindPermission)
 	if err != nil { return }

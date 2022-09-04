@@ -21,8 +21,8 @@ type SyntaxTree struct {
 
 // Identifier represents a chain of arguments separated by a dot.
 type Identifier struct {
-	location file.Location
-	trail    []string
+	locatable
+	trail []string
 }
 
 // TypeKind represents what kind of type a type is
@@ -42,7 +42,7 @@ const (
 
 // Type represents a type specifier
 type Type struct {
-	location file.Location
+	locatable
 
 	mutable bool
 	kind TypeKind
@@ -60,23 +60,23 @@ type Type struct {
 
 // Declaration represents a variable declaration.
 type Declaration struct {
-	location file.Location
-	name     string
-	what     Type
+	locatable
+	name string
+	what Type
 }
 
 // ObjectInitializationValues represents a list of object member initialization
 // attributes.
 type ObjectInitializationValues struct {
-	location   file.Location
+	locatable
 	attributes map[string] Argument
 }
 
 // ArrayInitializationValues represents a list of attributes initializing an
 // array.
 type ArrayInitializationValues struct {
-	location file.Location
-	values   []Argument
+	locatable
+	values []Argument
 }
 
 // ArgumentKind specifies the type of thing the value of an argument should be
@@ -139,17 +139,17 @@ const (
 // Argument represents a value that can be placed anywhere a value goes. This
 // allows things like phrases being arguments to other phrases.
 type Argument struct {
-	location file.Location
-	kind     ArgumentKind
-	value    any
+	locatable
+	kind  ArgumentKind
+	value any
 	// TODO: if there is an argument expansion operator its existence should
 	// be stored here in a boolean.
 }
 
 // DataSection represents a global variable.
 type DataSection struct {
-	location file.Location
-	name     string
+	locatable
+	name string
 	
 	what       Type
 	permission types.Permission
@@ -158,8 +158,8 @@ type DataSection struct {
 
 // TypeSection represents a blind type definition.
 type TypeSection struct {
-	location file.Location
-	name     string
+	locatable
+	name string
 	
 	inherits     Type
 	permission   types.Permission
@@ -168,8 +168,8 @@ type TypeSection struct {
 
 // ObjtMember represents a part of an object type definition.
 type ObjtMember struct {
-	location file.Location
-	name     string
+	locatable
+	name string
 
 	what         Type
 	bitWidth     uint64
@@ -179,8 +179,8 @@ type ObjtMember struct {
 
 // ObjtSection represents an object type definition.
 type ObjtSection struct {
-	location file.Location
-	name     string
+	locatable
+	name string
 
 	inherits     Identifier
 	permission   types.Permission
@@ -189,15 +189,15 @@ type ObjtSection struct {
 
 // EnumMember represents a member of an enum section.
 type EnumMember struct {
-	location file.Location
-	name     string
-	value    Argument
+	locatable
+	name  string
+	value Argument
 }
 
 // EnumSection represents an enumerated type section.
 type EnumSection struct {
-	location file.Location
-	name     string
+	locatable
+	name string
 	
 	what       Type
 	permission types.Permission
@@ -206,7 +206,7 @@ type EnumSection struct {
 
 // FaceBehavior represents a behavior of an interface section.
 type FaceBehavior struct {
-	location file.Location
+	locatable
 	name string
 
 	inputs  []Declaration
@@ -215,7 +215,7 @@ type FaceBehavior struct {
 
 // FaceSection represents an interface type section.
 type FaceSection struct {
-	location file.Location
+	locatable
 	name     string
 	inherits Identifier
 	
@@ -268,7 +268,7 @@ type FuncOutput struct {
 
 // FuncSection represents a function section.
 type FuncSection struct {
-	location   file.Location
+	locatable
 	name       string
 	permission types.Permission
 	

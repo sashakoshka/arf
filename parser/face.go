@@ -13,9 +13,9 @@ func (parser *ParsingOperation) parseFaceSection () (
 	if err != nil { return }
 	
 	section = &FaceSection {
-		location: parser.token.Location(),
 		behaviors:  make(map[string] FaceBehavior),
 	}
+	section.setLocation(parser.token.Location())
 
 	// get permission
 	err = parser.nextToken(lexer.TokenKindPermission)

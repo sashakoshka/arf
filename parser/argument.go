@@ -16,7 +16,7 @@ var validArgumentStartTokens = []lexer.TokenKind {
 }
 
 func (parser *ParsingOperation) parseArgument () (argument Argument, err error) {
-	argument.location = parser.token.Location()
+	argument.setLocation(parser.token.Location())
 
 	err = parser.expect(validArgumentStartTokens...)
 	if err != nil { return }
@@ -44,9 +44,8 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 
 			argument.kind  = ArgumentKindDeclaration
 			argument.value = Declaration {
-				location: argument.location,
-				name:     identifier.trail[0],
-				what:     what,
+				name: identifier.trail[0],
+				what: what,
 			}
 		} else {
 			argument.kind  = ArgumentKindIdentifier

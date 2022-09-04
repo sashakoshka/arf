@@ -11,7 +11,8 @@ func (parser *ParsingOperation) parseEnumSection () (
 	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
 	
-	section = &EnumSection { location: parser.token.Location() }
+	section = &EnumSection { }
+	section.setLocation(parser.token.Location())
 
 	// get permission
 	err = parser.nextToken(lexer.TokenKindPermission)
