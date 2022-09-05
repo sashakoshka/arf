@@ -80,7 +80,7 @@ func (what Type) ToString () (output string) {
 		output += "}"
 	}
 
-	if what.kind == TypeKindArray {
+	if what.length > 1 {
 		output += fmt.Sprint(":", what.length)
 	}
 	

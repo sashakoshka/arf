@@ -55,9 +55,6 @@ const (
 	// TypeKindPointer means it's a pointer
 	TypeKindPointer
 
-	// TypeKindArray means it's a fixed length array.
-	TypeKindArray
-
 	// TypeKindVariableArray means it's an array of variable length.
 	TypeKindVariableArray
 )
@@ -68,8 +65,6 @@ type Type struct {
 
 	mutable bool
 	kind TypeKind
-
-	// only applicable for fixed length arrays.
 	length uint64
 
 	// only applicable for basic.
