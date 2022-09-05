@@ -34,5 +34,18 @@ data ro kNestedObject:Obj
 	.that
 		.bird2 123.8439
 		.bird3 9328.21348239
+data ro lMutIntegerArray16:Int:16:mut
+data ro mIntegerArrayInitialized:Int:16:mut
+	3948
+	293
+	293049
+	948
+	912
+	340
+	0
+	2304
+	0
+	4785
+	92
 `, test)
 }
