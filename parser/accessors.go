@@ -42,3 +42,54 @@ func (section FuncSection) Kind () (kind SectionKind) {
 	kind = SectionKindFunc
 	return
 }
+
+// Length returns the amount of names in the identifier.
+func (identifier Identifier) Length () (length int) {
+	length = len(identifier.trail)
+	return
+}
+
+// Item returns the name at the specified index.
+func (identifier Identifier) Item (index int) (item string) {
+	item = identifier.trail[index]
+	return
+}
+
+// Kind returns the type's kind.
+func (what Type) Kind () (kind TypeKind) {
+	kind = what.kind
+	return
+}
+
+// Mutable returns whether or not the type's data is mutable.
+func (what Type) Mutable () (mutable bool) {
+	mutable = what.mutable
+	return
+}
+
+// Length returns the length of the type if the type is an array. If the result
+// is 0, this means the array has an undefined/variable length.
+func (what Type) Length () (length uint64) {
+	if what.kind == TypeKindArray {
+		length = what.length
+	}
+	return
+}
+
+// Name returns the name of the type, if it is a basic type. Otherwise, it
+// returns a zero value identifier.
+func (what Type) Name () (name Identifier) {
+	if what.kind == TypeKindBasic {
+		name = what.name
+	}
+	return
+}
+
+// Points returns the type that this type points to, or is an array of. If the
+// type is a basic type, this returns a zero value type.
+func (what Type) Points () (points Type) {
+	if what.kind != TypeKindBasic {
+		points = *what.points
+	}
+	return
+}

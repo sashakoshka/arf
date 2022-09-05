@@ -57,6 +57,9 @@ const (
 
 	// TypeKindArray means it's an array.
 	TypeKindArray
+
+	// TODO: add a type kind for arrays with a variable amount of elements,
+	// because they are very much different concepts
 )
 
 // Type represents a type specifier
