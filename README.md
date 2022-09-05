@@ -44,7 +44,7 @@ These are some design goals that I have followed/am following:
 
 - [X] File reader
 - [X] File -> tokens
-- [ ] Tokens -> syntax tree
+- [X] Tokens -> syntax tree
 - [ ] Syntax tree -> semantic tree
 - [ ] Semantic tree -> C -> object file
 - [ ] Figure out HOW to implement generics
