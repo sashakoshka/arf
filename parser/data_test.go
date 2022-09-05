@@ -3,7 +3,7 @@ package parser
 import "testing"
 
 func TestData (test *testing.T) {
-	checkTree ("../tests/parser/data",
+	checkTree ("../tests/parser/data", false,
 `:arf
 ---
 data ro aInteger:Int 3202
@@ -35,7 +35,9 @@ data ro kNestedObject:Obj
 		.bird0 324
 		.bird1 "hello world"
 data ro lMutIntegerArray16:Int:16:mut
-data ro mIntegerArrayInitialized:Int:16:mut
+data ro mExternalData:Int:8
+	external
+data ro nIntegerArrayInitialized:Int:16:mut
 	3948
 	293
 	293049

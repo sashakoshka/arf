@@ -32,6 +32,13 @@ func (parser *ParsingOperation) parseFuncSection () (
 	err = parser.parseFuncArguments(&section)
 	if err != nil { return }
 
+	// skip the rest of the section if we are only skimming it
+	if parser.skimming {
+		section.external = true
+		err = parser.skipIndentLevel(1)
+		return
+	}
+
 	// check to see if the function is external
 	if !parser.token.Is(lexer.TokenKindIndent) { return }
 	if parser.token.Value().(int) != 1         { return }
@@ -179,6 +186,13 @@ func (parser *ParsingOperation) parseFuncArguments (
 			if err != nil { return }
 			output.what, err = parser.parseType()
 			if err != nil { return }
+
+			// skip the default value if we are skimming
+			if parser.skimming {
+				err = parser.skipIndentLevel(2)
+				into.outputs = append(into.outputs, output)
+				return
+			}
 			
 			// parse default value
 			if parser.token.Is(lexer.TokenKindNewline) {

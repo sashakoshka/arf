@@ -169,6 +169,8 @@ type DataSection struct {
 	typeable
 	permissionable
 	valuable
+
+	external bool
 }
 
 // TypeSection represents a blind type definition.

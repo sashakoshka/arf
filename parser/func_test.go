@@ -3,7 +3,7 @@ package parser
 import "testing"
 
 func TestFunc (test *testing.T) {
-	checkTree ("../tests/parser/func",
+	checkTree ("../tests/parser/func", false,
 `:arf
 ---
 func ro aBasicExternal

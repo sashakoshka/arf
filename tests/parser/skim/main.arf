@@ -1,0 +1,42 @@
+:arf
+---
+
+data ro aExternalData:Int
+	external
+
+data ro bSingleValue:Int 342
+
+data ro cNestedObject:Obj
+	.this
+		.bird0 324
+		.bird1 "hello world"
+	.that
+		.bird2 123.8439
+		.bird3 9328.21348239
+
+data ro dUninitialized:Int:16:mut
+
+data ro eIntegerArrayInitialized:Int:16:mut
+	3948 293 293049 948 912
+	340 0 2304 0 4785 92
+
+func ro fComplexFunction
+	---
+	= x:Int 3
+	= y:{Int} [loc x]
+	= z:Int:8
+		398 9 2309 983 -2387
+		478 555 123
+	= bird:Bird
+		.that
+			.whenYou 99999
+		.this 324
+
+func ro gExternalFunction
+	> x:Int
+	< arr:Int 5
+		34908
+		39 3498
+		38 219
+	---
+	external

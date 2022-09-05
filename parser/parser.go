@@ -13,6 +13,7 @@ type ParsingOperation struct {
 	token      lexer.Token
 	tokens     []lexer.Token
 	tokenIndex int
+	skimming   bool
 
 	tree SyntaxTree
 }
@@ -42,6 +43,7 @@ func Fetch (modulePath string, skim bool) (tree SyntaxTree, err error) {
 	// miss, so parse the module.
 	parser := ParsingOperation {
 		modulePath: modulePath,
+		skimming:   skim,
 		tree: SyntaxTree {
 			sections: make(map[string] Section),			
 		},
@@ -149,4 +151,24 @@ func (parser *ParsingOperation) previousToken () {
 	if parser.tokenIndex < 0 { parser.tokenIndex = 0 }
 	parser.token = parser.tokens[parser.tokenIndex]
 	return
+}
+
+// skipIndentLevel advances the parser, ignoring every line with an indentation
+// equal to or greater than the specified indent.
+func (parser *ParsingOperation) skipIndentLevel (indent int) (err error) {
+	for {
+		if parser.token.Is(lexer.TokenKindNewline) {
+			err = parser.nextToken()
+			if err != nil { return }
+
+			if !parser.token.Is(lexer.TokenKindIndent) ||
+				parser.token.Value().(int) < indent {
+
+				return
+			}
+		}
+
+		err = parser.nextToken()
+		if err != nil { return }
+	}
 }
