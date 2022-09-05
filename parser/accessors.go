@@ -102,7 +102,7 @@ func (what Type) Points () (points Type) {
 	return
 }
 
-// Values returns an iterator for the initialization values
+// Values returns an iterator for the initialization values.
 func (values ObjectInitializationValues) Sections () (
 	iterator types.Iterator[Argument],
 ) {
@@ -110,13 +110,13 @@ func (values ObjectInitializationValues) Sections () (
 	return
 }
 
-// Length returns the amount of values
+// Length returns the amount of values.
 func (values ArrayInitializationValues) Length () (length int) {
 	length = len(values.values)
 	return
 }
 
-// Item returns the value at index
+// Item returns the value at index.
 func (values ArrayInitializationValues) Value (index int) (value Argument) {
 	value = values.values[index]
 	return
@@ -139,5 +139,29 @@ func (argument Argument) Value () (value any) {
 // be treated as unspecified.
 func (member ObjtMember) BitWidth () (width uint64) {
 	width = member.bitWidth
+	return
+}
+
+// Length returns the amount of members in the section.
+func (section ObjtSection) Length () (length int) {
+	length = len(section.members)
+	return
+}
+
+// Item returns the member at index.
+func (section ObjtSection) Item (index int) (member ObjtMember) {
+	member = section.members[index]
+	return
+}
+
+// Length returns the amount of members in the section.
+func (section EnumSection) Length () (length int) {
+	length = len(section.members)
+	return
+}
+
+// Item returns the member at index.
+func (section EnumSection) Item (index int) (member EnumMember) {
+	member = section.members[index]
 	return
 }

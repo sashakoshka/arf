@@ -193,7 +193,7 @@ type ObjtMember struct {
 	permissionable
 	valuable
 	
-	bitWidth     uint64
+	bitWidth uint64
 }
 
 // ObjtSection represents an object type definition.
