@@ -6,16 +6,14 @@ import "git.tebibyte.media/arf/arf/infoerr"
 
 // parseFaceSection parses an interface section.
 func (parser *ParsingOperation) parseFaceSection () (
-	section *FaceSection,
+	section FaceSection,
 	err     error,
 ) {
 	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
 	
-	section = &FaceSection {
-		location: parser.token.Location(),
-		behaviors:  make(map[string] FaceBehavior),
-	}
+	section.behaviors = make(map[string] FaceBehavior)
+	section.location  = parser.token.Location()
 
 	// get permission
 	err = parser.nextToken(lexer.TokenKindPermission)

@@ -4,14 +4,15 @@ import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
+// parseEnumSection parses an enumerated type section.
 func (parser *ParsingOperation) parseEnumSection () (
-	section *EnumSection,
+	section EnumSection,
 	err     error,
 ) {
 	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
 	
-	section = &EnumSection { location: parser.token.Location() }
+	section.location = parser.token.Location()
 
 	// get permission
 	err = parser.nextToken(lexer.TokenKindPermission)
@@ -36,7 +37,7 @@ func (parser *ParsingOperation) parseEnumSection () (
 	if err != nil { return }
 
 	// parse members
-	err = parser.parseEnumMembers(section)
+	err = parser.parseEnumMembers(&section)
 	if err != nil { return }
 	
 	if len(section.members) == 0 {

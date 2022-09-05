@@ -41,13 +41,15 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 					infoerr.ErrorKindError)
 				return
 			}
+			
+			declaration := Declaration { }
+			declaration.what = what
+			declaration.name = identifier.trail[0]
+			declaration.location = argument.Location()
 
 			argument.kind  = ArgumentKindDeclaration
-			argument.value = Declaration {
-				location: argument.location,
-				name:     identifier.trail[0],
-				what:     what,
-			}
+			argument.value = declaration
+			
 		} else {
 			argument.kind  = ArgumentKindIdentifier
 			argument.value = identifier

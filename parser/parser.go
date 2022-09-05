@@ -14,13 +14,25 @@ type ParsingOperation struct {
 	tokens     []lexer.Token
 	tokenIndex int
 
-	tree *SyntaxTree
+	tree SyntaxTree
 }
+
+// TODO:
+// - implement parser cache
+// - have this try to hit the cache, and actually parse on miss
+// - rename this to Fetch
+// - add `skim bool` argument. when this is true, don't parse any code or data
+//   section initialization values, just definitions and their default values.
 
 // Parse reads the files located in the module specified by modulePath, and
 // converts them into an abstract syntax tree.
-func Parse (modulePath string) (tree *SyntaxTree, err error) {
-	parser := ParsingOperation { modulePath: modulePath }
+func Parse (modulePath string) (tree SyntaxTree, err error) {
+	parser := ParsingOperation {
+		modulePath: modulePath,
+		tree: SyntaxTree {
+			sections: make(map[string] Section),			
+		},
+	}
 
 	if parser.modulePath[len(parser.modulePath) - 1] != '/' {
 		parser.modulePath += "/"
@@ -54,9 +66,6 @@ func (parser *ParsingOperation) parse (sourceFile *file.File) (err error) {
 	if err != nil { return }
 
 	// reset the parser
-	if parser.tree == nil {
-		parser.tree = &SyntaxTree { }
-	}
 	if len(tokens) == 0 { return }
 	parser.tokens = tokens
 	parser.token  = tokens[0]

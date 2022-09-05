@@ -6,13 +6,13 @@ import "git.tebibyte.media/arf/arf/infoerr"
 
 // parseFunc parses a function section.
 func (parser *ParsingOperation) parseFuncSection () (
-	section *FuncSection,
+	section FuncSection,
 	err     error,
 ) {
 	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
 	
-	section = &FuncSection { location: parser.token.Location() }
+	section.location = parser.token.Location()
 
 	// get permission
 	err = parser.nextToken(lexer.TokenKindPermission)
@@ -29,7 +29,7 @@ func (parser *ParsingOperation) parseFuncSection () (
 	if err != nil { return }
 	err = parser.nextToken()
 	if err != nil { return }
-	err = parser.parseFuncArguments(section)
+	err = parser.parseFuncArguments(&section)
 	if err != nil { return }
 
 	// check to see if the function is external
@@ -185,12 +185,12 @@ func (parser *ParsingOperation) parseFuncArguments (
 				err = parser.nextToken()
 				if err != nil { return }
 
-				output.defaultValue, err =
+				output.value, err =
 					parser.parseInitializationValues(1)
 				into.outputs = append(into.outputs, output)
 				if err != nil { return }
 			} else {
-				output.defaultValue, err =
+				output.value, err =
 					parser.parseArgument()
 				into.outputs = append(into.outputs, output)
 				if err != nil { return }

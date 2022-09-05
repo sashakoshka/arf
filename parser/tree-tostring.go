@@ -30,7 +30,7 @@ func sortMapKeysAlphabetically[KEY_TYPE any] (
 	return
 }
 
-func (tree *SyntaxTree) ToString (indent int) (output string) {
+func (tree SyntaxTree) ToString (indent int) (output string) {
 	output += doIndent(indent, ":arf\n")
 
 	if tree.author != "" {
@@ -47,35 +47,11 @@ func (tree *SyntaxTree) ToString (indent int) (output string) {
 	
 	output += doIndent(indent, "---\n")
 
-	typeSectionKeys := sortMapKeysAlphabetically(tree.typeSections)
-	for _, name := range typeSectionKeys {
-		output += tree.typeSections[name].ToString(indent)
+	sectionKeys := sortMapKeysAlphabetically(tree.sections)
+	for _, name := range sectionKeys {
+		output += tree.sections[name].ToString(indent)
 	}
 
-	objtSectionKeys := sortMapKeysAlphabetically(tree.objtSections)
-	for _, name := range objtSectionKeys {
-		output += tree.objtSections[name].ToString(indent)
-	}
-
-	enumSectionKeys := sortMapKeysAlphabetically(tree.enumSections)
-	for _, name := range enumSectionKeys {
-		output += tree.enumSections[name].ToString(indent)
-	}
-
-	faceSectionKeys := sortMapKeysAlphabetically(tree.faceSections)
-	for _, name := range faceSectionKeys {
-		output += tree.faceSections[name].ToString(indent)
-	}
-
-	dataSectionKeys := sortMapKeysAlphabetically(tree.dataSections)
-	for _, name := range dataSectionKeys {
-		output += tree.dataSections[name].ToString(indent)
-	}
-
-	funcSectionKeys := sortMapKeysAlphabetically(tree.funcSections)
-	for _, name := range funcSectionKeys {
-		output += tree.funcSections[name].ToString(indent)
-	}
 	return
 }
 
@@ -90,7 +66,7 @@ func (identifier Identifier) ToString () (output string) {
 	return
 }
 
-func (what *Type) ToString () (output string) {
+func (what Type) ToString () (output string) {
 	if what.kind == TypeKindBasic {
 		output += what.name.ToString()
 	} else {
@@ -98,12 +74,9 @@ func (what *Type) ToString () (output string) {
 		output += what.points.ToString()
 
 		if what.kind == TypeKindArray {
-			output += " "
-			if what.length == 0 {
-				output += ".."
-			} else {
-				output += fmt.Sprint(what.length)
-			}
+			output += fmt.Sprint(" ", what.length)
+		} else if what.kind == TypeKindVariableArray {
+			output += " .."
 		}
 		
 		output += "}"
@@ -154,7 +127,7 @@ func (values ArrayInitializationValues) ToString (
 	return
 }
 
-func (argument *Argument) ToString (indent int, breakLine bool) (output string) {
+func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 	if !breakLine { indent = 0 }
 	if argument.kind == ArgumentKindNil {
 		output += "NIL-ARGUMENT"
@@ -279,7 +252,7 @@ func (argument *Argument) ToString (indent int, breakLine bool) (output string) 
 	return
 }
 
-func (section *DataSection) ToString (indent int) (output string) {
+func (section DataSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
 		"data ",
@@ -303,25 +276,25 @@ func (section *DataSection) ToString (indent int) (output string) {
 	return
 }
 
-func (section *TypeSection) ToString (indent int) (output string) {
+func (section TypeSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
 		"type ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.inherits.ToString())
+		section.what.ToString())
 
 	isComplexInitialization :=
-		section.defaultValue.kind == ArgumentKindObjectInitializationValues ||
-		section.defaultValue.kind == ArgumentKindArrayInitializationValues
+		section.value.kind == ArgumentKindObjectInitializationValues ||
+		section.value.kind == ArgumentKindArrayInitializationValues
 
-	if section.defaultValue.value == nil {
+	if section.value.value == nil {
 		output += "\n"
 	} else if isComplexInitialization {
 		output += "\n"
-		output += section.defaultValue.ToString(indent + 1, true)
+		output += section.value.ToString(indent + 1, true)
 	} else {
-		output += " " + section.defaultValue.ToString(0, false)
+		output += " " + section.value.ToString(0, false)
 		output += "\n"
 	}
 	return
@@ -339,23 +312,23 @@ func (member ObjtMember) ToString (indent int) (output string) {
 	}
 	
 	isComplexInitialization :=
-		member.defaultValue.kind == ArgumentKindObjectInitializationValues ||
-		member.defaultValue.kind == ArgumentKindArrayInitializationValues
+		member.value.kind == ArgumentKindObjectInitializationValues ||
+		member.value.kind == ArgumentKindArrayInitializationValues
 	
-	if member.defaultValue.value == nil {
+	if member.value.value == nil {
 		output += "\n"
 	} else if isComplexInitialization {
 		output += "\n"
-		output += member.defaultValue.ToString(indent + 1, true)
+		output += member.value.ToString(indent + 1, true)
 	} else {
-		output += " " + member.defaultValue.ToString(0, false)
+		output += " " + member.value.ToString(0, false)
 		output += "\n"
 	}
 
 	return
 }
 
-func (section *ObjtSection) ToString (indent int) (output string) {
+func (section ObjtSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
 		"objt ",
@@ -369,7 +342,7 @@ func (section *ObjtSection) ToString (indent int) (output string) {
 	return
 }
 
-func (section *EnumSection) ToString (indent int) (output string) {
+func (section EnumSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
 		"enum ",
@@ -397,7 +370,7 @@ func (section *EnumSection) ToString (indent int) (output string) {
 	return
 }
 
-func (section *FaceSection) ToString (indent int) (output string) {
+func (section FaceSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
 		"face ",
@@ -412,7 +385,7 @@ func (section *FaceSection) ToString (indent int) (output string) {
 	return
 }
 
-func (behavior *FaceBehavior) ToString (indent int) (output string) {
+func (behavior FaceBehavior) ToString (indent int) (output string) {
 	output += doIndent(indent, behavior.name, "\n")
 	
 	for _, inputItem := range behavior.inputs {
@@ -473,13 +446,13 @@ func (block Block) ToString (indent int) (output string) {
 
 func (funcOutput FuncOutput) ToString () (output string) {
 	output += funcOutput.Declaration.ToString()
-	if funcOutput.defaultValue.kind != ArgumentKindNil {
-		output += " " + funcOutput.defaultValue.ToString(0, false)
+	if funcOutput.value.kind != ArgumentKindNil {
+		output += " " + funcOutput.value.ToString(0, false)
 	}
 	return
 }
 
-func (section *FuncSection) ToString (indent int) (output string) {
+func (section FuncSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
 		"func ",

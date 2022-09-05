@@ -2,6 +2,7 @@ package parser
 
 import "git.tebibyte.media/arf/arf/file"
 import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // SyntaxTree represents an abstract syntax tree. It covers an entire module. It
 // can be expected to be syntactically correct, but it might not be semantically
@@ -10,22 +11,40 @@ type SyntaxTree struct {
 	license string
 	author  string
 
-	requires     []string
-	typeSections map[string] *TypeSection
-	objtSections map[string] *ObjtSection
-	enumSections map[string] *EnumSection
-	faceSections map[string] *FaceSection
-	dataSections map[string] *DataSection
-	funcSections map[string] *FuncSection
+	requires []string
+	sections map[string] Section
 }
 
-// Identifier represents a chain of arguments separated by a dot.
+// SectionKind differentiates Section interfaces.
+type SectionKind int
+
+const (
+	SectionKindType = iota
+	SectionKindObjt
+	SectionKindEnum
+	SectionKindFace
+	SectionKindData
+	SectionKindFunc
+)
+
+// Section can be any kind of section. You can find out what type of section it
+// is with the Kind method.
+type Section interface {
+	Location   () (location file.Location)
+	Kind       () (kind SectionKind)
+	Permission () (permission types.Permission)
+	Name       () (name string)
+	NewError   (message string, kind infoerr.ErrorKind) (err error)
+	ToString   (indent int) (output string)
+}
+
+// Identifier represents a chain of names separated by a dot.
 type Identifier struct {
-	location file.Location
-	trail    []string
+	locatable
+	trail []string
 }
 
-// TypeKind represents what kind of type a type is
+// TypeKind represents what kind of type a type is.
 type TypeKind int
 
 const (
@@ -36,19 +55,21 @@ const (
 	// TypeKindPointer means it's a pointer
 	TypeKindPointer
 
-	// TypeKindArray means it's an array.
+	// TypeKindArray means it's a fixed length array.
 	TypeKindArray
+
+	// TypeKindVariableArray means it's an array of variable length.
+	TypeKindVariableArray
 )
 
 // Type represents a type specifier
 type Type struct {
-	location file.Location
+	locatable
 
 	mutable bool
 	kind TypeKind
 
-	// only applicable for arrays. a value of zero means it has an
-	// undefined/dynamic length.
+	// only applicable for fixed length arrays.
 	length uint64
 
 	// only applicable for basic.
@@ -60,23 +81,23 @@ type Type struct {
 
 // Declaration represents a variable declaration.
 type Declaration struct {
-	location file.Location
-	name     string
-	what     Type
+	locatable
+	nameable
+	typeable
 }
 
 // ObjectInitializationValues represents a list of object member initialization
 // attributes.
 type ObjectInitializationValues struct {
-	location   file.Location
+	locatable
 	attributes map[string] Argument
 }
 
 // ArrayInitializationValues represents a list of attributes initializing an
 // array.
 type ArrayInitializationValues struct {
-	location file.Location
-	values   []Argument
+	locatable
+	values []Argument
 }
 
 // ArgumentKind specifies the type of thing the value of an argument should be
@@ -139,75 +160,73 @@ const (
 // Argument represents a value that can be placed anywhere a value goes. This
 // allows things like phrases being arguments to other phrases.
 type Argument struct {
-	location file.Location
-	kind     ArgumentKind
-	value    any
+	locatable
+	kind  ArgumentKind
+	value any
 	// TODO: if there is an argument expansion operator its existence should
 	// be stored here in a boolean.
 }
 
 // DataSection represents a global variable.
 type DataSection struct {
-	location file.Location
-	name     string
-	
-	what       Type
-	permission types.Permission
-	value      Argument
+	locatable
+	nameable
+	typeable
+	permissionable
+	valuable
 }
 
 // TypeSection represents a blind type definition.
 type TypeSection struct {
-	location file.Location
-	name     string
-	
-	inherits     Type
-	permission   types.Permission
-	defaultValue Argument
+	locatable
+	nameable
+	typeable
+	permissionable
+	valuable
 }
 
 // ObjtMember represents a part of an object type definition.
 type ObjtMember struct {
-	location file.Location
-	name     string
-
-	what         Type
-	bitWidth     uint64
-	permission   types.Permission
-	defaultValue Argument
+	locatable
+	nameable
+	typeable
+	permissionable
+	valuable
+	
+	bitWidth uint64
 }
 
 // ObjtSection represents an object type definition.
 type ObjtSection struct {
-	location file.Location
-	name     string
+	locatable
+	nameable
+	permissionable
+	inherits Identifier
 
-	inherits     Identifier
-	permission   types.Permission
-	members      []ObjtMember
+	members []ObjtMember
 }
 
 // EnumMember represents a member of an enum section.
 type EnumMember struct {
-	location file.Location
-	name     string
-	value    Argument
+	locatable
+	nameable
+	valuable
 }
 
 // EnumSection represents an enumerated type section.
 type EnumSection struct {
-	location file.Location
-	name     string
-	
-	what       Type
-	permission types.Permission
-	members    []EnumMember
+	locatable
+	nameable
+	typeable
+	permissionable
+
+	members []EnumMember
 }
 
 // FaceBehavior represents a behavior of an interface section.
 type FaceBehavior struct {
-	location file.Location
-	name string
+	locatable
+	nameable
 
 	inputs  []Declaration
 	outputs []Declaration
@@ -215,12 +234,12 @@ type FaceBehavior struct {
 
 // FaceSection represents an interface type section.
 type FaceSection struct {
-	location file.Location
-	name     string
+	locatable
+	nameable
+	permissionable
 	inherits Identifier
 	
-	permission types.Permission
-	behaviors  map[string] FaceBehavior
+	behaviors map[string] FaceBehavior
 }
 
 // PhraseKind determines what semantic role a phrase plays.
@@ -248,6 +267,8 @@ type Phrase struct {
 	location  file.Location
 	command   Argument
 	arguments []Argument
+	// TODO: this is wack. it should be named after a plural noun like,
+	// returnees or something. accessor methods should beupdated to match.
 	returnsTo []Argument
 
 	kind PhraseKind
@@ -263,14 +284,14 @@ type Block []Phrase
 // that it can have a default value.
 type FuncOutput struct {
 	Declaration
-	defaultValue Argument
+	valuable
 }
 
 // FuncSection represents a function section.
 type FuncSection struct {
-	location   file.Location
-	name       string
-	permission types.Permission
+	locatable
+	nameable
+	permissionable
 	
 	receiver *Declaration
 	inputs   []Declaration
