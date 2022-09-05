@@ -34,7 +34,7 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 			err = parser.nextToken(lexer.TokenKindRBrace)
 			if err != nil { return }
 		} else if parser.token.Is(lexer.TokenKindElipsis) {
-			what.kind = TypeKindArray
+			what.kind = TypeKindVariableArray
 		
 			err = parser.nextToken(lexer.TokenKindRBrace)
 			if err != nil { return }

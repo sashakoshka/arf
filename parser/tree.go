@@ -38,7 +38,7 @@ type Section interface {
 	ToString   (indent int) (output string)
 }
 
-// Identifier represents a chain of arguments separated by a dot.
+// Identifier represents a chain of names separated by a dot.
 type Identifier struct {
 	locatable
 	trail []string
@@ -55,11 +55,11 @@ const (
 	// TypeKindPointer means it's a pointer
 	TypeKindPointer
 
-	// TypeKindArray means it's an array.
+	// TypeKindArray means it's a fixed length array.
 	TypeKindArray
 
-	// TODO: add a type kind for arrays with a variable amount of elements,
-	// because they are very much different concepts
+	// TypeKindVariableArray means it's an array of variable length.
+	TypeKindVariableArray
 )
 
 // Type represents a type specifier
@@ -69,8 +69,7 @@ type Type struct {
 	mutable bool
 	kind TypeKind
 
-	// only applicable for arrays. a value of zero means it has an
-	// undefined/dynamic length.
+	// only applicable for fixed length arrays.
 	length uint64
 
 	// only applicable for basic.

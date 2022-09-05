@@ -67,8 +67,8 @@ func (what Type) Mutable () (mutable bool) {
 	return
 }
 
-// Length returns the length of the type if the type is an array. If the result
-// is 0, this means the array has an undefined/variable length.
+// Length returns the length of the type if the type is a fixed length array.
+// Otherwise, it just returns zero.
 func (what Type) Length () (length uint64) {
 	if what.kind == TypeKindArray {
 		length = what.length

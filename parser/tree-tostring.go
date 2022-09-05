@@ -74,12 +74,9 @@ func (what Type) ToString () (output string) {
 		output += what.points.ToString()
 
 		if what.kind == TypeKindArray {
-			output += " "
-			if what.length == 0 {
-				output += ".."
-			} else {
-				output += fmt.Sprint(what.length)
-			}
+			output += fmt.Sprint(" ", what.length)
+		} else if what.kind == TypeKindVariableArray {
+			output += " .."
 		}
 		
 		output += "}"
