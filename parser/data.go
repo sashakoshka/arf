@@ -28,6 +28,13 @@ func (parser *ParsingOperation) parseDataSection () (
 	section.what, err = parser.parseType()
 	if err != nil { return }
 
+	// skip the rest of the section if we are only skimming it
+	if parser.skimming {
+		section.external = true
+		err = parser.skipIndentLevel(1)
+		return
+	}
+
 	if parser.token.Is(lexer.TokenKindNewline) {
 		err = parser.nextToken()
 		if err != nil { return }
