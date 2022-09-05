@@ -21,6 +21,7 @@ func ro fComplexFunction
 	external
 func ro gExternalFunction
 	> x:Int
+	< arr:Int
 	---
 	external
 `, test)

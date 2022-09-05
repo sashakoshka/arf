@@ -186,6 +186,13 @@ func (parser *ParsingOperation) parseFuncArguments (
 			if err != nil { return }
 			output.what, err = parser.parseType()
 			if err != nil { return }
+
+			// skip the default value if we are skimming
+			if parser.skimming {
+				err = parser.skipIndentLevel(2)
+				into.outputs = append(into.outputs, output)
+				return
+			}
 			
 			// parse default value
 			if parser.token.Is(lexer.TokenKindNewline) {

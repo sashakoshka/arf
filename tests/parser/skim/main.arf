@@ -34,5 +34,9 @@ func ro fComplexFunction
 
 func ro gExternalFunction
 	> x:Int
+	< arr:Int 5
+		34908
+		39 3498
+		38 219
 	---
 	external
