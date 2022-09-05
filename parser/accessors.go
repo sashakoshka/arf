@@ -232,3 +232,45 @@ func (phrase Phrase) Block () (block Block) {
 	return
 }
 
+// Receiver returns the method receiver, if there is one. Otherwise, it returns
+// nil.
+func (section FuncSection) Receiver () (receiver *Declaration) {
+	receiver = section.receiver
+	return
+}
+
+// InputsLength returns the number of inputs in the function.
+func (section FuncSection) InputsLength () (length int) {
+	length = len(section.inputs)
+	return
+}
+
+// Input returns the input at index.
+func (section FuncSection) Input (index int) (input Declaration) {
+	input = section.inputs[index]
+	return
+}
+
+// OutputsLength returns the number of outputs in the function.
+func (section FuncSection) OutputsLength () (length int) {
+	length = len(section.outputs)
+	return
+}
+
+// Output returns the output at index.
+func (section FuncSection) Output (index int) (output FuncOutput) {
+	output = section.outputs[index]
+	return
+}
+
+// Root returns the root block of the section.
+func (section FuncSection) Root () (root Block) {
+	root = section.root
+	return
+}
+
+// External returns whether or not the function is an external function or not.
+func (section FuncSection) External () (external bool) {
+	external = section.external
+	return
+}
