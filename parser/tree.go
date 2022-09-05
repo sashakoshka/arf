@@ -239,7 +239,7 @@ type FaceSection struct {
 	permissionable
 	inherits Identifier
 	
-	behaviors  map[string] FaceBehavior
+	behaviors map[string] FaceBehavior
 }
 
 // PhraseKind determines what semantic role a phrase plays.
@@ -267,6 +267,8 @@ type Phrase struct {
 	location  file.Location
 	command   Argument
 	arguments []Argument
+	// TODO: this is wack. it should be named after a plural noun like,
+	// returnees or something. accessor methods should beupdated to match.
 	returnsTo []Argument
 
 	kind PhraseKind

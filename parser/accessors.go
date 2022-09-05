@@ -195,3 +195,40 @@ func (section FaceSection) Behaviors () (iterator types.Iterator[FaceBehavior]) 
 	iterator = types.NewIterator(section.behaviors)
 	return
 }
+
+// Kind returns what kind of phrase it is.
+func (phrase Phrase) Kind () (kind PhraseKind) {
+	kind = phrase.kind
+	return
+}
+
+// ArgumentsLength returns the amount of arguments in the phrase.
+func (phrase Phrase) ArgumentsLength () (length int) {
+	length = len(phrase.arguments)
+	return
+}
+
+// Argument returns the argument at index.
+func (phrase Phrase) Argument (index int) (argument Argument) {
+	argument = phrase.arguments[index]
+	return
+}
+
+// ReturnsToLength returns the amount of things the phrase returns to.
+func (phrase Phrase) ReturnsToLength () (length int) {
+	length = len(phrase.returnsTo)
+	return
+}
+
+// ReturnTo returns the thing alskdjaslkdjsa whatever i dont even know wtf.
+func (phrase Phrase) ReturnTo (index int) (returnTo Argument) {
+	returnTo = phrase.returnsTo[index]
+	return
+}
+
+// Block returns the block under the phrase, if it is a control flow statement.
+func (phrase Phrase) Block () (block Block) {
+	block = phrase.block
+	return
+}
+
