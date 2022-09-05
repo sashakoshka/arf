@@ -44,7 +44,7 @@ type Identifier struct {
 	trail []string
 }
 
-// TypeKind represents what kind of type a type is
+// TypeKind represents what kind of type a type is.
 type TypeKind int
 
 const (

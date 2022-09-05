@@ -14,15 +14,15 @@ type ParsingOperation struct {
 	tokens     []lexer.Token
 	tokenIndex int
 
-	tree *SyntaxTree
+	tree SyntaxTree
 }
 
 // Parse reads the files located in the module specified by modulePath, and
 // converts them into an abstract syntax tree.
-func Parse (modulePath string) (tree *SyntaxTree, err error) {
+func Parse (modulePath string) (tree SyntaxTree, err error) {
 	parser := ParsingOperation {
 		modulePath: modulePath,
-		tree: &SyntaxTree {
+		tree: SyntaxTree {
 			sections: make(map[string] Section),			
 		},
 	}

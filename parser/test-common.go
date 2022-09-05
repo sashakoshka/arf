@@ -7,15 +7,6 @@ import "testing"
 
 func checkTree (modulePath string, correct string, test *testing.T) {
 	tree, err := Parse(modulePath)
-	if tree == nil {
-		test.Log("TREE IS NIL!")
-		if err != io.EOF && err != nil {
-			test.Log("returned error:")
-			test.Log(err)
-		}
-		test.Fail()
-		return
-	}
 	
 	treeString := tree.ToString(0)
 	treeRunes  := []rune(treeString)
