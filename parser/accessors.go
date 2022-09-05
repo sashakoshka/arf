@@ -121,3 +121,23 @@ func (values ArrayInitializationValues) Value (index int) (value Argument) {
 	value = values.values[index]
 	return
 }
+
+// Kind returns what kind of argument it is.
+func (argument Argument) Kind () (kind ArgumentKind) {
+	kind = argument.kind
+	return
+}
+
+// Value returns the underlying value of the argument. You can use Kind() to
+// find out what to cast this to.
+func (argument Argument) Value () (value any) {
+	value = argument.value
+	return
+}
+
+// BitWidth returns the bit width of the object member. If it is zero, it should
+// be treated as unspecified.
+func (member ObjtMember) BitWidth () (width uint64) {
+	width = member.bitWidth
+	return
+}
