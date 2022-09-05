@@ -3,7 +3,7 @@ package parser
 import "testing"
 
 func TestType (test *testing.T) {
-	checkTree ("../tests/parser/type",
+	checkTree ("../tests/parser/type", false,
 `:arf
 ---
 type ro Basic:Int

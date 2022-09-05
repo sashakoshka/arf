@@ -3,7 +3,7 @@ package parser
 import "testing"
 
 func TestData (test *testing.T) {
-	checkTree ("../tests/parser/data",
+	checkTree ("../tests/parser/data", false,
 `:arf
 ---
 data ro aInteger:Int 3202

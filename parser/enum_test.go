@@ -3,7 +3,7 @@ package parser
 import "testing"
 
 func TestEnum (test *testing.T) {
-	checkTree ("../tests/parser/enum",
+	checkTree ("../tests/parser/enum", false,
 `:arf
 ---
 enum ro AffrontToGod:Int:4

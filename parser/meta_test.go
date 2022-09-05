@@ -3,7 +3,7 @@ package parser
 import "testing"
 
 func TestMeta (test *testing.T) {
-	checkTree ("../tests/parser/meta",
+	checkTree ("../tests/parser/meta", false,
 `:arf
 author "Sasha Koshka"
 license "GPLv3"

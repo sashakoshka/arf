@@ -3,7 +3,7 @@ package parser
 import "testing"
 
 func TestObjt (test *testing.T) {
-	checkTree ("../tests/parser/objt",
+	checkTree ("../tests/parser/objt", false,
 `:arf
 ---
 objt ro Basic:Obj

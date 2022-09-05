@@ -6,11 +6,11 @@ import "strings"
 import "testing"
 import "path/filepath"
 
-func checkTree (modulePath string, correct string, test *testing.T) {
+func checkTree (modulePath string, skim bool, correct string, test *testing.T) {
 	cwd, _ := os.Getwd()
 	modulePath = filepath.Join(cwd, modulePath)
 	println(modulePath)
-	tree, err := Fetch(modulePath, false)
+	tree, err := Fetch(modulePath, skim)
 	
 	treeString := tree.ToString(0)
 	treeRunes  := []rune(treeString)
