@@ -44,19 +44,11 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 		what.points = &points
 
 		err = parser.expect (
-			lexer.TokenKindUInt,
 			lexer.TokenKindRBrace,
 			lexer.TokenKindElipsis)
 		if err != nil { return }
 
-		if parser.token.Is(lexer.TokenKindUInt) {
-			what.kind = TypeKindArray
-		
-			what.length = parser.token.Value().(uint64)
-		
-			err = parser.nextToken(lexer.TokenKindRBrace)
-			if err != nil { return }
-		} else if parser.token.Is(lexer.TokenKindElipsis) {
+		if parser.token.Is(lexer.TokenKindElipsis) {
 			what.kind = TypeKindVariableArray
 		
 			err = parser.nextToken(lexer.TokenKindRBrace)
@@ -70,19 +62,28 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 		if err != nil { return }
 	}
 
-	if parser.token.Is(lexer.TokenKindColon) {
-		err = parser.nextToken(lexer.TokenKindName)
+	for {
+		if !parser.token.Is(lexer.TokenKindColon) { break }
+		
+		err = parser.nextToken(lexer.TokenKindName, lexer.TokenKindUInt)
 		if err != nil { return }
 
-		qualifier := parser.token.Value().(string)
-		switch qualifier {
-		case "mut":
-			what.mutable = true
-		default:
-			err = parser.token.NewError (
-				"unknown type qualifier \"" + qualifier + "\"",
-				infoerr.ErrorKindError)
-			return
+		if parser.token.Is(lexer.TokenKindName) {
+			// parse type qualifier
+			qualifier := parser.token.Value().(string)
+			switch qualifier {
+			case "mut":
+				what.mutable = true
+			default:
+				err = parser.token.NewError (
+					"unknown type qualifier \"" +
+					qualifier + "\"",
+					infoerr.ErrorKindError)
+				return
+			}
+		} else {
+			// parse fixed array length
+			what.length = parser.token.Value().(uint64)
 		}
 		
 		err = parser.nextToken()

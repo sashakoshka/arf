@@ -6,7 +6,7 @@ func TestEnum (test *testing.T) {
 	checkTree ("../tests/parser/enum",
 `:arf
 ---
-enum ro AffrontToGod:{Int 4}
+enum ro AffrontToGod:Int:4
 	bird0
 		28394
 		9328

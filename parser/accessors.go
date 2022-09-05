@@ -75,10 +75,11 @@ func (what Type) Mutable () (mutable bool) {
 	return
 }
 
-// Length returns the length of the type if the type is a fixed length array.
-// Otherwise, it just returns zero.
+// Length returns the length of the type. If it is greater than 1, that means
+// the type is a fixed length array.
 func (what Type) Length () (length uint64) {
-	if what.kind == TypeKindArray {
+	length = 1
+	if what.length > 1 {
 		length = what.length
 	}
 	return

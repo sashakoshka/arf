@@ -1,34 +1,34 @@
 :arf
 ---
 
-data ro integer:Int 3202
+data ro aInteger:Int 3202
 
-data ro mutInteger:Int:mut 3202
+data ro bMutInteger:Int:mut 3202
 
-data ro integerPointer:{Int}
+data ro cIntegerPointer:{Int}
 
-data ro mutIntegerPointer:{Int}:mut
+data ro dMutIntegerPointer:{Int}:mut
 
-data ro integerArray16:{Int 16}
+data ro eIntegerArray16:Int:16
 
-data ro integerArrayVariable:{Int ..}
+data ro fIntegerArrayVariable:{Int ..}
 
-data ro integerArrayInitialized:{Int 16}
+data ro gIntegerArrayInitialized:Int:16
 	3948 293 293049 948 912
 	340 0 2304 0 4785 92
 
 # TODO: reinstate these two after phrase parsing is implemented
-# data wr integerPointerInit:{Int} [& integer]
+# data wr hIntegerPointerInit:{Int} [& integer]
 
-# data wr mutIntegerPointerInit:{Int}:mut [& integer]
+# data wr iMutIntegerPointerInit:{Int}:mut [& integer]
 
 # TODO: maybe test identifiers somewhere else?
-data ro object:thing.thing.
+data ro jObject:thing.Thing.
 	thing.thing
 	.this 324
 	.that 2139
 
-data ro nestedObject:Obj
+data ro kNestedObject:Obj
 	.this
 		.bird0 324
 		.bird1 "hello world"
@@ -36,19 +36,8 @@ data ro nestedObject:Obj
 		.bird2 123.8439
 		.bird3 9328.21348239
 
+data ro lMutIntegerArray16:Int:16:mut
 
-# func ro main
-	# ---
-	# # TODO: set should be a special case, checking under itself for object
-	# member initialization args. it should also check for args in general
-	# under there which should be treated as array initialization args.
-	# basically, under a set phrase, it should do the same checks that it
-	# does under a data section.
-	#
-	# [set object:Obj]
-		# .this 324
-		# .that 2139
-	# 
-	# set object:Obj 
-	#	.this 324
-	#	.that 2139
+data ro mIntegerArrayInitialized:Int:16:mut
+	3948 293 293049 948 912
+	340 0 2304 0 4785 92

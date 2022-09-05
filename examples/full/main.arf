@@ -13,7 +13,7 @@ objt ro Greeter:Obj
 
 # this is a function
 func ro main
-	> arguments:{String}
+	> arguments:{String ..}
 	< status:Int 0
 	---
 	= greeter:Greeter:mut

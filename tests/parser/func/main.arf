@@ -28,7 +28,7 @@ func ro cBasicPhrases
 func ro dArgumentTypes
 	---
 	[bird tree butterfly.wing "hello world"
-		grass:{Int:mut 8}]
+		grass:Int:mut:8]
 
 func ro eMath
 	> x:Int
@@ -127,7 +127,7 @@ func ro hSetPhrase
 	= x:Int 3
 	# loc is a reference, similar to * in C
 	= y:{Int} [loc x]
-	= z:{Int 8}
+	= z:Int:8
 		398 9 2309 983 -2387
 		478 555 123
 	= bird:Bird

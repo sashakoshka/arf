@@ -3,7 +3,7 @@ require "io"
 ---
 
 func ro main
-	> arguments:{String}
+	> arguments:{String ..}
 	< status:Int 0
 	---
 	io.println "hello world"
