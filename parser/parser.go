@@ -17,6 +17,13 @@ type ParsingOperation struct {
 	tree SyntaxTree
 }
 
+// TODO:
+// - implement parser cache
+// - have this try to hit the cache, and actually parse on miss
+// - rename this to Fetch
+// - add `skim bool` argument. when this is true, don't parse any code or data
+//   section initialization values, just definitions and their default values.
+
 // Parse reads the files located in the module specified by modulePath, and
 // converts them into an abstract syntax tree.
 func Parse (modulePath string) (tree SyntaxTree, err error) {
