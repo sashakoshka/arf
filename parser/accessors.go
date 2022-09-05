@@ -165,3 +165,33 @@ func (section EnumSection) Item (index int) (member EnumMember) {
 	member = section.members[index]
 	return
 }
+
+// InputsLength returns the amount of inputs in the behavior.
+func (behavior FaceBehavior) IntputsLength () (length int) {
+	length = len(behavior.inputs)
+	return
+}
+
+// Input returns the input at index.
+func (behavior FaceBehavior) Input (index int) (input Declaration) {
+	input = behavior.inputs[index]
+	return
+}
+
+// OutputsLength returns the amount of outputs in the behavior.
+func (behavior FaceBehavior) OutputsLength () (length int) {
+	length = len(behavior.outputs)
+	return
+}
+
+// Output returns the output at index.
+func (behavior FaceBehavior) Output (index int) (output Declaration) {
+	output = behavior.outputs[index]
+	return
+}
+
+// Behaviors returns an iterator for the interface's behaviors.
+func (section FaceSection) Behaviors () (iterator types.Iterator[FaceBehavior]) {
+	iterator = types.NewIterator(section.behaviors)
+	return
+}
