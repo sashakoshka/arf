@@ -73,15 +73,17 @@ func (what Type) ToString () (output string) {
 		output += "{"
 		output += what.points.ToString()
 
-		if what.kind == TypeKindArray {
-			output += fmt.Sprint(" ", what.length)
-		} else if what.kind == TypeKindVariableArray {
+		if what.kind == TypeKindVariableArray {
 			output += " .."
 		}
 		
 		output += "}"
 	}
 
+	if what.kind == TypeKindArray {
+		output += fmt.Sprint(":", what.length)
+	}
+	
 	if what.mutable {
 		output += ":mut"
 	}
