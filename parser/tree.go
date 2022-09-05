@@ -262,9 +262,7 @@ type Phrase struct {
 	location  file.Location
 	command   Argument
 	arguments []Argument
-	// TODO: this is wack. it should be named after a plural noun like,
-	// returnees or something. accessor methods should beupdated to match.
-	returnsTo []Argument
+	returnees []Argument
 
 	kind PhraseKind
 

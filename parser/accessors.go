@@ -215,15 +215,15 @@ func (phrase Phrase) Argument (index int) (argument Argument) {
 	return
 }
 
-// ReturnsToLength returns the amount of things the phrase returns to.
-func (phrase Phrase) ReturnsToLength () (length int) {
-	length = len(phrase.returnsTo)
+// ReturneesLength returns the amount of things the phrase returns to.
+func (phrase Phrase) ReturneesLength () (length int) {
+	length = len(phrase.returnees)
 	return
 }
 
-// ReturnTo returns the thing alskdjaslkdjsa whatever i dont even know wtf.
-func (phrase Phrase) ReturnTo (index int) (returnTo Argument) {
-	returnTo = phrase.returnsTo[index]
+// Returnee returns the returnee at index.
+func (phrase Phrase) Returnee (index int) (returnee Argument) {
+	returnee = phrase.returnees[index]
 	return
 }
 

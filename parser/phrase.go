@@ -202,11 +202,11 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 			// ...until we hit a newline
 			if parser.token.Is(lexer.TokenKindNewline) { break }
 
-			var returnTo Argument
-			returnTo, err = parser.parseArgument()
+			var returnee Argument
+			returnee, err = parser.parseArgument()
 			if err != nil { return }
 
-			phrase.returnsTo = append(phrase.returnsTo, returnTo)
+			phrase.returnees = append(phrase.returnees, returnee)
 		}
 	}
 	

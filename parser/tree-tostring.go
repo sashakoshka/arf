@@ -421,9 +421,9 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 	}
 	output += "]"
 
-	if len(phrase.returnsTo) > 0 {
+	if len(phrase.returnees) > 0 {
 		output += " ->"
-		for _, returnItem := range phrase.returnsTo {
+		for _, returnItem := range phrase.returnees {
 			output += " " + returnItem.ToString(0, false)
 		}
 	}
