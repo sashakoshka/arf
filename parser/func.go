@@ -32,6 +32,13 @@ func (parser *ParsingOperation) parseFuncSection () (
 	err = parser.parseFuncArguments(&section)
 	if err != nil { return }
 
+	// skip the rest of the section if we are only skimming it
+	if parser.skimming {
+		section.external = true
+		err = parser.skipIndentLevel(1)
+		return
+	}
+
 	// check to see if the function is external
 	if !parser.token.Is(lexer.TokenKindIndent) { return }
 	if parser.token.Value().(int) != 1         { return }
