@@ -1,12 +1,16 @@
 package parser
 
 import "io"
+import "os"
 import "strings"
 import "testing"
-// import "git.tebibyte.media/arf/arf/types"
+import "path/filepath"
 
 func checkTree (modulePath string, correct string, test *testing.T) {
-	tree, err := Parse(modulePath)
+	cwd, _ := os.Getwd()
+	modulePath = filepath.Join(cwd, modulePath)
+	println(modulePath)
+	tree, err := Fetch(modulePath)
 	
 	treeString := tree.ToString(0)
 	treeRunes  := []rune(treeString)
