@@ -1,9 +1,17 @@
 package parser
 
+import "git.tebibyte.media/arf/arf/types"
+
 // LookupSection looks returns the section under the give name. If the section
 // does not exist, nil is returned.
-func (tree *SyntaxTree) LookupSection (name string) (section Section) {
+func (tree SyntaxTree) LookupSection (name string) (section Section) {
 	section = tree.sections[name]
+	return
+}
+
+// Sections returns an iterator for the tree's sections
+func (tree SyntaxTree) Sections () (iterator types.Iterator[Section]) {
+	iterator = types.NewIterator(tree.sections)
 	return
 }
 
@@ -91,5 +99,25 @@ func (what Type) Points () (points Type) {
 	if what.kind != TypeKindBasic {
 		points = *what.points
 	}
+	return
+}
+
+// Values returns an iterator for the initialization values
+func (values ObjectInitializationValues) Sections () (
+	iterator types.Iterator[Argument],
+) {
+	iterator = types.NewIterator(values.attributes)
+	return
+}
+
+// Length returns the amount of values
+func (values ArrayInitializationValues) Length () (length int) {
+	length = len(values.values)
+	return
+}
+
+// Item returns the value at index
+func (values ArrayInitializationValues) Value (index int) (value Argument) {
+	value = values.values[index]
 	return
 }

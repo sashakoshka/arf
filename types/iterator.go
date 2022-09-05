@@ -43,8 +43,8 @@ func (iterator Iterator[VALUE_TYPE]) Next () {
 	iterator.index ++
 }
 
-// AtEnd returns whether the iterator has reached the end of the map.
-func (iterator Iterator[VALUE_TYPE]) AtEnd () (atEnd bool) {
+// End returns whether the iterator has reached the end of the map.
+func (iterator Iterator[VALUE_TYPE]) End () (atEnd bool) {
 	atEnd = iterator.index >= len(iterator.keys) || iterator.index < 0
 	return
 }
