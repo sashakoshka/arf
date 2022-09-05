@@ -266,7 +266,10 @@ func (section DataSection) ToString (indent int) (output string) {
 		section.value.kind == ArgumentKindObjectInitializationValues ||
 		section.value.kind == ArgumentKindArrayInitializationValues
 
-	if section.value.value == nil {
+	if section.external {
+		output += "\n"
+		output += doIndent(indent + 1, "external\n")
+	} else if section.value.value == nil {
 		output += "\n"
 	} else if isComplexInitialization {
 		output += "\n"

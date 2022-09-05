@@ -197,6 +197,12 @@ func (section FaceSection) Behaviors () (iterator types.Iterator[FaceBehavior]) 
 	return
 }
 
+// External returns whether or not the data section is external.
+func (section DataSection) External () (external bool) {
+	external = section.external
+	return
+}
+
 // Kind returns what kind of phrase it is.
 func (phrase Phrase) Kind () (kind PhraseKind) {
 	kind = phrase.kind

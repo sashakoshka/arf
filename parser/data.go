@@ -32,6 +32,25 @@ func (parser *ParsingOperation) parseDataSection () (
 		err = parser.nextToken()
 		if err != nil { return }
 
+		// check if external
+		if !parser.token.Is(lexer.TokenKindIndent) { return }
+		if parser.token.Value().(int) != 1     { return }
+		
+		err = parser.nextToken()
+		if err != nil { return }
+		if parser.token.Is(lexer.TokenKindName) &&
+			parser.token.Value().(string) == "external" {
+		
+			section.external = true
+			err = parser.nextToken(lexer.TokenKindNewline)
+			if err != nil { return }
+			err = parser.nextToken()
+			if err != nil { return }
+			return
+		}
+
+		// otherwise, parse initialization values
+		parser.previousToken()
 		section.value, err = parser.parseInitializationValues(0)
 		if err != nil { return }
 	} else {
