@@ -15,7 +15,7 @@ enum ro NamedColor:U32
 	green 0x00FF00
 	blue  0x0000FF
 
-enum ro AffrontToGod:{Int 4}
+enum ro AffrontToGod:Int:4
 	bird0
 		28394 9328
 		398 9

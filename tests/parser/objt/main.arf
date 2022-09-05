@@ -13,7 +13,7 @@ objt ro Init:Obj
 	ro this:Int 23
 
 objt ro ComplexInit:Obj
-	ro whatever:{Int 3}
+	ro whatever:Int:3
 		230984
 		849 394580
 	ro complex0:Bird
