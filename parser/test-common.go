@@ -10,7 +10,7 @@ func checkTree (modulePath string, correct string, test *testing.T) {
 	cwd, _ := os.Getwd()
 	modulePath = filepath.Join(cwd, modulePath)
 	println(modulePath)
-	tree, err := Fetch(modulePath)
+	tree, err := Fetch(modulePath, false)
 	
 	treeString := tree.ToString(0)
 	treeRunes  := []rune(treeString)

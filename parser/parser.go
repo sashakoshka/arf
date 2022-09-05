@@ -27,14 +27,14 @@ type ParsingOperation struct {
 // Fetch returns the parsed module located at the specified path, and returns an
 // abstract syntax tree. If the module has not yet been parsed, it parses it
 // first.
-func Fetch (modulePath string) (tree SyntaxTree, err error) {
+func Fetch (modulePath string, skim bool) (tree SyntaxTree, err error) {
 	if modulePath[0] != '/' {
 		panic("module path did not begin at filesystem root")
 	}
 
 	// try to hit cache
 	cached, exists := cache[modulePath]
-	if exists {
+	if exists && !(!skim && cached.skimmed){
 		tree = cached.tree
 		return
 	}
