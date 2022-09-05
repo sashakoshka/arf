@@ -15,37 +15,37 @@ func (parser *ParsingOperation) parseBody () (err error) {
 			section, parseErr := parser.parseDataSection()
 			err = parser.tree.addSection(section)
 			if err      != nil { return }
-			if parseErr != nil { return }
+			if parseErr != nil { return parseErr }
 			
 		case "type":
 			section, parseErr := parser.parseTypeSection()
 			err = parser.tree.addSection(section)
 			if err      != nil { return }
-			if parseErr != nil { return }
+			if parseErr != nil { return parseErr }
 			
 		case "objt":
 			section, parseErr := parser.parseObjtSection()
 			err = parser.tree.addSection(section)
 			if err      != nil { return }
-			if parseErr != nil { return }
+			if parseErr != nil { return parseErr }
 			
 		case "face":
 			section, parseErr := parser.parseFaceSection()
 			err = parser.tree.addSection(section)
 			if err      != nil { return }
-			if parseErr != nil { return }
+			if parseErr != nil { return parseErr }
 			
 		case "enum":
 			section, parseErr := parser.parseEnumSection()
 			err = parser.tree.addSection(section)
 			if err      != nil { return }
-			if parseErr != nil { return }
+			if parseErr != nil { return parseErr }
 			
 		case "func":
 			section, parseErr := parser.parseFuncSection()
 			err = parser.tree.addSection(section)
 			if err      != nil { return }
-			if parseErr != nil { return }
+			if parseErr != nil { return parseErr }
 			
 		default:
 			err = parser.token.NewError (
