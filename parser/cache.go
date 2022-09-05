@@ -2,7 +2,7 @@ package parser
 
 // cacheItem stores an item of the parser cache.
 type cacheItem struct {
-	section Section
+	tree    SyntaxTree
 	skimmed bool
 }
 
