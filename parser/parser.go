@@ -150,3 +150,18 @@ func (parser *ParsingOperation) previousToken () {
 	parser.token = parser.tokens[parser.tokenIndex]
 	return
 }
+
+// skipIndentLevel advances the parser, ignoring every line with an indentation
+// equal to or greater than the specified indent.
+func (parser *ParsingOperation) skipIndentLevel (indent int) (err error) {
+	for {
+		err = parser.nextToken()
+		if err != nil { return }
+
+		if parser.token.Is(lexer.TokenKindIndent) &&
+			parser.token.Value().(int) < indent {
+
+			return
+		}
+	}
+}
