@@ -18,13 +18,6 @@ type ParsingOperation struct {
 	tree SyntaxTree
 }
 
-// TODO:
-// * implement parser cache
-// * have this try to hit the cache, and actually parse on miss
-// * rename this to Fetch
-// - add `skim bool` argument. when this is true, don't parse any code or data
-//   section initialization values, just definitions and their default values.
-
 // Fetch returns the parsed module located at the specified path, and returns an
 // abstract syntax tree. If the module has not yet been parsed, it parses it
 // first.
