@@ -4,8 +4,6 @@ import "git.tebibyte.media/arf/arf/file"
 import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/infoerr"
 
-// TODO: implement table of import names -> full paths from /. perhaps replace
-// requires[] with this, and build it when parsing the meta section.
 // SyntaxTree represents an abstract syntax tree. It covers an entire module. It
 // can be expected to be syntactically correct, but it might not be semantically
 // correct (because it has not been analyzed yet.)
@@ -13,7 +11,7 @@ type SyntaxTree struct {
 	license string
 	author  string
 
-	requires []string
+	requires map[string] string
 	sections map[string] Section
 }
 

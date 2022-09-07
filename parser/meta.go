@@ -1,10 +1,14 @@
 package parser
 
+import "os"
+import "path/filepath"
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // parseMeta parsese the metadata header at the top of an arf file.
 func (parser *ParsingOperation) parseMeta () (err error) {
+	cwd, _ := os.Getwd()
+	
 	for {
 		err = parser.expect (
 			lexer.TokenKindName,
@@ -31,7 +35,30 @@ func (parser *ParsingOperation) parseMeta () (err error) {
 		case "license":
 			parser.tree.license = value
 		case "require":
-			parser.tree.requires = append(parser.tree.requires, value)
+			// if import path is relative, get absolute path.
+			if value[0] == '.' {
+				value = filepath.Join(cwd, value)
+			} else if value[0] != '/' {
+				// TODO: get arf import path from an env
+				// variable, and default to this if not found.
+				// then, search all paths.
+				value = filepath.Join (
+					"/usr/local/include/arf/",
+					value)
+			}
+
+			basename  := filepath.Base(value)
+			_, exists := parser.tree.requires[basename]
+
+			if exists {
+				err = parser.token.NewError (
+					"cannot require \"" + basename +
+					"\" multiple times",
+					infoerr.ErrorKindError)
+				return
+			}
+
+			parser.tree.requires[basename] = value
 		default:
 			parser.token.NewError (
 				"unrecognized metadata field: " + field,

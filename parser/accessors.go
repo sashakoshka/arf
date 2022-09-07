@@ -15,6 +15,14 @@ func (tree SyntaxTree) Sections () (iterator types.Iterator[Section]) {
 	return
 }
 
+// ResolveRequire returns the full path, from the filesystem root, of an import.
+// This method will return false for exists if the module has not been
+// imported.
+func (tree SyntaxTree) ResolveRequire (name string) (path string, exists bool) {
+	path, exists = tree.requires[name]
+	return
+}
+
 // Kind returns the section's kind (SectionKindType).
 func (section TypeSection) Kind () (kind SectionKind) {
 	kind = SectionKindType

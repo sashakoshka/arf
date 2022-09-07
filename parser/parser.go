@@ -38,6 +38,7 @@ func Fetch (modulePath string, skim bool) (tree SyntaxTree, err error) {
 		modulePath: modulePath,
 		skimming:   skim,
 		tree: SyntaxTree {
+			requires: make(map[string] string),
 			sections: make(map[string] Section),			
 		},
 	}
