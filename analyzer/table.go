@@ -14,7 +14,7 @@ type SectionTable map[locator] Section
 type SectionKind int
 
 const (
-	SectionKindType = iota
+	SectionKindType SectionKind = iota
 	SectionKindObjt
 	SectionKindEnum
 	SectionKindFace
@@ -26,4 +26,35 @@ const (
 type Section interface {
 	Kind () (kind SectionKind)
 	Name () (name string)
+}
+
+// TypeKind represents what kind of type a type is.
+type TypeKind int
+
+const (
+	// TypeKindBasic means it's a single value, or a fixed length array.
+	TypeKindBasic TypeKind = iota
+
+	// TypeKindPointer means it's a pointer
+	TypeKindPointer
+
+	// TypeKindVariableArray means it's an array of variable length.
+	TypeKindVariableArray
+)
+
+// Type represents a description of a type. It must eventually point to a
+// TypeSection.
+type Type struct {
+	actual Section
+	points *Type
+
+	mutable bool
+	kind TypeKind
+	length uint64
+}
+
+// TypeSection represents a type definition section.
+type TypeSection struct {
+	name     string
+	inherits Type
 }
