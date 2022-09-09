@@ -2,15 +2,16 @@ package analyzer
 
 import "os"
 import "path/filepath"
+import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/parser"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // AnalysisOperation holds information about an ongoing analysis operation.
 type AnalysisOperation struct {
 	sectionTable SectionTable
 	modulePath   string
 
-	// TODO: create trail stack to setect and prevent dependency cycles
-	// between sections
+	trail types.Stack[locator]
 }
 
 // Analyze performs a semantic analyisys on the module specified by path, and
@@ -76,6 +77,20 @@ func (analyzer *AnalysisOperation) fetchSection (
 		section = nil
 		return
 	}
+
+	// FIXME: this does not take into account, for instance, recursive
+	// functions or objects that have pointers to themselves.
+	for _, plate := range analyzer.trail {
+		if plate == where {
+			parsedSection.NewError (
+				"cannot have cyclic section dependency",
+				infoerr.ErrorKindError)
+			return
+		}
+	}
+	
+	analyzer.trail.Push(where)
+	defer analyzer.trail.Pop()
 
 	// TODO: analyze section
 	switch parsedSection.Kind() {
