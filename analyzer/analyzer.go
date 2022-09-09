@@ -8,6 +8,9 @@ import "git.tebibyte.media/arf/arf/parser"
 type AnalysisOperation struct {
 	sectionTable SectionTable
 	modulePath   string
+
+	// TODO: create trail stack to setect and prevent dependency cycles
+	// between sections
 }
 
 // Analyze performs a semantic analyisys on the module specified by path, and
@@ -35,12 +38,55 @@ func (analyzer *AnalysisOperation) analyze () (err error) {
 	sections := tree.Sections()
 
 	for !sections.End() {
-		switch sections.Value().Kind() {
-			
-		}
-		
+		_, err = analyzer.fetchSection(locator {
+			modulePath: analyzer.modulePath,
+			name: sections.Value().Name(),
+		})
 		sections.Next()
 	}
 	
 	return
 }
+
+// fetchSection returns a section from the section table. If it has not already
+// been analyzed, it analyzes it first. If the section does not actually exist,
+// a nil section is returned. When this happens, an error should be created on
+// whatever syntax tree node "requested" the section be analyzed.
+func (analyzer *AnalysisOperation) fetchSection (
+	where locator,
+) (
+	section Section,
+	err error,
+) {
+	var exists bool
+	section, exists = analyzer.sectionTable[where]
+	if exists { return }
+
+	// fetch the module. since we already have our main module parsed fully
+	// and not skimmed, we can just say "yeah lets skim stuff here".
+	var tree parser.SyntaxTree
+	tree, err = parser.Fetch(where.modulePath, true)
+	if err != nil {
+		section = nil
+		return
+	}
+
+	var parsedSection = tree.LookupSection(where.name)
+	if parsedSection == nil {
+		section = nil
+		return
+	}
+
+	// TODO: analyze section
+	switch parsedSection.Kind() {
+	case parser.SectionKindType:
+	case parser.SectionKindObjt:
+	case parser.SectionKindEnum:
+	case parser.SectionKindFace:
+	case parser.SectionKindData:
+	case parser.SectionKindFunc:
+	}
+	
+	analyzer.sectionTable[where] = section
+	return
+} 

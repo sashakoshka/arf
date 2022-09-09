@@ -26,6 +26,7 @@ const (
 type Section interface {
 	Kind () (kind SectionKind)
 	Name () (name string)
+	ToString () (output string)
 }
 
 // TypeKind represents what kind of type a type is.
