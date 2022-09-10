@@ -24,38 +24,26 @@ const (
 
 // Section is a semantically analyzed section.
 type Section interface {
-	Kind () (kind SectionKind)
-	Name () (name string)
-	ToString () (output string)
+	Kind     () (kind SectionKind)
+	Name     () (name string)
+	ToString (indent int) (output string)
+	Complete () (complete bool)
 }
 
-// TypeKind represents what kind of type a type is.
-type TypeKind int
-
-const (
-	// TypeKindBasic means it's a single value, or a fixed length array.
-	TypeKindBasic TypeKind = iota
-
-	// TypeKindPointer means it's a pointer
-	TypeKindPointer
-
-	// TypeKindVariableArray means it's an array of variable length.
-	TypeKindVariableArray
-)
-
-// Type represents a description of a type. It must eventually point to a
-// TypeSection.
-type Type struct {
-	actual Section
-	points *Type
-
-	mutable bool
-	kind TypeKind
-	length uint64
-}
-
-// TypeSection represents a type definition section.
-type TypeSection struct {
+// sectionBase is a struct that all sections must embed.
+type sectionBase struct {
 	name     string
-	inherits Type
+	complete bool
+}
+
+// Name returns the name of the section.
+func (section sectionBase) Name () (name string) {
+	name = section.name
+	return
+}
+
+// Complete returns wether the section has been completed.
+func (section sectionBase) Complete () (complete bool) {
+	complete = section.complete
+	return
 }

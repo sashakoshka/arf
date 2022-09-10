@@ -2,16 +2,17 @@ package analyzer
 
 import "os"
 import "path/filepath"
-import "git.tebibyte.media/arf/arf/types"
+// import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/parser"
-import "git.tebibyte.media/arf/arf/infoerr"
+// import "git.tebibyte.media/arf/arf/infoerr"
 
 // AnalysisOperation holds information about an ongoing analysis operation.
 type AnalysisOperation struct {
 	sectionTable SectionTable
 	modulePath   string
 
-	trail types.Stack[locator]
+	currentPosition locator
+	currentSection  parser.Section
 }
 
 // Analyze performs a semantic analyisys on the module specified by path, and
@@ -78,21 +79,18 @@ func (analyzer *AnalysisOperation) fetchSection (
 		return
 	}
 
-	// FIXME: this does not take into account, for instance, recursive
-	// functions or objects that have pointers to themselves.
-	for _, plate := range analyzer.trail {
-		if plate == where {
-			parsedSection.NewError (
-				"cannot have cyclic section dependency",
-				infoerr.ErrorKindError)
-			return
-		}
-	}
-	
-	analyzer.trail.Push(where)
-	defer analyzer.trail.Pop()
+	previousPosition := analyzer.currentPosition
+	previousSection  := analyzer.currentSection
+	analyzer.currentPosition = where
+	analyzer.currentSection  = parsedSection
 
-	// TODO: analyze section
+	// TODO: analyze section. have analysis methods work on currentPosition
+	// and currentSection.
+	// 
+	// while building an analyzed section, add it to the section
+	// table as soon as the vital details are acquired, and mark it as
+	// incomplete. that way, it can still be referenced by itself in certain
+	// scenarios.
 	switch parsedSection.Kind() {
 	case parser.SectionKindType:
 	case parser.SectionKindObjt:
@@ -102,6 +100,7 @@ func (analyzer *AnalysisOperation) fetchSection (
 	case parser.SectionKindFunc:
 	}
 	
-	analyzer.sectionTable[where] = section
+	analyzer.currentPosition = previousPosition
+	analyzer.currentSection  = previousSection
 	return
-} 
+}
