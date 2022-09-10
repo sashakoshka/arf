@@ -1,6 +1,7 @@
 package analyzer
 
 import "os"
+import "fmt"
 import "path/filepath"
 // import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/parser"
@@ -102,5 +103,14 @@ func (analyzer *AnalysisOperation) fetchSection (
 	
 	analyzer.currentPosition = previousPosition
 	analyzer.currentSection  = previousSection
+	return
+}
+
+func doIndent (indent int, input ...any) (output string) {
+	for index := 0; index < indent; index ++ {
+		output += "\t"
+	}
+
+	output += fmt.Sprint(input...)
 	return
 }

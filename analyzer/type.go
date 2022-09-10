@@ -1,6 +1,5 @@
 package analyzer
 
-import "fmt"
 import "git.tebibyte.media/arf/arf/types"
 
 // TypeKind represents what kind of type a type is.
@@ -33,9 +32,20 @@ type ObjectMember struct {
 	// a defaultValue member here.
 }
 
+func (member ObjectMember) ToString (indent int) (output string) {
+	output += doIndent (
+		indent,
+		member.name, " ",
+		member.permission.ToString(),
+		// TODO: default value
+		"\n")
+	return
+}
+
 // Type represents a description of a type. It must eventually point to a
 // TypeSection.
 type Type struct {
+	// one of these must be nil.
 	actual Section
 	points *Type
 
@@ -58,7 +68,32 @@ type Type struct {
 
 // ToString returns all data stored within the type, in string form.
 func (what Type) ToString (indent int) (output string) {
-	output += fmt.Sprint("") 
+	output += doIndent(indent, "type ", what.length)
+
+	if what.mutable {
+		output += " mutable"
+	}
+	
+	switch what.kind {
+	case TypeKindBasic:
+		output += " basic"
+	case TypeKindPointer:
+		output += " pointer"
+	case TypeKindVariableArray:
+		output += " variableArray"
+	case TypeKindObject:
+		output += " object"
+	}
+
+	if what.points != nil {
+		output += " {\n"
+		output += what.points.ToString(indent + 1)
+		output += doIndent(indent, "}")
+	}
+
+	if what.actual != nil {
+		output += what.actual.Name()
+	}
 	return
 }
 
@@ -76,5 +111,7 @@ func (section TypeSection) Kind () (kind SectionKind) {
 
 // ToString returns all data stored within the type section, in string form.
 func (section TypeSection) ToString (indent int) (output string) {
+	output += doIndent(indent, "typeSection ", section.where.ToString(), "\n")
+	output += section.inherits.ToString(indent + 1)
 	return
 }

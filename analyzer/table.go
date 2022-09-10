@@ -6,6 +6,11 @@ type locator struct {
 	name string
 }
 
+func (where locator) ToString () (output string) {
+	output += where.modulePath + "." + where.name
+	return
+}
+
 // SectionTable stores a list of semantically analized sections from one module,
 // and all sections that it requires from other modules.
 type SectionTable map[locator] Section
@@ -32,15 +37,23 @@ type Section interface {
 
 // sectionBase is a struct that all sections must embed.
 type sectionBase struct {
-	name     string
+	where    locator
 	complete bool
 }
 
 // Name returns the name of the section.
 func (section sectionBase) Name () (name string) {
-	name = section.name
+	name = section.where.name
 	return
 }
+
+// ModulePath returns the full path of the module the section came from.
+func (section sectionBase) ModulePath () (name string) {
+	name = section.where.modulePath
+	return
+}
+
+// TODO: ModuleName returns the name of the module where the section came from.
 
 // Complete returns wether the section has been completed.
 func (section sectionBase) Complete () (complete bool) {

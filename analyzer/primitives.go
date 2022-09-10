@@ -2,23 +2,28 @@ package analyzer
 
 // This is a global, cannonical list of primitive and built-in types.
 
-var PrimitiveInt  = TypeSection { sectionBase: sectionBase { name: "Int" }  }
-var PrimitiveUInt = TypeSection { sectionBase: sectionBase { name: "UInt" } }
-var PrimitiveI8   = TypeSection { sectionBase: sectionBase { name: "I8 " }  }
-var PrimitiveI16  = TypeSection { sectionBase: sectionBase { name: "I16 " } }
-var PrimitiveI32  = TypeSection { sectionBase: sectionBase { name: "I32 " } }
-var PrimitiveI64  = TypeSection { sectionBase: sectionBase { name: "I64 " } }
-var PrimitiveU8   = TypeSection { sectionBase: sectionBase { name: "U8 " }  }
-var PrimitiveU16  = TypeSection { sectionBase: sectionBase { name: "U16 " } }
-var PrimitiveU32  = TypeSection { sectionBase: sectionBase { name: "U32 " } }
-var PrimitiveU64  = TypeSection { sectionBase: sectionBase { name: "U64 " } }
+var PrimitiveInt  = createPrimitive("Int",  Type {})
+var PrimitiveUInt = createPrimitive("UInt", Type {})
+var PrimitiveI8   = createPrimitive("I8",   Type {})
+var PrimitiveI16  = createPrimitive("I16",  Type {})
+var PrimitiveI32  = createPrimitive("I32",  Type {})
+var PrimitiveI64  = createPrimitive("I64",  Type {})
+var PrimitiveU8   = createPrimitive("U8",   Type {})
+var PrimitiveU16  = createPrimitive("U16",  Type {})
+var PrimitiveU32  = createPrimitive("U32",  Type {})
+var PrimitiveU64  = createPrimitive("U64",  Type {})
+var PrimitiveObjt = createPrimitive("Objt", Type {})
+var PrimitiveFace = createPrimitive("Face", Type {})
 
-var PrimitiveObjt = TypeSection { sectionBase: sectionBase { name: "Objt" } }
-var PrimitiveFace = TypeSection { sectionBase: sectionBase { name: "Face" } }
+var BuiltInString = createPrimitive("String", Type {
+	actual: PrimitiveU8,
+	kind:   TypeKindVariableArray,
+})
 
-var BuiltInString = TypeSection {
-	inherits: Type {
-		actual: PrimitiveU8,
-		kind:   TypeKindVariableArray,
-	},
+// createPrimitive provides a quick way to construct a primitive for the above
+// list.
+func createPrimitive (name string, inherits Type) (primitive TypeSection) {
+	primitive.where = locator { name: name }
+	primitive.inherits = inherits
+	return
 }
