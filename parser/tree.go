@@ -20,7 +20,6 @@ type SectionKind int
 
 const (
 	SectionKindType = iota
-	SectionKindObjt
 	SectionKindEnum
 	SectionKindFace
 	SectionKindData
@@ -59,6 +58,17 @@ const (
 	TypeKindVariableArray
 )
 
+// TypeMember represents a member variable of a type specifier.
+type TypeMember struct {
+	locatable
+	nameable
+	typeable
+	permissionable
+	valuable
+	
+	bitWidth uint64
+}
+
 // Type represents a type specifier
 type Type struct {
 	locatable
@@ -72,6 +82,9 @@ type Type struct {
 
 	// not applicable for basic.
 	points *Type
+
+	// if non-nil, this type defines new members.
+	members []TypeMember
 }
 
 // Declaration represents a variable declaration.
@@ -173,34 +186,13 @@ type DataSection struct {
 	external bool
 }
 
-// TypeSection represents a blind type definition.
+// TypeSection represents a type definition.
 type TypeSection struct {
 	locatable
 	nameable
 	typeable
 	permissionable
 	valuable
-}
-
-// ObjtMember represents a part of an object type definition.
-type ObjtMember struct {
-	locatable
-	nameable
-	typeable
-	permissionable
-	valuable
-	
-	bitWidth uint64
-}
-
-// ObjtSection represents an object type definition.
-type ObjtSection struct {
-	locatable
-	nameable
-	permissionable
-	inherits Identifier
-
-	members []ObjtMember
 }
 
 // EnumMember represents a member of an enum section.
