@@ -7,12 +7,12 @@ data ro aExternalData:Int
 data ro bSingleValue:Int 342
 
 data ro cNestedObject:Obj
-	.this
-		.bird0 324
-		.bird1 "hello world"
-	.that
-		.bird2 123.8439
-		.bird3 9328.21348239
+	-- this
+		-- bird0 324
+		-- bird1 "hello world"
+	-- that
+		-- bird2 123.8439
+		-- bird3 9328.21348239
 
 data ro dUninitialized:Int:16:mut
 
@@ -28,9 +28,9 @@ func ro fComplexFunction
 		398 9 2309 983 -2387
 		478 555 123
 	= bird:Bird
-		.that
-			.whenYou 99999
-		.this 324
+		-- that
+			-- whenYou 99999
+		-- this 324
 
 func ro gExternalFunction
 	> x:Int

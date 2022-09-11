@@ -25,15 +25,15 @@ data ro gIntegerArrayInitialized:Int:16
 	4785
 	92
 data ro jObject:thing.Thing.thing.thing
-	.that 2139
-	.this 324
+	-- that 2139
+	-- this 324
 data ro kNestedObject:Obj
-	.that
-		.bird2 123.8439
-		.bird3 9328.21348239
-	.this
-		.bird0 324
-		.bird1 "hello world"
+	-- that
+		-- bird2 123.8439
+		-- bird3 9328.21348239
+	-- this
+		-- bird0 324
+		-- bird1 "hello world"
 data ro lMutIntegerArray16:Int:16:mut
 data ro mExternalData:Int:8
 	external
