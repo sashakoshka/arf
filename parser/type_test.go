@@ -19,7 +19,6 @@ type ro dInitInherit:aBasic
 	-- that 9384
 	-- this 389
 type ro eInitAndDefine:aBasic
-	-- this 389
 	ro these:aBasic
 		ro born:Int 4
 		ro in:Int
@@ -27,6 +26,8 @@ type ro eInitAndDefine:aBasic
 			9348
 			92384
 			92834
+	-- this 389
+	-- these
 		-- this 98
 	-- that 9384
 

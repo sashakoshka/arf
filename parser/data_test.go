@@ -28,6 +28,7 @@ data ro jObject:thing.Thing.thing.thing
 	-- that 2139
 	-- this 324
 data ro kNestedObject:Obj
+	ro newMember:Int 9023
 	-- that
 		-- bird2 123.8439
 		-- bird3 9328.21348239

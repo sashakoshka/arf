@@ -47,11 +47,11 @@ type Identifier struct {
 type TypeKind int
 
 const (
-	// TypeKindBasic either means it's a primitive, or it inherits from
-	// something.
+	// TypeKindBasic means its a normal type and inherits from something.
+	// Basic types can define new members on their parent types.
 	TypeKindBasic TypeKind = iota
 
-	// TypeKindPointer means it's a pointer
+	// TypeKindPointer means it's a pointer.
 	TypeKindPointer
 
 	// TypeKindVariableArray means it's an array of variable length.

@@ -3,6 +3,15 @@ package parser
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
+// TODO:
+// (parser *ParsingOperation) parseDefaultValues
+
+// (parser *ParsingOperation) parseDefaultMemberValues (return tree of new members and a tree of member values)
+// (parser *ParsingOperation) parseDefaultArrayValues
+
+// (parser *ParsingOperation) parseDefaultMemberValue
+// (parser *ParsingOperation) parseMemberDeclaration
+
 // parseInitializationValues starts on the line after a data section, or a set
 // phrase. It checks for an indent greater than the indent of the aforementioned
 // data section or set phrase (passed through baseIndent), and if there is,
