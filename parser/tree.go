@@ -127,11 +127,11 @@ const (
 	// {name 23}
 	ArgumentKindSubscript
 
-	// .name value
-	// but like, a lot of them
+	// (.name <value>)
+	// (.name <value> .name (.name <value))
 	ArgumentKindObjectDefaultValues
 
-	// value value...
+	// <4 32 98 5>
 	ArgumentKindArrayDefaultValues
 
 	// name.name

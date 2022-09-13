@@ -67,5 +67,55 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 		if err != nil { return }
 	}
 
+	// TODO: consider offloading array default values to argument parsing, and
+	// then just grabbing the next argument after this if it exists. that way
+	// we can have array litreals anywhere.
+
+	// get default value
+	if parser.token.Is(lexer.TokenKindLessThan) {
+		what.defaultValue, err = parser.parseBasicDefaultValue()
+		if err != nil { return }
+		
+	} else if parser.token.Is(lexer.TokenKindLParen) {
+		// TODO: parse members and member default values
+	}
+
+	return
+}
+
+// parseBasicDefaultValue parses a default value of a non-object type.
+func (parser *ParsingOperation) parseBasicDefaultValue () (
+	value Argument,
+	err error,
+) {
+	err = parser.expect(lexer.TokenKindLessThan)
+	if err != nil { return }
+
+	var arguments []Argument
+
+	defer func () {
+		// if we have multiple values, we need to return the full array
+		// instead.
+		if len(arguments) > 1 {
+			// FIXME: i think this is a sign that the tree needs
+			// cleaning up.
+			value.kind = ArgumentKindArrayDefaultValues
+			location := value.location
+			value.value = ArrayDefaultValues {
+				values: arguments,
+			}
+			value.location = location
+		}
+	} ()
+
+	for {
+		if parser.token.Is(lexer.TokenKindIndent)   { continue }
+		if parser.token.Is(lexer.TokenKindNewline)  { continue }
+		if parser.token.Is(lexer.TokenKindGreaterThan) { break }
+
+		value, err = parser.parseArgument()
+		if err != nil { return }
+		arguments = append(arguments, value)
+	}
 	return
 }
