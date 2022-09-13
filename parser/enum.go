@@ -77,7 +77,7 @@ func (parser *ParsingOperation) parseEnumMembers (
 			err = parser.nextToken()
 			if err != nil { return }
 
-			member.value, err = parser.parseInitializationValues(1)
+			member.value, err = parser.parseDefaultValues(1)
 			into.members = append(into.members, member)
 			if err != nil { return }
 		} else {

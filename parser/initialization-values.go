@@ -16,7 +16,7 @@ import "git.tebibyte.media/arf/arf/infoerr"
 // phrase. It checks for an indent greater than the indent of the aforementioned
 // data section or set phrase (passed through baseIndent), and if there is,
 // it parses initialization values.
-func (parser *ParsingOperation) parsedefaultValues (
+func (parser *ParsingOperation) parseDefaultValues (
 	baseIndent int,
 ) (
 	argument Argument,
@@ -107,7 +107,7 @@ func (parser *ParsingOperation) parseObjectdefaultValues () (
 			err = parser.nextToken(lexer.TokenKindIndent)
 			if err != nil { return }
 			
-			value, err = parser.parsedefaultValues(baseIndent)
+			value, err = parser.parseDefaultValues(baseIndent)
 			defaultValues.attributes[name] = value
 			if err != nil { return }
 			

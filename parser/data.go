@@ -58,7 +58,7 @@ func (parser *ParsingOperation) parseDataSection () (
 
 		// otherwise, parse initialization values
 		parser.previousToken()
-		section.value, err = parser.parseInitializationValues(0)
+		section.value, err = parser.parseDefaultValues(0)
 		if err != nil { return }
 	} else {
 		section.value, err = parser.parseArgument()

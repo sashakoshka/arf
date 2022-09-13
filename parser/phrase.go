@@ -216,7 +216,7 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 	// if this is a set phrase, parse initialization values under it
 	if phrase.kind == PhraseKindAssign {
 		var values Argument
-		values, err = parser.parseInitializationValues(indent)
+		values, err = parser.parseDefaultValues(indent)
 
 		if values.kind != ArgumentKindNil {
 			phrase.arguments = append(phrase.arguments, values)

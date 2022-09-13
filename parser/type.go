@@ -37,7 +37,7 @@ func (parser *ParsingOperation) parseTypeSection () (
 		err = parser.nextToken()
 		if err != nil { return }
 
-		section.value, err = parser.parseInitializationValues(0)
+		section.value, err = parser.parseDefaultValues(0)
 		if err != nil { return }
 	} else {
 		section.value, err = parser.parseArgument()

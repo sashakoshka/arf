@@ -200,7 +200,7 @@ func (parser *ParsingOperation) parseFuncArguments (
 				if err != nil { return }
 
 				output.value, err =
-					parser.parseInitializationValues(1)
+					parser.parseDefaultValues(1)
 				into.outputs = append(into.outputs, output)
 				if err != nil { return }
 			} else {
