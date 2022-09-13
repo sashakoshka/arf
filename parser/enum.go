@@ -73,9 +73,11 @@ func (parser *ParsingOperation) parseEnumMembers (
 		if err != nil { return }
 	
 		// parse default value
-		member.value, err = parser.parseArgument()
-		into.members = append(into.members, member)
-		if err != nil { return }
+		if !parser.token.Is(lexer.TokenKindNewline) {
+			member.value, err = parser.parseArgument()
+			into.members = append(into.members, member)
+			if err != nil { return }
+		}
 
 		err = parser.expect(lexer.TokenKindNewline)
 		if err != nil { return }

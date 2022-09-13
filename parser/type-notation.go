@@ -69,4 +69,3 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 
 	return
 }
-

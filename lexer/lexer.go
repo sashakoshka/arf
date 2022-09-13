@@ -192,6 +192,16 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		token.kind = TokenKindComma
 		lexer.addToken(token)
 		err = lexer.nextRune()
+	case '(':
+		token := lexer.newToken()
+		token.kind = TokenKindLParen
+		lexer.addToken(token)
+		err = lexer.nextRune()
+	case ')':
+		token := lexer.newToken()
+		token.kind = TokenKindRParen
+		lexer.addToken(token)
+		err = lexer.nextRune()
 	case '[':
 		token := lexer.newToken()
 		token.kind = TokenKindLBracket
