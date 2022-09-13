@@ -64,7 +64,6 @@ type TypeMember struct {
 	nameable
 	typeable
 	permissionable
-	valuable
 	
 	bitWidth uint64
 }
@@ -84,7 +83,10 @@ type Type struct {
 	points *Type
 
 	// if non-nil, this type defines new members.
-	members []TypeMember
+	members      []TypeMember
+
+	// the default value of the type.
+	defaultValue Argument
 }
 
 // Declaration represents a variable declaration.
@@ -180,7 +182,6 @@ type DataSection struct {
 	nameable
 	typeable
 	permissionable
-	valuable
 
 	external bool
 }
@@ -191,7 +192,6 @@ type TypeSection struct {
 	nameable
 	typeable
 	permissionable
-	valuable
 }
 
 // EnumMember represents a member of an enum section.
@@ -270,7 +270,6 @@ type Block []Phrase
 // that it can have a default value.
 type FuncOutput struct {
 	Declaration
-	valuable
 }
 
 // FuncSection represents a function section.

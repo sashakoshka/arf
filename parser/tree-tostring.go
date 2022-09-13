@@ -87,7 +87,8 @@ func (what Type) ToString () (output string) {
 	if what.mutable {
 		output += ":mut"
 	}
-	
+
+	// TODO: print out default value
 	return
 }
 
@@ -260,29 +261,7 @@ func (section DataSection) ToString (indent int) (output string) {
 		"type ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString())
-
-	isComplexInitialization :=
-		section.value.kind == ArgumentKindObjectDefaultValues ||
-		section.value.kind == ArgumentKindArrayDefaultValues
-	
-	if !isComplexInitialization && section.value.value != nil {
-		output += " " + section.value.ToString(0, false)
-	}
-	output += "\n"
-
-	for _, member := range section.what.members {
-		output += member.ToString(indent + 1)
-	}
-	
-	if isComplexInitialization {
-		output += section.value.ToString(indent + 1, true)
-	}
-	
-	if section.external {
-		output += "\n"
-		output += doIndent(indent + 1, "external\n")
-	}
+		section.what.ToString(), "\n")
 	return
 }
 
@@ -308,24 +287,7 @@ func (section TypeSection) ToString (indent int) (output string) {
 		"type ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString())
-
-	isComplexInitialization :=
-		section.value.kind == ArgumentKindObjectDefaultValues ||
-		section.value.kind == ArgumentKindArrayDefaultValues
-	
-	if !isComplexInitialization && section.value.value != nil {
-		output += " " + section.value.ToString(0, false)
-	}
-	output += "\n"
-
-	for _, member := range section.what.members {
-		output += member.ToString(indent + 1)
-	}
-	
-	if isComplexInitialization {
-		output += section.value.ToString(indent + 1, true)
-	}
+		section.what.ToString(), "\n")
 	return
 }
 
@@ -443,24 +405,9 @@ func (block Block) ToString (indent int) (output string) {
 }
 
 func (funcOutput FuncOutput) ToString (indent int) (output string) {
-	output += doIndent(indent + 1, "< ", funcOutput.Declaration.ToString())
-	
-	isComplexInitialization :=
-		funcOutput.value.kind == ArgumentKindObjectDefaultValues ||
-		funcOutput.value.kind == ArgumentKindArrayDefaultValues
-	
-	if !isComplexInitialization && funcOutput.value.value != nil {
-		output += " " + funcOutput.value.ToString(0, false)
-	}
-	output += "\n"
-
-	for _, member := range funcOutput.what.members {
-		output += member.ToString(indent + 1)
-	}
-	
-	if isComplexInitialization {
-		output += funcOutput.value.ToString(indent + 1, true)
-	}
+	output += doIndent (
+		indent + 1,
+		"< ", funcOutput.Declaration.ToString(), "\n")
 	return
 }
 
