@@ -442,10 +442,24 @@ func (block Block) ToString (indent int) (output string) {
 	return
 }
 
-func (funcOutput FuncOutput) ToString () (output string) {
-	output += funcOutput.Declaration.ToString()
-	if funcOutput.value.kind != ArgumentKindNil {
+func (funcOutput FuncOutput) ToString (indent int) (output string) {
+	output += doIndent(indent + 1, "< ", funcOutput.Declaration.ToString())
+	
+	isComplexInitialization :=
+		funcOutput.value.kind == ArgumentKindObjectInitializationValues ||
+		funcOutput.value.kind == ArgumentKindArrayInitializationValues
+	
+	if !isComplexInitialization && funcOutput.value.value != nil {
 		output += " " + funcOutput.value.ToString(0, false)
+	}
+	output += "\n"
+
+	for _, member := range funcOutput.what.members {
+		output += member.ToString(indent + 1)
+	}
+	
+	if isComplexInitialization {
+		output += funcOutput.value.ToString(indent + 1, true)
 	}
 	return
 }
@@ -468,7 +482,7 @@ func (section FuncSection) ToString (indent int) (output string) {
 	}
 	
 	for _, outputItem := range section.outputs {
-		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
+		output += outputItem.ToString(indent + 1)
 	}
 
 	output += doIndent(indent + 1, "---\n")
