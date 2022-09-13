@@ -126,7 +126,7 @@ func (member TypeMember) BitWidth () (width uint64) {
 }
 
 // Values returns an iterator for the initialization values.
-func (values ObjectInitializationValues) Sections () (
+func (values ObjectDefaultValues) Sections () (
 	iterator types.Iterator[Argument],
 ) {
 	iterator = types.NewIterator(values.attributes)
@@ -134,13 +134,13 @@ func (values ObjectInitializationValues) Sections () (
 }
 
 // Length returns the amount of values.
-func (values ArrayInitializationValues) Length () (length int) {
+func (values ArrayDefaultValues) Length () (length int) {
 	length = len(values.values)
 	return
 }
 
 // Item returns the value at index.
-func (values ArrayInitializationValues) Value (index int) (value Argument) {
+func (values ArrayDefaultValues) Value (index int) (value Argument) {
 	value = values.values[index]
 	return
 }

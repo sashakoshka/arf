@@ -97,7 +97,7 @@ func (declaration Declaration) ToString () (output string) {
 	return
 }
 
-func (attributes ObjectInitializationValues) ToString (
+func (attributes ObjectDefaultValues) ToString (
 	indent int,
 ) (
 	output string,
@@ -106,7 +106,7 @@ func (attributes ObjectInitializationValues) ToString (
 		value := attributes.attributes[name]
 	
 		output += doIndent(indent, ".", name)
-		if value.kind == ArgumentKindObjectInitializationValues {
+		if value.kind == ArgumentKindObjectDefaultValues {
 			output += "\n"
 			output += value.ToString(indent + 1, true)
 		} else {
@@ -117,7 +117,7 @@ func (attributes ObjectInitializationValues) ToString (
 	return
 }
 
-func (values ArrayInitializationValues) ToString (
+func (values ArrayDefaultValues) ToString (
 	indent int,
 ) (
 	output string,
@@ -143,14 +143,14 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 				indent,
 				breakLine)
 	
-	case ArgumentKindObjectInitializationValues:
+	case ArgumentKindObjectDefaultValues:
 		// this should only appear in contexts where breakLine is true
-		output += argument.value.(ObjectInitializationValues).
+		output += argument.value.(ObjectDefaultValues).
 				ToString(indent)
 	
-	case ArgumentKindArrayInitializationValues:
+	case ArgumentKindArrayDefaultValues:
 		// this should only appear in contexts where breakLine is true
-		output += argument.value.(ArrayInitializationValues).
+		output += argument.value.(ArrayDefaultValues).
 				ToString(indent)
 	
 	case ArgumentKindIdentifier:
@@ -263,8 +263,8 @@ func (section DataSection) ToString (indent int) (output string) {
 		section.what.ToString())
 
 	isComplexInitialization :=
-		section.value.kind == ArgumentKindObjectInitializationValues ||
-		section.value.kind == ArgumentKindArrayInitializationValues
+		section.value.kind == ArgumentKindObjectDefaultValues ||
+		section.value.kind == ArgumentKindArrayDefaultValues
 	
 	if !isComplexInitialization && section.value.value != nil {
 		output += " " + section.value.ToString(0, false)
@@ -311,8 +311,8 @@ func (section TypeSection) ToString (indent int) (output string) {
 		section.what.ToString())
 
 	isComplexInitialization :=
-		section.value.kind == ArgumentKindObjectInitializationValues ||
-		section.value.kind == ArgumentKindArrayInitializationValues
+		section.value.kind == ArgumentKindObjectDefaultValues ||
+		section.value.kind == ArgumentKindArrayDefaultValues
 	
 	if !isComplexInitialization && section.value.value != nil {
 		output += " " + section.value.ToString(0, false)
@@ -342,8 +342,8 @@ func (section EnumSection) ToString (indent int) (output string) {
 		output += doIndent(indent + 1, member.name)
 	
 		isComplexInitialization :=
-			member.value.kind == ArgumentKindObjectInitializationValues ||
-			member.value.kind == ArgumentKindArrayInitializationValues
+			member.value.kind == ArgumentKindObjectDefaultValues ||
+			member.value.kind == ArgumentKindArrayDefaultValues
 		
 		if member.value.value == nil {
 			output += "\n"
@@ -398,8 +398,8 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 	output += "[" + phrase.command.ToString(0, false)
 	for _, argument := range phrase.arguments {
 		isInitializationValue :=
-			argument.kind == ArgumentKindObjectInitializationValues ||
-			argument.kind == ArgumentKindArrayInitializationValues
+			argument.kind == ArgumentKindObjectDefaultValues ||
+			argument.kind == ArgumentKindArrayDefaultValues
 		if isInitializationValue {
 			initializationValues = argument
 		} else if argument.kind == ArgumentKindDeclaration {
@@ -446,8 +446,8 @@ func (funcOutput FuncOutput) ToString (indent int) (output string) {
 	output += doIndent(indent + 1, "< ", funcOutput.Declaration.ToString())
 	
 	isComplexInitialization :=
-		funcOutput.value.kind == ArgumentKindObjectInitializationValues ||
-		funcOutput.value.kind == ArgumentKindArrayInitializationValues
+		funcOutput.value.kind == ArgumentKindObjectDefaultValues ||
+		funcOutput.value.kind == ArgumentKindArrayDefaultValues
 	
 	if !isComplexInitialization && funcOutput.value.value != nil {
 		output += " " + funcOutput.value.ToString(0, false)

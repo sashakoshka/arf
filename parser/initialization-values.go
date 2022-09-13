@@ -12,21 +12,21 @@ import "git.tebibyte.media/arf/arf/infoerr"
 // (parser *ParsingOperation) parseDefaultMemberValue
 // (parser *ParsingOperation) parseMemberDeclaration
 
-// parseInitializationValues starts on the line after a data section, or a set
+// parsedefaultValues starts on the line after a data section, or a set
 // phrase. It checks for an indent greater than the indent of the aforementioned
 // data section or set phrase (passed through baseIndent), and if there is,
 // it parses initialization values.
-func (parser *ParsingOperation) parseInitializationValues (
+func (parser *ParsingOperation) parsedefaultValues (
 	baseIndent int,
 ) (
-	initializationArgument Argument,
+	argument Argument,
 	err error,
 ) {
 	// check if line is indented one more than baseIndent
 	if !parser.token.Is(lexer.TokenKindIndent) { return }
 	if parser.token.Value().(int) != baseIndent + 1 { return }
 
-	initializationArgument.location = parser.token.Location()
+	argument.location = parser.token.Location()
 	
 	err = parser.nextToken()
 	if err != nil { return }
@@ -35,31 +35,31 @@ func (parser *ParsingOperation) parseInitializationValues (
 
 		// object initialization
 		parser.previousToken()
-		var initializationValues ObjectInitializationValues
-		initializationValues, err    = parser.parseObjectInitializationValues()
-		initializationArgument.kind  = ArgumentKindObjectInitializationValues
-		initializationArgument.value = initializationValues
+		var values ObjectDefaultValues
+		values, err    = parser.parseObjectdefaultValues()
+		argument.kind  = ArgumentKindObjectDefaultValues
+		argument.value = values
 		
 	} else {
 	
 		// array initialization
 		parser.previousToken()
-		var initializationValues ArrayInitializationValues
-		initializationValues, err    = parser.parseArrayInitializationValues()
-		initializationArgument.kind  = ArgumentKindArrayInitializationValues
-		initializationArgument.value = initializationValues
+		var values ArrayDefaultValues
+		values, err    = parser.parseArrayDefaultValues()
+		argument.kind  = ArgumentKindArrayDefaultValues
+		argument.value = values
 	}
 	
 	return
 }
 
-// parseObjectInitializationValues parses a list of object initialization
+// parseObjectdefaultValues parses a list of object initialization
 // values until the indentation level drops.
-func (parser *ParsingOperation) parseObjectInitializationValues () (
-	initializationValues ObjectInitializationValues,
+func (parser *ParsingOperation) parseObjectdefaultValues () (
+	defaultValues ObjectDefaultValues,
 	err                  error,
 ) {
-	initializationValues.attributes = make(map[string] Argument)
+	defaultValues.attributes = make(map[string] Argument)
 
 	baseIndent := 0
 	begin      := true
@@ -70,7 +70,7 @@ func (parser *ParsingOperation) parseObjectInitializationValues () (
 		indent := parser.token.Value().(int)
 		
 		if begin == true {
-			initializationValues.location = parser.token.Location()
+			defaultValues.location = parser.token.Location()
 			baseIndent = indent 
 			begin      = false
 		}
@@ -87,7 +87,7 @@ func (parser *ParsingOperation) parseObjectInitializationValues () (
 		name := parser.token.Value().(string)
 
 		// if the member has already been listed, throw an error
-		_, exists := initializationValues.attributes[name]
+		_, exists := defaultValues.attributes[name]
 		if exists {
 			err = parser.token.NewError (
 				"duplicate member \"" + name + "\" in object " +
@@ -107,15 +107,15 @@ func (parser *ParsingOperation) parseObjectInitializationValues () (
 			err = parser.nextToken(lexer.TokenKindIndent)
 			if err != nil { return }
 			
-			value, err = parser.parseInitializationValues(baseIndent)
-			initializationValues.attributes[name] = value
+			value, err = parser.parsedefaultValues(baseIndent)
+			defaultValues.attributes[name] = value
 			if err != nil { return }
 			
 		} else {
 
 			// parse as normal argument
 			value, err = parser.parseArgument()
-			initializationValues.attributes[name] = value
+			defaultValues.attributes[name] = value
 			if err != nil { return }
 			
 			err = parser.expect(lexer.TokenKindNewline)
@@ -128,10 +128,10 @@ func (parser *ParsingOperation) parseObjectInitializationValues () (
 	return
 }
 
-// parseArrayInitializationValues parses a list of array initialization values
-// until the indentation lexel drops.
-func (parser *ParsingOperation) parseArrayInitializationValues () (
-	initializationValues ArrayInitializationValues,
+// parseArrayDefaultValues parses a list of array initialization values until
+// the indentation lexel drops.
+func (parser *ParsingOperation) parseArrayDefaultValues () (
+	defaultValues ArrayDefaultValues,
 	err                  error,
 ) {
 	baseIndent := 0
@@ -143,7 +143,7 @@ func (parser *ParsingOperation) parseArrayInitializationValues () (
 		indent := parser.token.Value().(int)
 		
 		if begin == true {
-			initializationValues.location = parser.token.Location()
+			defaultValues.location = parser.token.Location()
 			baseIndent = indent 
 			begin      = false
 		}
@@ -169,8 +169,8 @@ func (parser *ParsingOperation) parseArrayInitializationValues () (
 			var argument Argument
 			argument, err = parser.parseArgument()
 			if err != nil { return }
-			initializationValues.values = append (
-				initializationValues.values,
+			defaultValues.values = append (
+				defaultValues.values,
 				argument)
 		}
 	}

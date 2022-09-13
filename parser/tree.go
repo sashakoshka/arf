@@ -94,16 +94,15 @@ type Declaration struct {
 	typeable
 }
 
-// ObjectInitializationValues represents a list of object member initialization
+// ObjectDefaultValues represents a list of object member initialization
 // attributes.
-type ObjectInitializationValues struct {
+type ObjectDefaultValues struct {
 	locatable
 	attributes map[string] Argument
 }
 
-// ArrayInitializationValues represents a list of attributes initializing an
-// array.
-type ArrayInitializationValues struct {
+// ArrayDefaultValues represents a list of elements initializing an array.
+type ArrayDefaultValues struct {
 	locatable
 	values []Argument
 }
@@ -128,10 +127,10 @@ const (
 
 	// .name value
 	// but like, a lot of them
-	ArgumentKindObjectInitializationValues
+	ArgumentKindObjectDefaultValues
 
 	// value value...
-	ArgumentKindArrayInitializationValues
+	ArgumentKindArrayDefaultValues
 
 	// name.name
 	// name.name.name
