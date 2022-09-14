@@ -137,8 +137,10 @@ func (parser *ParsingOperation) parseObjectDefaultValue () (
 	for {
 		err = parser.expect(lexer.TokenKindDot)
 		if err != nil { return }
-		parser.nextToken()
+		parser.nextToken(lexer.TokenKindName, lexer.TokenKindPermission)
 		if err != nil { return }
+
+		// TODO: if name, parse parent default. if permission,
 	}
 	
 	return
