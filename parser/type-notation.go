@@ -90,6 +90,8 @@ func (parser *ParsingOperation) parseBasicDefaultValue () (
 ) {
 	err = parser.expect(lexer.TokenKindLessThan)
 	if err != nil { return }
+	err = parser.nextToken()
+	if err != nil { return }
 
 	var arguments []Argument
 
@@ -117,5 +119,27 @@ func (parser *ParsingOperation) parseBasicDefaultValue () (
 		if err != nil { return }
 		arguments = append(arguments, value)
 	}
+	return
+}
+
+// parseObjectDefaultValue parses default values and new members of an object
+// type.
+func (parser *ParsingOperation) parseObjectDefaultValue () (
+	value   Argument,
+	members []TypeMember,
+	err error,
+) {
+	err = parser.expect(lexer.TokenKindLParen)
+	if err != nil { return }
+	parser.nextToken()
+	if err != nil { return }
+
+	for {
+		err = parser.expect(lexer.TokenKindDot)
+		if err != nil { return }
+		parser.nextToken()
+		if err != nil { return }
+	}
+	
 	return
 }
