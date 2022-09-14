@@ -42,7 +42,11 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 	for {
 		if !parser.token.Is(lexer.TokenKindColon) { break }
 		
-		err = parser.nextToken(lexer.TokenKindName, lexer.TokenKindUInt)
+		err = parser.nextToken(
+			lexer.TokenKindName,
+			lexer.TokenKindUInt,
+			lexer.TokenKindLParen,
+			lexer.TokenKindLessThan)
 		if err != nil { return }
 
 		if parser.token.Is(lexer.TokenKindName) {
@@ -58,26 +62,25 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 					infoerr.ErrorKindError)
 				return
 			}
-		} else {
+		} else if parser.token.Is(lexer.TokenKindUInt) {
 			// parse fixed array length
 			what.length = parser.token.Value().(uint64)
+			
+		} else if parser.token.Is(lexer.TokenKindLessThan) {
+			// parse default value
+			what.defaultValue, err = parser.parseBasicDefaultValue()
+			if err != nil { return }
+			
+		} else if parser.token.Is(lexer.TokenKindLParen) {
+			// parse members and member default values
+			what.defaultValue,
+			what.members,
+			err = parser.parseObjectDefaultValueAndMembers()
+			if err != nil { return }
 		}
 		
 		err = parser.nextToken()
 		if err != nil { return }
-	}
-
-	// TODO: consider offloading array default values to argument parsing, and
-	// then just grabbing the next argument after this if it exists. that way
-	// we can have array litreals anywhere.
-
-	// get default value
-	if parser.token.Is(lexer.TokenKindLessThan) {
-		what.defaultValue, err = parser.parseBasicDefaultValue()
-		if err != nil { return }
-		
-	} else if parser.token.Is(lexer.TokenKindLParen) {
-		// TODO: parse members and member default values
 	}
 
 	return
@@ -88,25 +91,21 @@ func (parser *ParsingOperation) parseBasicDefaultValue () (
 	value Argument,
 	err error,
 ) {
+	value.location = parser.token.Location()
+	
 	err = parser.expect(lexer.TokenKindLessThan)
 	if err != nil { return }
 	err = parser.nextToken()
 	if err != nil { return }
 
-	var arguments []Argument
+	var attributes []Argument
 
 	defer func () {
 		// if we have multiple values, we need to return the full array
 		// instead.
-		if len(arguments) > 1 {
-			// FIXME: i think this is a sign that the tree needs
-			// cleaning up.
+		if len(attributes) > 1 {
 			value.kind = ArgumentKindArrayDefaultValues
-			location := value.location
-			value.value = ArrayDefaultValues {
-				values: arguments,
-			}
-			value.location = location
+			value.value = ArrayDefaultValues(attributes)
 		}
 	} ()
 
@@ -117,31 +116,139 @@ func (parser *ParsingOperation) parseBasicDefaultValue () (
 
 		value, err = parser.parseArgument()
 		if err != nil { return }
-		arguments = append(arguments, value)
+		attributes = append(attributes, value)
 	}
 	return
 }
 
-// parseObjectDefaultValue parses default values and new members of an object
-// type.
-func (parser *ParsingOperation) parseObjectDefaultValue () (
+// parseObjectDefaultValueAndMembers parses default values and new members of an
+// object type.
+func (parser *ParsingOperation) parseObjectDefaultValueAndMembers () (
 	value   Argument,
 	members []TypeMember,
 	err error,
 ) {
+	value.location = parser.token.Location()
+
 	err = parser.expect(lexer.TokenKindLParen)
 	if err != nil { return }
 	parser.nextToken()
 	if err != nil { return }
 
+	var attributes ObjectDefaultValues
+
 	for {
+		if parser.token.Is(lexer.TokenKindIndent)  { continue }
+		if parser.token.Is(lexer.TokenKindNewline) { continue }
+		if parser.token.Is(lexer.TokenKindRParen)  { break }
+		
 		err = parser.expect(lexer.TokenKindDot)
 		if err != nil { return }
 		parser.nextToken(lexer.TokenKindName, lexer.TokenKindPermission)
 		if err != nil { return }
 
-		// TODO: if name, parse parent default. if permission,
+		if parser.token.Is(lexer.TokenKindName) {
+			// parsing a defalut value for an inherited member
+			var memberName  string
+			var memberValue Argument
+
+			memberName,
+			memberValue, err = parser.parseObjectMemberDefinition()
+			if err != nil { return }
+			
+			if value.kind == ArgumentKindNil {
+				// create default value map if it doesn't
+				// already exist
+				value.kind = ArgumentKindObjectDefaultValues
+				attributes = make(ObjectDefaultValues)
+				value.value = attributes
+			}
+
+			// TODO: error on duplicate
+			if memberValue.kind != ArgumentKindNil {
+				attributes[memberName] = memberValue
+			}
+			
+		} else if parser.token.Is(lexer.TokenKindPermission) {
+			// parsing a member declaration
+			var member TypeMember
+			member,
+			err = parser.parseObjectMemberDeclaration()
+
+			members = append(members, member)
+		}
 	}
+	
+	return
+}
+
+// parseObjectDefaultValue parses member default values only, and will throw an
+// error when it encounteres a new member definition.
+func (parser *ParsingOperation) parseObjectDefaultValue () (
+	value Argument,
+	err error,
+) {
+	value.location = parser.token.Location()
+
+	err = parser.expect(lexer.TokenKindLParen)
+	if err != nil { return }
+	parser.nextToken()
+	if err != nil { return }
+
+	var attributes ObjectDefaultValues
+
+	for {
+		if parser.token.Is(lexer.TokenKindIndent)  { continue }
+		if parser.token.Is(lexer.TokenKindNewline) { continue }
+		if parser.token.Is(lexer.TokenKindRParen)  { break }
+		
+		err = parser.expect(lexer.TokenKindDot)
+		if err != nil { return }
+		parser.nextToken(lexer.TokenKindName)
+		if err != nil { return }
+
+		if value.kind == ArgumentKindNil {
+			value.kind = ArgumentKindObjectDefaultValues
+			attributes = make(ObjectDefaultValues)
+			value.value = attributes
+		}
+
+		var memberName  string
+		var memberValue Argument
+		memberName,
+		memberValue, err = parser.parseObjectMemberDefinition()
+
+		attributes[memberName] = memberValue
+	}
+	
+	return
+}
+
+// .ro name:Type:qualifier:<value>
+
+// parseObjectMemberDeclaration parses a new default value for an inherited
+// member.
+func (parser *ParsingOperation) parseObjectMemberDefinition () (
+	name  string,
+	value Argument,
+	err   error,
+) {
+	err = parser.expect(lexer.TokenKindName)
+	if err != nil { return }
+	
+	return
+}
+
+// .name:<value>
+
+// parseObjectMemberDeclaration parses an object member declaration, and its
+// default value if it exists.
+func (parser *ParsingOperation) parseObjectMemberDeclaration () (
+	member TypeMember,
+	err error,
+) {
+	err = parser.expect(lexer.TokenKindPermission)
+	if err != nil { return }
 	
 	return
 }

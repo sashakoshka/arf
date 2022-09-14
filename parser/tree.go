@@ -83,7 +83,7 @@ type Type struct {
 	points *Type
 
 	// if non-nil, this type defines new members.
-	members      []TypeMember
+	members []TypeMember
 
 	// the default value of the type.
 	defaultValue Argument
@@ -98,16 +98,10 @@ type Declaration struct {
 
 // ObjectDefaultValues represents a list of object member initialization
 // attributes.
-type ObjectDefaultValues struct {
-	locatable
-	attributes map[string] Argument
-}
+type ObjectDefaultValues map[string] Argument
 
 // ArrayDefaultValues represents a list of elements initializing an array.
-type ArrayDefaultValues struct {
-	locatable
-	values []Argument
-}
+type ArrayDefaultValues []Argument
 
 // ArgumentKind specifies the type of thing the value of an argument should be
 // cast to.
