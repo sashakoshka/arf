@@ -226,7 +226,7 @@ func (parser *ParsingOperation) parseObjectDefaultValue () (
 
 // .ro name:Type:qualifier:<value>
 
-// parseObjectMemberDeclaration parses a new default value for an inherited
+// parseObjectMemberDefinition parses a new default value for an inherited
 // member.
 func (parser *ParsingOperation) parseObjectMemberDefinition () (
 	name  string,
@@ -245,7 +245,16 @@ func (parser *ParsingOperation) parseObjectMemberDefinition () (
 	err = parser.nextToken(lexer.TokenKindLParen, lexer.TokenKindLessThan)
 	if err != nil { return }
 
-	// TODO: parse default value
+	if parser.token.Is(lexer.TokenKindLessThan) {
+		// parse default value
+		value, err = parser.parseBasicDefaultValue()
+		if err != nil { return }
+		
+	} else if parser.token.Is(lexer.TokenKindLParen) {
+		// parse member default values
+		value, err = parser.parseObjectDefaultValue()
+		if err != nil { return }
+	}
 	
 	return
 }
