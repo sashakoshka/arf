@@ -2,6 +2,7 @@ package parser
 
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
+import "git.tebibyte.media/arf/arf/types"
 
 // parseType parses a type notation of the form Name, {Name}, etc.
 func (parser *ParsingOperation) parseType () (what Type, err error) {
@@ -153,7 +154,7 @@ func (parser *ParsingOperation) parseObjectDefaultValueAndMembers () (
 			var memberValue Argument
 
 			memberName,
-			memberValue, err = parser.parseObjectMemberDefinition()
+			memberValue, err = parser.parseObjectInheritedMember()
 			if err != nil { return }
 			
 			if value.kind == ArgumentKindNil {
@@ -173,8 +174,9 @@ func (parser *ParsingOperation) parseObjectDefaultValueAndMembers () (
 			// parsing a member declaration
 			var member TypeMember
 			member,
-			err = parser.parseObjectMemberDeclaration()
+			err = parser.parseObjectNewMember()
 
+			// TODO: error on duplicate
 			members = append(members, member)
 		}
 	}
@@ -216,7 +218,7 @@ func (parser *ParsingOperation) parseObjectDefaultValue () (
 		var memberName  string
 		var memberValue Argument
 		memberName,
-		memberValue, err = parser.parseObjectMemberDefinition()
+		memberValue, err = parser.parseObjectInheritedMember()
 
 		attributes[memberName] = memberValue
 	}
@@ -224,22 +226,22 @@ func (parser *ParsingOperation) parseObjectDefaultValue () (
 	return
 }
 
-// .ro name:Type:qualifier:<value>
+// .name:<value>
 
-// parseObjectMemberDefinition parses a new default value for an inherited
+// parseObjectInheritedMember parses a new default value for an inherited
 // member.
-func (parser *ParsingOperation) parseObjectMemberDefinition () (
+func (parser *ParsingOperation) parseObjectInheritedMember () (
 	name  string,
 	value Argument,
 	err   error,
 ) {
 	// get the name of the inherited member
 	err = parser.expect(lexer.TokenKindName)
+	value.location = parser.token.Location()
 	if err != nil { return }
 	name = parser.token.Value().(string)
 
-	// we require a default value, or else why would this structure even be
-	// present?
+	// we require a default value to be present
 	err = parser.nextToken(lexer.TokenKindColon)
 	if err != nil { return }
 	err = parser.nextToken(lexer.TokenKindLParen, lexer.TokenKindLessThan)
@@ -259,15 +261,29 @@ func (parser *ParsingOperation) parseObjectMemberDefinition () (
 	return
 }
 
-// .name:<value>
+// .ro name:Type:qualifier:<value>
 
-// parseObjectMemberDeclaration parses an object member declaration, and its
+// parseObjectNewMember parses an object member declaration, and its
 // default value if it exists.
-func (parser *ParsingOperation) parseObjectMemberDeclaration () (
+func (parser *ParsingOperation) parseObjectNewMember () (
 	member TypeMember,
 	err error,
 ) {
+	// get member permission
 	err = parser.expect(lexer.TokenKindPermission)
+	member.location = parser.token.Location()
+	if err != nil { return }
+	member.permission = parser.token.Value().(types.Permission)
+	
+	// get member name
+	err = parser.nextToken(lexer.TokenKindName)
+	if err != nil { return }
+	member.name = parser.token.Value().(string)
+
+	// get type
+	err = parser.nextToken(lexer.TokenKindColon)
+	if err != nil { return }
+	member.what, err = parser.parseType()
 	if err != nil { return }
 	
 	return
