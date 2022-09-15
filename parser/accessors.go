@@ -125,26 +125,6 @@ func (member TypeMember) BitWidth () (width uint64) {
 	return
 }
 
-// Values returns an iterator for the initialization values.
-func (values ObjectDefaultValues) Sections () (
-	iterator types.Iterator[Argument],
-) {
-	iterator = types.NewIterator(values.attributes)
-	return
-}
-
-// Length returns the amount of values.
-func (values ArrayDefaultValues) Length () (length int) {
-	length = len(values.values)
-	return
-}
-
-// Item returns the value at index.
-func (values ArrayDefaultValues) Value (index int) (value Argument) {
-	value = values.values[index]
-	return
-}
-
 // Kind returns what kind of argument it is.
 func (argument Argument) Kind () (kind ArgumentKind) {
 	kind = argument.kind
