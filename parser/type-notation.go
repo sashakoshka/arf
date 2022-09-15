@@ -233,8 +233,19 @@ func (parser *ParsingOperation) parseObjectMemberDefinition () (
 	value Argument,
 	err   error,
 ) {
+	// get the name of the inherited member
 	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
+	name = parser.token.Value().(string)
+
+	// we require a default value, or else why would this structure even be
+	// present?
+	err = parser.nextToken(lexer.TokenKindColon)
+	if err != nil { return }
+	err = parser.nextToken(lexer.TokenKindLParen, lexer.TokenKindLessThan)
+	if err != nil { return }
+
+	// TODO: parse default value
 	
 	return
 }
