@@ -103,8 +103,8 @@ func (attributes ObjectDefaultValues) ToString (
 ) (
 	output string,
 ) {
-	for _, name := range sortMapKeysAlphabetically(attributes.attributes) {
-		value := attributes.attributes[name]
+	for _, name := range sortMapKeysAlphabetically(attributes) {
+		value := attributes[name]
 	
 		output += doIndent(indent, ".", name)
 		if value.kind == ArgumentKindObjectDefaultValues {
@@ -123,7 +123,7 @@ func (values ArrayDefaultValues) ToString (
 ) (
 	output string,
 ) {
-	for _, value := range values.values {
+	for _, value := range values {
 		output += value.ToString(indent, true)
 	}
 	
