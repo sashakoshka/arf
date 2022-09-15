@@ -98,38 +98,6 @@ func (declaration Declaration) ToString () (output string) {
 	return
 }
 
-func (attributes ObjectDefaultValues) ToString (
-	indent int,
-) (
-	output string,
-) {
-	for _, name := range sortMapKeysAlphabetically(attributes) {
-		value := attributes[name]
-	
-		output += doIndent(indent, ".", name)
-		if value.kind == ArgumentKindObjectDefaultValues {
-			output += "\n"
-			output += value.ToString(indent + 1, true)
-		} else {
-			output += " " + value.ToString(0, false) + "\n"
-		}
-	}
-	
-	return
-}
-
-func (values ArrayDefaultValues) ToString (
-	indent int,
-) (
-	output string,
-) {
-	for _, value := range values {
-		output += value.ToString(indent, true)
-	}
-	
-	return
-}
-
 func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 	if !breakLine { indent = 0 }
 	if argument.kind == ArgumentKindNil {
@@ -144,15 +112,8 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 				indent,
 				breakLine)
 	
-	case ArgumentKindObjectDefaultValues:
-		// this should only appear in contexts where breakLine is true
-		output += argument.value.(ObjectDefaultValues).
-				ToString(indent)
-	
-	case ArgumentKindArrayDefaultValues:
-		// this should only appear in contexts where breakLine is true
-		output += argument.value.(ArrayDefaultValues).
-				ToString(indent)
+	case ArgumentKindArrayDefaultValues, ArgumentKindObjectDefaultValues:
+		output += "DEFAULT VALUES IN WRONG PLACE"
 	
 	case ArgumentKindIdentifier:
 		output += doIndent (
