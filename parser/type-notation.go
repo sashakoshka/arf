@@ -111,8 +111,8 @@ func (parser *ParsingOperation) parseBasicDefaultValue () (
 	} ()
 
 	for {
-		if parser.token.Is(lexer.TokenKindIndent)   { continue }
-		if parser.token.Is(lexer.TokenKindNewline)  { continue }
+		err = parser.skipWhitespace()
+		if err != nil { return }
 		if parser.token.Is(lexer.TokenKindGreaterThan) { break }
 
 		value, err = parser.parseArgument()
@@ -139,8 +139,8 @@ func (parser *ParsingOperation) parseObjectDefaultValueAndMembers () (
 	var attributes ObjectDefaultValues
 
 	for {
-		if parser.token.Is(lexer.TokenKindIndent)  { continue }
-		if parser.token.Is(lexer.TokenKindNewline) { continue }
+		err = parser.skipWhitespace()
+		if err != nil { return }
 		if parser.token.Is(lexer.TokenKindRParen)  { break }
 		
 		err = parser.expect(lexer.TokenKindDot)
@@ -200,8 +200,8 @@ func (parser *ParsingOperation) parseObjectDefaultValue () (
 	var attributes ObjectDefaultValues
 
 	for {
-		if parser.token.Is(lexer.TokenKindIndent)  { continue }
-		if parser.token.Is(lexer.TokenKindNewline) { continue }
+		err = parser.skipWhitespace()
+		if err != nil { return }
 		if parser.token.Is(lexer.TokenKindRParen)  { break }
 		
 		err = parser.expect(lexer.TokenKindDot)
