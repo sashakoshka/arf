@@ -286,6 +286,8 @@ func (parser *ParsingOperation) parseObjectNewMember () (
 	// get type
 	err = parser.nextToken(lexer.TokenKindColon)
 	if err != nil { return }
+	err = parser.nextToken(lexer.TokenKindName, lexer.TokenKindLBrace)
+	if err != nil { return }
 	member.what, err = parser.parseType()
 	if err != nil { return }
 
