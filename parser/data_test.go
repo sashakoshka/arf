@@ -34,6 +34,7 @@ data ro jObject:Obj:
 data ro kNestedObject:Obj:
 	(
 	.ro newMember:Int:<9023>
+	)
 	.this:
 		(
 		.bird0:<324>

@@ -257,6 +257,9 @@ func (parser *ParsingOperation) parseObjectInheritedMember () (
 		value, err = parser.parseObjectDefaultValue()
 		if err != nil { return }
 	}
+
+	err = parser.nextToken()
+	if err != nil { return }
 	
 	return
 }
