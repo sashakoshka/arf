@@ -128,7 +128,7 @@ func (what Type) ToString (indent int) (output string) {
 			output += what.defaultValue.ToString(indent, true)
 		} else {
 			output += ":<"
-			output += what.defaultValue.ToString(indent, true)
+			output += what.defaultValue.ToString(indent, false)
 			output += ">\n"
 		}
 	}
@@ -269,7 +269,7 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 func (section DataSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
-		"type ",
+		"data ",
 		section.permission.ToString(), " ",
 		section.name, ":",
 		section.what.ToString(indent), "\n")
