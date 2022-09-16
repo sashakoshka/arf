@@ -66,32 +66,43 @@ func (identifier Identifier) ToString () (output string) {
 	return
 }
 
-func (values ObjectDefaultValues) ToString (indent int) (output string) {
+func (values ObjectDefaultValues) ToString (
+	indent int,
+	breakLine bool,
+) (
+	output string,
+) {
 	output += doIndent(indent, "(\n")
 	for name, value := range values {
 		output += doIndent (
 			indent,
-			name + ":" + value.ToString(indent, true))
+			name + ":" + value.ToString(indent, false))
+		output += "\n"
 	}
-	output += doIndent(indent, ")\n")
+	output += doIndent(indent, ")")
 	return
 }
 
-func (values ArrayDefaultValues) ToString (indent int) (output string) {
+func (values ArrayDefaultValues) ToString (
+	indent int,
+	breakLine bool,
+) (
+	output string,
+) {
 	output += doIndent(indent, "<\n")
 	for _, value := range values {
-		output += doIndent(indent, value.ToString(indent, true))
+		output += value.ToString(indent, breakLine)
 	}
-	output += doIndent(indent, ">\n")
+	output += doIndent(indent, ">")
 	return
 }
 
-func (what Type) ToString (indent int) (output string) {
+func (what Type) ToString (indent int, breakLine bool) (output string) {
 	if what.kind == TypeKindBasic {
 		output += what.name.ToString()
 	} else {
 		output += "{"
-		output += what.points.ToString(indent)
+		output += what.points.ToString(indent, breakLine)
 
 		if what.kind == TypeKindVariableArray {
 			output += " .."
@@ -123,13 +134,13 @@ func (what Type) ToString (indent int) (output string) {
 			defaultValueKind == ArgumentKindObjectDefaultValues ||
 			defaultValueKind == ArgumentKindArrayDefaultValues
 		
-		if isComplexDefaultValue {
+		if isComplexDefaultValue && breakLine{
 			output += ":\n"
-			output += what.defaultValue.ToString(indent, true)
+			output += what.defaultValue.ToString(indent + 1, breakLine)
 		} else {
 			output += ":<"
 			output += what.defaultValue.ToString(indent, false)
-			output += ">\n"
+			output += ">"
 		}
 	}
 	return
@@ -137,7 +148,7 @@ func (what Type) ToString (indent int) (output string) {
 
 func (declaration Declaration) ToString (indent int) (output string) {
 	output += declaration.name + ":"
-	output += declaration.what.ToString(indent)
+	output += declaration.what.ToString(indent, false)
 	return
 }
 
@@ -157,13 +168,11 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 	
 	case ArgumentKindObjectDefaultValues:
 		output += argument.value.(ObjectDefaultValues).
-				ToString(indent)
-		if breakLine { output += "\n" }
+				ToString(indent, breakLine)
 	
 	case ArgumentKindArrayDefaultValues:
 		output += argument.value.(ArrayDefaultValues).
-				ToString(indent)
-		if breakLine { output += "\n" }
+				ToString(indent, breakLine)
 	
 	case ArgumentKindIdentifier:
 		output += doIndent (
@@ -272,7 +281,7 @@ func (section DataSection) ToString (indent int) (output string) {
 		"data ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(indent), "\n")
+		section.what.ToString(indent, true), "\n")
 	return
 }
 
@@ -281,7 +290,7 @@ func (member TypeMember) ToString (indent int) (output string) {
 	
 	output += member.permission.ToString() + " "
 	output += member.name + ":"
-	output += member.what.ToString(indent)
+	output += member.what.ToString(indent, true)
 
 	if member.bitWidth > 0 {
 		output += fmt.Sprint(" & ", member.bitWidth)
@@ -298,7 +307,7 @@ func (section TypeSection) ToString (indent int) (output string) {
 		"type ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(indent), "\n")
+		section.what.ToString(indent, true), "\n")
 	return
 }
 
@@ -309,7 +318,7 @@ func (section EnumSection) ToString (indent int) (output string) {
 		"enum ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(indent), "\n")
+		section.what.ToString(indent, true), "\n")
 
 	for _, member := range section.members {
 		output += doIndent(indent + 1, member.name)
