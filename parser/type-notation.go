@@ -285,6 +285,8 @@ func (parser *ParsingOperation) parseObjectNewMember () (
 	if err != nil { return }
 	member.what, err = parser.parseType()
 	if err != nil { return }
+
+	// TODO: get bit width
 	
 	return
 }
