@@ -67,12 +67,22 @@ func (identifier Identifier) ToString () (output string) {
 }
 
 func (values ObjectDefaultValues) ToString (indent int) (output string) {
-	
+	output += doIndent(indent, "(\n")
+	for name, value := range values {
+		output += doIndent (
+			indent,
+			name + ":" + value.ToString(indent, true))
+	}
+	output += doIndent(indent, ")\n")
 	return
 }
 
 func (values ArrayDefaultValues) ToString (indent int) (output string) {
-	
+	output += doIndent(indent, "<\n")
+	for _, value := range values {
+		output += doIndent(indent, value.ToString(indent, true))
+	}
+	output += doIndent(indent, ">\n")
 	return
 }
 
@@ -99,13 +109,12 @@ func (what Type) ToString (indent int) (output string) {
 	}
 
 	if what.members != nil {
-		output += ":("
+		output += ":\n" + doIndent(indent, "(\n")
 		for _, member := range what.members {
 			output += doIndent (
-				indent,
-				"\n" + member.ToString(indent + 1))
+				indent, member.ToString(indent + 1), "\n")
 		}
-		output += ")"
+		output += doIndent(indent, ")")
 	}
 
 	defaultValueKind := what.defaultValue.kind
@@ -117,12 +126,11 @@ func (what Type) ToString (indent int) (output string) {
 		if isComplexDefaultValue {
 			output += ":\n"
 			output += what.defaultValue.ToString(indent, true)
+		} else {
+			output += ":<"
+			output += what.defaultValue.ToString(indent, true)
+			output += ">\n"
 		}
-	}
-
-	if what.defaultValue.kind == ArgumentKindObjectDefaultValues {
-	} else if what.defaultValue.kind != ArgumentKindNil {
-		output += ":<" + what.defaultValue.ToString(indent, true) + ">"
 	}
 	return
 }
@@ -150,10 +158,12 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 	case ArgumentKindObjectDefaultValues:
 		output += argument.value.(ObjectDefaultValues).
 				ToString(indent)
+		if breakLine { output += "\n" }
 	
 	case ArgumentKindArrayDefaultValues:
 		output += argument.value.(ArrayDefaultValues).
 				ToString(indent)
+		if breakLine { output += "\n" }
 	
 	case ArgumentKindIdentifier:
 		output += doIndent (
