@@ -329,6 +329,11 @@ func (section DataSection) ToString (indent int) (output string) {
 		section.permission.ToString(), " ",
 		section.name, ":",
 		section.what.ToString(indent + 1, true), "\n")
+	
+	if section.external {
+		output += doIndent(indent + 1, "external\n")
+	}
+	
 	return
 }
 
