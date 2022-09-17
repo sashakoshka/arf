@@ -8,21 +8,30 @@ func TestEnum (test *testing.T) {
 ---
 enum ro AffrontToGod:Int:4
 	- bird0:
-		<28394 9328
-		398 9>
-	- bird1:
-		<23 932832
+		<
+		28394
+		9328
 		398
-		2349>
+		9
+		>
+	- bird1:
+		<
+		23
+		932832
+		398
+		2349
+		>
 	- bird2:
-		<1
+		<
+		1
 		2
 		3
-		4>
+		4
+		>
 enum ro NamedColor:U32
-	- red:<0xFF0000>
-	- green:<0x00FF00>
-	- blue:<0x0000FF>
+	- red:<16711680>
+	- green:<65280>
+	- blue:<255>
 enum ro ThisIsTerrible:Obj:
 	(
 	.rw x:Int
@@ -36,7 +45,8 @@ enum ro ThisIsTerrible:Obj:
 	- down:
 		(
 		.x:<0>
-		.y:<1>)
+		.y:<1>
+		)
 	- left:
 		(
 		.x:<-1>
