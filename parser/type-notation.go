@@ -297,6 +297,13 @@ func (parser *ParsingOperation) parseObjectNewMember () (
 	if err != nil { return }
 
 	// TODO: get bit width
+	if parser.token.Is(lexer.TokenKindBinaryAnd) {
+		err = parser.nextToken(lexer.TokenKindUInt)
+		if err != nil { return }
+		member.bitWidth = parser.token.Value().(uint64)
+		err = parser.nextToken()
+		if err != nil { return }
+	}
 	
 	return
 }

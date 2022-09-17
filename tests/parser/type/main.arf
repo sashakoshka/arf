@@ -16,7 +16,7 @@ type ro dInitInherit:aBasic:(
 	.that:<9384>
 	.this:<389>)
 
-type ro cInitAndDefine:aBasic:(
+type ro eInitAndDefine:aBasic:(
 	.this:<389>
 	.ro these:aBasic:(
 		.ro born:Int:<4>
