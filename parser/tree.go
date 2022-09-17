@@ -231,6 +231,7 @@ const (
 	PhraseKindCall = iota
 	PhraseKindCallExternal
 	PhraseKindOperator
+	PhraseKindLet
 	PhraseKindAssign
 	PhraseKindReference
 	PhraseKindDefer
