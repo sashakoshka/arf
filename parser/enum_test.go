@@ -20,14 +20,33 @@ enum ro AffrontToGod:Int:4
 		3
 		4>
 enum ro NamedColor:U32
-	- red:   <0xFF0000>
-	- green: <0x00FF00>
-	- blue:  <0x0000FF>
-enum ro ThisIsTerrible:Obj:(.rw x:Int .rw y:Int)
-	- up:    (.x:  0 .y: -1)
-	- down:  (.x:  0 .y:  1)
-	- left:  (.x: -1 .y:  0)
-	- right: (.x:  1 .y:  0)
+	- red:<0xFF0000>
+	- green:<0x00FF00>
+	- blue:<0x0000FF>
+enum ro ThisIsTerrible:Obj:
+	(
+	.rw x:Int
+	.rw y:Int
+	)
+	- up:
+		(
+		.x:<0>
+		.y:<-1>
+		)
+	- down:
+		(
+		.x:<0>
+		.y:<1>)
+	- left:
+		(
+		.x:<-1>
+		.y:<0>
+		)
+	- right:
+		(
+		.x:<1>
+		.y:<0>
+		)
 enum ro Weekday:Int
 	- sunday
 	- monday

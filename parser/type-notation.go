@@ -6,7 +6,10 @@ import "git.tebibyte.media/arf/arf/types"
 
 // parseType parses a type notation of the form Name, {Name}, etc.
 func (parser *ParsingOperation) parseType () (what Type, err error) {
+	println("START")
+	defer println("END")
 	err = parser.expect(lexer.TokenKindName, lexer.TokenKindLBrace)
+	println(parser.token.Describe())
 	if err != nil { return }
 	what.location = parser.token.Location()
 
@@ -181,11 +184,11 @@ func (parser *ParsingOperation) parseObjectDefaultValueAndMembers () (
 		} else if parser.token.Is(lexer.TokenKindPermission) {
 			// parsing a member declaration
 			var member TypeMember
-			member,
-			err = parser.parseObjectNewMember()
+			member, err = parser.parseObjectNewMember()
 
 			// TODO: error on duplicate
 			members = append(members, member)
+			if err != nil { return }
 		}
 	}
 	

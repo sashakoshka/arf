@@ -103,7 +103,7 @@ func (parser *ParsingOperation) parseEnumMember () (
 		if err != nil { return }
 		err = parser.expect (
 			lexer.TokenKindLessThan,
-			lexer.TokenKindGreaterThan)
+			lexer.TokenKindLParen)
 		if err != nil { return }
 
 		if parser.token.Is(lexer.TokenKindLessThan) {

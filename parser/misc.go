@@ -12,7 +12,10 @@ func (parser *ParsingOperation) parseIdentifier () (
 	identifier.location = parser.token.Location()
 
 	for {
-		if !parser.token.Is(lexer.TokenKindName) { break }
+		if !parser.token.Is(lexer.TokenKindName) {
+			parser.previousToken()
+			break
+		}
 
 		identifier.trail = append (
 			identifier.trail,

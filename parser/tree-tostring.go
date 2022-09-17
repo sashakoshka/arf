@@ -364,10 +364,10 @@ func (section EnumSection) ToString (indent int) (output string) {
 			member.value.kind == ArgumentKindArrayDefaultValues
 		
 		if isComplexInitialization {
-			output += "\n"
+			output += ":\n"
 			output += member.value.ToString(indent + 2, true)
 		} else if member.value.kind != ArgumentKindNil {
-			output += " " + member.value.ToString(0, false)
+			output += ":<" + member.value.ToString(0, false) + ">"
 		}
 		output += "\n"
 	}
