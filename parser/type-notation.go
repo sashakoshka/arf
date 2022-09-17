@@ -42,8 +42,13 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 
 	for {
 		if !parser.token.Is(lexer.TokenKindColon) { break }
+
+		err = parser.nextToken()
+		if err != nil { return }
+		err = parser.skipWhitespace()
+		if err != nil { return }
 		
-		err = parser.nextToken(
+		err = parser.expect(
 			lexer.TokenKindName,
 			lexer.TokenKindUInt,
 			lexer.TokenKindLParen,
