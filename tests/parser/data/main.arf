@@ -18,10 +18,9 @@ data ro gIntegerArrayInitialized:Int:16:<
 	340 0 2304 0 4785 92
 	>
 
-# TODO: reinstate these two
-# data wr hIntegerPointerInit:{Int}:<[& integer]>
+data wr hIntegerPointerInit:{Int}:<[& integer]>
 
-# data wr iMutIntegerPointerInit:{Int}:mut:<[& integer]>
+data wr iMutIntegerPointerInit:{Int}:mut:<[& integer]>
 
 data ro jObject:Obj:(
 	.this:<324>
