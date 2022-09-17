@@ -26,8 +26,8 @@ data ro gIntegerArrayInitialized:Int:16:
 	4785
 	92
 	>
-data wr hIntegerPointerInit:{Int}:<[& integer]>
-data wr iMutIntegerPointerInit:{Int}:mut:<[& integer]>
+data rw hIntegerPointerInit:{Int}:<[& integer]>
+data rw iMutIntegerPointerInit:{Int}:mut:<[& integer]>
 data ro jObject:Obj:
 	(
 	.that:<324>

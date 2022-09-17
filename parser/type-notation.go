@@ -6,10 +6,7 @@ import "git.tebibyte.media/arf/arf/types"
 
 // parseType parses a type notation of the form Name, {Name}, etc.
 func (parser *ParsingOperation) parseType () (what Type, err error) {
-	println("START")
-	defer println("END")
 	err = parser.expect(lexer.TokenKindName, lexer.TokenKindLBrace)
-	println(parser.token.Describe())
 	if err != nil { return }
 	what.location = parser.token.Location()
 
@@ -50,7 +47,7 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 		if err != nil { return }
 		err = parser.skipWhitespace()
 		if err != nil { return }
-		
+
 		err = parser.expect(
 			lexer.TokenKindName,
 			lexer.TokenKindUInt,
@@ -71,6 +68,9 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 					infoerr.ErrorKindError)
 				return
 			}
+			err = parser.nextToken()
+			if err != nil { return }
+			
 		} else if parser.token.Is(lexer.TokenKindUInt) {
 			// parse fixed array length
 			what.length = parser.token.Value().(uint64)
