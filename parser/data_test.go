@@ -28,22 +28,23 @@ data ro gIntegerArrayInitialized:Int:16:
 	>
 data ro jObject:Obj:
 	(
-	.this:<324>
 	.that:<324>
+	.this:<324>
 	)
 data ro kNestedObject:Obj:
 	(
 	.ro newMember:Int:<9023>
-	)
-	.this:
-		(
-		.bird0:<324>
-		.bird1:<"hello world">
-		)
+	):
+	(
 	.that:
 		(
 		.bird2:<123.8439>
 		.bird3:<9328.21348239>
+		)
+	.this:
+		(
+		.bird0:<324>
+		.bird1:<"hello world">
 		)
 	)
 data ro lMutIntegerArray16:Int:16:mut

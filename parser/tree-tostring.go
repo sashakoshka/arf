@@ -72,12 +72,28 @@ func (values ObjectDefaultValues) ToString (
 ) (
 	output string,
 ) {
-	output += doIndent(indent, "(\n")
-	for name, value := range values {
-		output += doIndent (
-			indent,
-			name + ":" + value.ToString(indent, false))
-		output += "\n"
+	if !breakLine { indent = 0 }
+	output += doIndent(indent, "(")
+	if breakLine { output += "\n" }
+	
+	for _, name := range sortMapKeysAlphabetically(values) {
+		value := values[name]
+		
+		output += doIndent(indent, "." + name + ":")
+		
+		isComplexDefaultValue :=
+			value.kind == ArgumentKindObjectDefaultValues ||
+			value.kind == ArgumentKindArrayDefaultValues
+		
+		if isComplexDefaultValue {
+			if breakLine { output += "\n" }
+			output += value.ToString(indent + 1, breakLine)
+		} else {
+			output += "<"
+			output += value.ToString(indent + 1, false)
+			output += ">"
+		}
+		if breakLine { output += "\n" }
 	}
 	output += doIndent(indent, ")")
 	return
@@ -89,11 +105,33 @@ func (values ArrayDefaultValues) ToString (
 ) (
 	output string,
 ) {
-	output += doIndent(indent, "<\n")
+	if !breakLine { indent = 0 }
+	output += doIndent(indent, "<")
+	if breakLine { output += "\n" }
+	
 	for _, value := range values {
 		output += value.ToString(indent, breakLine)
 	}
+	
 	output += doIndent(indent, ">")
+	return
+}
+
+func (member TypeMember) ToString (indent int, breakLine bool) (output string) {
+	output += doIndent(indent, ".")
+	
+	output += member.permission.ToString() + " "
+	output += member.name + ":"
+	output += member.what.ToString(indent, breakLine)
+
+	if member.bitWidth > 0 {
+		output += fmt.Sprint(" & ", member.bitWidth)
+	}
+
+	if breakLine {
+		output += "\n"
+	}
+
 	return
 }
 
@@ -120,12 +158,20 @@ func (what Type) ToString (indent int, breakLine bool) (output string) {
 	}
 
 	if what.members != nil {
-		output += ":\n" + doIndent(indent, "(\n")
-		for _, member := range what.members {
-			output += doIndent (
-				indent, member.ToString(indent + 1), "\n")
+		if breakLine {
+			output += ":\n" + doIndent(indent, "(\n")
+			for _, member := range what.members {
+				output += member.ToString(indent, breakLine)
+			}
+			output += doIndent(indent, ")")
+		} else {
+			output += ":("
+			for index, member := range what.members {
+				if index > 0 { output += " " }
+				output += member.ToString(indent, breakLine)
+			}
+			output += ")"
 		}
-		output += doIndent(indent, ")")
 	}
 
 	defaultValueKind := what.defaultValue.kind
@@ -134,9 +180,10 @@ func (what Type) ToString (indent int, breakLine bool) (output string) {
 			defaultValueKind == ArgumentKindObjectDefaultValues ||
 			defaultValueKind == ArgumentKindArrayDefaultValues
 		
-		if isComplexDefaultValue && breakLine{
-			output += ":\n"
-			output += what.defaultValue.ToString(indent + 1, breakLine)
+		if isComplexDefaultValue {
+			output += ":"
+			if breakLine { output += "\n" }
+			output += what.defaultValue.ToString(indent, breakLine)
 		} else {
 			output += ":<"
 			output += what.defaultValue.ToString(indent, false)
@@ -281,23 +328,7 @@ func (section DataSection) ToString (indent int) (output string) {
 		"data ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(indent, true), "\n")
-	return
-}
-
-func (member TypeMember) ToString (indent int) (output string) {
-	output += doIndent(indent)
-	
-	output += member.permission.ToString() + " "
-	output += member.name + ":"
-	output += member.what.ToString(indent, true)
-
-	if member.bitWidth > 0 {
-		output += fmt.Sprint(" & ", member.bitWidth)
-	}
-
-	output += "\n"
-
+		section.what.ToString(indent + 1, true), "\n")
 	return
 }
 
@@ -307,7 +338,7 @@ func (section TypeSection) ToString (indent int) (output string) {
 		"type ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(indent, true), "\n")
+		section.what.ToString(indent + 1, true), "\n")
 	return
 }
 
@@ -374,21 +405,9 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 		output += doIndent(indent)
 	}
 
-	var initializationValues Argument
-	var declaration Argument
-	
 	output += "[" + phrase.command.ToString(0, false)
 	for _, argument := range phrase.arguments {
-		isInitializationValue :=
-			argument.kind == ArgumentKindObjectDefaultValues ||
-			argument.kind == ArgumentKindArrayDefaultValues
-		if isInitializationValue {
-			initializationValues = argument
-		} else if argument.kind == ArgumentKindDeclaration {
-			declaration = argument
-		} else {
-			output += " " + argument.ToString(0, false)
-		}
+		output += " " + argument.ToString(0, false)
 	}
 	output += "]"
 
@@ -401,17 +420,9 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 
 	if ownLine {
 		output += "\n"
-
-		// TODO: make = phrases special, have them carry a declaration
-		// and argument and nothing else. somehow.
-		for _, member := range declaration.value.(Declaration).what.members {
-			output += member.ToString(indent + 1)
-		}
-		
-		if initializationValues.kind != ArgumentKindNil {
-			output += initializationValues.ToString(indent + 1, true)
-		}
 		output += phrase.block.ToString(indent + 1)
+	} else if len(phrase.block) > 0 {
+		output += "NON BLOCKLEVEL PHRASE HAS BLOCK"
 	}
 	return
 }
