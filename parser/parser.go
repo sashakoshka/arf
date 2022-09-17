@@ -166,3 +166,21 @@ func (parser *ParsingOperation) skipIndentLevel (indent int) (err error) {
 		if err != nil { return }
 	}
 }
+
+// skipWhitespace skips over newlines and indent tokens.
+func (parser *ParsingOperation) skipWhitespace () (err error) {
+	for {
+		isWhitespace :=
+			parser.token.Is(lexer.TokenKindIndent) ||
+			parser.token.Is(lexer.TokenKindNewline)
+
+		if !isWhitespace {
+			break
+		}
+
+		err = parser.nextToken()
+		if err != nil { return }
+	}
+
+	return
+}

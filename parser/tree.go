@@ -20,7 +20,6 @@ type SectionKind int
 
 const (
 	SectionKindType = iota
-	SectionKindObjt
 	SectionKindEnum
 	SectionKindFace
 	SectionKindData
@@ -48,16 +47,26 @@ type Identifier struct {
 type TypeKind int
 
 const (
-	// TypeKindBasic either means it's a primitive, or it inherits from
-	// something.
+	// TypeKindBasic means its a normal type and inherits from something.
+	// Basic types can define new members on their parent types.
 	TypeKindBasic TypeKind = iota
 
-	// TypeKindPointer means it's a pointer
+	// TypeKindPointer means it's a pointer.
 	TypeKindPointer
 
 	// TypeKindVariableArray means it's an array of variable length.
 	TypeKindVariableArray
 )
+
+// TypeMember represents a member variable of a type specifier.
+type TypeMember struct {
+	locatable
+	nameable
+	typeable
+	permissionable
+	
+	bitWidth uint64
+}
 
 // Type represents a type specifier
 type Type struct {
@@ -72,6 +81,12 @@ type Type struct {
 
 	// not applicable for basic.
 	points *Type
+
+	// if non-nil, this type defines new members.
+	members []TypeMember
+
+	// the default value of the type.
+	defaultValue Argument
 }
 
 // Declaration represents a variable declaration.
@@ -81,19 +96,12 @@ type Declaration struct {
 	typeable
 }
 
-// ObjectInitializationValues represents a list of object member initialization
+// ObjectDefaultValues represents a list of object member initialization
 // attributes.
-type ObjectInitializationValues struct {
-	locatable
-	attributes map[string] Argument
-}
+type ObjectDefaultValues map[string] Argument
 
-// ArrayInitializationValues represents a list of attributes initializing an
-// array.
-type ArrayInitializationValues struct {
-	locatable
-	values []Argument
-}
+// ArrayDefaultValues represents a list of elements initializing an array.
+type ArrayDefaultValues []Argument
 
 // ArgumentKind specifies the type of thing the value of an argument should be
 // cast to.
@@ -113,12 +121,12 @@ const (
 	// {name 23}
 	ArgumentKindSubscript
 
-	// .name value
-	// but like, a lot of them
-	ArgumentKindObjectInitializationValues
+	// (.name <value>)
+	// (.name <value> .name (.name <value))
+	ArgumentKindObjectDefaultValues
 
-	// value value...
-	ArgumentKindArrayInitializationValues
+	// <4 32 98 5>
+	ArgumentKindArrayDefaultValues
 
 	// name.name
 	// name.name.name
@@ -168,39 +176,16 @@ type DataSection struct {
 	nameable
 	typeable
 	permissionable
-	valuable
 
 	external bool
 }
 
-// TypeSection represents a blind type definition.
+// TypeSection represents a type definition.
 type TypeSection struct {
 	locatable
 	nameable
 	typeable
 	permissionable
-	valuable
-}
-
-// ObjtMember represents a part of an object type definition.
-type ObjtMember struct {
-	locatable
-	nameable
-	typeable
-	permissionable
-	valuable
-	
-	bitWidth uint64
-}
-
-// ObjtSection represents an object type definition.
-type ObjtSection struct {
-	locatable
-	nameable
-	permissionable
-	inherits Identifier
-
-	members []ObjtMember
 }
 
 // EnumMember represents a member of an enum section.
@@ -246,6 +231,7 @@ const (
 	PhraseKindCall = iota
 	PhraseKindCallExternal
 	PhraseKindOperator
+	PhraseKindLet
 	PhraseKindAssign
 	PhraseKindReference
 	PhraseKindDefer
@@ -275,13 +261,6 @@ type Phrase struct {
 // Block represents a scoped/indented block of code.
 type Block []Phrase
 
-// FuncOutput represents an input a function section. It is unlike an input in
-// that it can have a default value.
-type FuncOutput struct {
-	Declaration
-	valuable
-}
-
 // FuncSection represents a function section.
 type FuncSection struct {
 	locatable
@@ -290,7 +269,7 @@ type FuncSection struct {
 	
 	receiver *Declaration
 	inputs   []Declaration
-	outputs  []FuncOutput
+	outputs  []Declaration
 	root     Block
 
 	external bool

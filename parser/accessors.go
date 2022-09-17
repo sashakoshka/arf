@@ -29,12 +29,6 @@ func (section TypeSection) Kind () (kind SectionKind) {
 	return
 }
 
-// Kind returns the section's kind (SectionKindObjt).
-func (section ObjtSection) Kind () (kind SectionKind) {
-	kind = SectionKindObjt
-	return
-}
-
 // Kind returns the section's kind (SectionKindEnum).
 func (section EnumSection) Kind () (kind SectionKind) {
 	kind = SectionKindEnum
@@ -111,23 +105,23 @@ func (what Type) Points () (points Type) {
 	return
 }
 
-// Values returns an iterator for the initialization values.
-func (values ObjectInitializationValues) Sections () (
-	iterator types.Iterator[Argument],
-) {
-	iterator = types.NewIterator(values.attributes)
+// MembersLength returns the amount of new members the type specifier defines.
+// If it defines no new members, it returns zero.
+func (what Type) MembersLength () (length int) {
+	length = len(what.members)
 	return
 }
 
-// Length returns the amount of values.
-func (values ArrayInitializationValues) Length () (length int) {
-	length = len(values.values)
+// Member returns the member at index.
+func (what Type) Member (index int) (member TypeMember) {
+	member = what.members[index]
 	return
 }
 
-// Item returns the value at index.
-func (values ArrayInitializationValues) Value (index int) (value Argument) {
-	value = values.values[index]
+// BitWidth returns the bit width of the type member. If it is zero, it should
+// be treated as unspecified.
+func (member TypeMember) BitWidth () (width uint64) {
+	width = member.bitWidth
 	return
 }
 
@@ -141,25 +135,6 @@ func (argument Argument) Kind () (kind ArgumentKind) {
 // find out what to cast this to.
 func (argument Argument) Value () (value any) {
 	value = argument.value
-	return
-}
-
-// BitWidth returns the bit width of the object member. If it is zero, it should
-// be treated as unspecified.
-func (member ObjtMember) BitWidth () (width uint64) {
-	width = member.bitWidth
-	return
-}
-
-// Length returns the amount of members in the section.
-func (section ObjtSection) Length () (length int) {
-	length = len(section.members)
-	return
-}
-
-// Item returns the member at index.
-func (section ObjtSection) Item (index int) (member ObjtMember) {
-	member = section.members[index]
 	return
 }
 
@@ -269,12 +244,6 @@ func (section FuncSection) Input (index int) (input Declaration) {
 // OutputsLength returns the number of outputs in the function.
 func (section FuncSection) OutputsLength () (length int) {
 	length = len(section.outputs)
-	return
-}
-
-// Output returns the output at index.
-func (section FuncSection) Output (index int) (output FuncOutput) {
-	output = section.outputs[index]
 	return
 }
 

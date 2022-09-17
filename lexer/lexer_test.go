@@ -138,6 +138,8 @@ func TestTokenizeAll (test *testing.T) {
 		quickToken(1, TokenKindDot, nil),
 		quickToken(1, TokenKindComma, nil),
 		quickToken(2, TokenKindElipsis, nil),
+		quickToken(1, TokenKindLParen, nil),
+		quickToken(1, TokenKindRParen, nil),
 		quickToken(1, TokenKindLBracket, nil),
 		quickToken(1, TokenKindRBracket, nil),
 		quickToken(1, TokenKindLBrace, nil),

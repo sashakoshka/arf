@@ -66,12 +66,84 @@ func (identifier Identifier) ToString () (output string) {
 	return
 }
 
-func (what Type) ToString () (output string) {
+func (values ObjectDefaultValues) ToString (
+	indent int,
+	breakLine bool,
+) (
+	output string,
+) {
+	if !breakLine { indent = 0 }
+	output += doIndent(indent, "(")
+	if breakLine { output += "\n" }
+	
+	for index, name := range sortMapKeysAlphabetically(values) {
+		if index > 0 && !breakLine { output += " " }
+		
+		value := values[name]
+		
+		output += doIndent(indent, "." + name + ":")
+		
+		isComplexDefaultValue :=
+			value.kind == ArgumentKindObjectDefaultValues ||
+			value.kind == ArgumentKindArrayDefaultValues
+		
+		if isComplexDefaultValue {
+			if breakLine { output += "\n" }
+			output += value.ToString(indent + 1, breakLine)
+		} else {
+			output += "<"
+			output += value.ToString(indent + 1, false)
+			output += ">"
+		}
+		if breakLine { output += "\n" }
+	}
+	output += doIndent(indent, ")")
+	return
+}
+
+func (values ArrayDefaultValues) ToString (
+	indent int,
+	breakLine bool,
+) (
+	output string,
+) {
+	if !breakLine { indent = 0 }
+	output += doIndent(indent, "<")
+	if breakLine { output += "\n" }
+	
+	for index, value := range values {
+		if index > 0 && !breakLine { output += " " }
+		output += value.ToString(indent, breakLine)
+	}
+	
+	output += doIndent(indent, ">")
+	return
+}
+
+func (member TypeMember) ToString (indent int, breakLine bool) (output string) {
+	output += doIndent(indent, ".")
+	
+	output += member.permission.ToString() + " "
+	output += member.name + ":"
+	output += member.what.ToString(indent + 1, breakLine)
+
+	if member.bitWidth > 0 {
+		output += fmt.Sprint(" & ", member.bitWidth)
+	}
+
+	if breakLine {
+		output += "\n"
+	}
+
+	return
+}
+
+func (what Type) ToString (indent int, breakLine bool) (output string) {
 	if what.kind == TypeKindBasic {
 		output += what.name.ToString()
 	} else {
 		output += "{"
-		output += what.points.ToString()
+		output += what.points.ToString(indent, breakLine)
 
 		if what.kind == TypeKindVariableArray {
 			output += " .."
@@ -87,45 +159,46 @@ func (what Type) ToString () (output string) {
 	if what.mutable {
 		output += ":mut"
 	}
-	
-	return
-}
 
-func (declaration Declaration) ToString () (output string) {
-	output += declaration.name + ":"
-	output += declaration.what.ToString()
-	return
-}
-
-func (attributes ObjectInitializationValues) ToString (
-	indent int,
-) (
-	output string,
-) {
-	for _, name := range sortMapKeysAlphabetically(attributes.attributes) {
-		value := attributes.attributes[name]
-	
-		output += doIndent(indent, ".", name)
-		if value.kind == ArgumentKindObjectInitializationValues {
-			output += "\n"
-			output += value.ToString(indent + 1, true)
+	if what.members != nil {
+		if breakLine {
+			output += ":\n" + doIndent(indent, "(\n")
+			for _, member := range what.members {
+				output += member.ToString(indent, breakLine)
+			}
+			output += doIndent(indent, ")")
 		} else {
-			output += " " + value.ToString(0, false) + "\n"
+			output += ":("
+			for index, member := range what.members {
+				if index > 0 { output += " " }
+				output += member.ToString(indent, breakLine)
+			}
+			output += ")"
 		}
 	}
-	
+
+	defaultValueKind := what.defaultValue.kind
+	if defaultValueKind != ArgumentKindNil {
+		isComplexDefaultValue :=
+			defaultValueKind == ArgumentKindObjectDefaultValues ||
+			defaultValueKind == ArgumentKindArrayDefaultValues
+		
+		if isComplexDefaultValue {
+			output += ":"
+			if breakLine { output += "\n" }
+			output += what.defaultValue.ToString(indent, breakLine)
+		} else {
+			output += ":<"
+			output += what.defaultValue.ToString(indent, false)
+			output += ">"
+		}
+	}
 	return
 }
 
-func (values ArrayInitializationValues) ToString (
-	indent int,
-) (
-	output string,
-) {
-	for _, value := range values.values {
-		output += value.ToString(indent, true)
-	}
-	
+func (declaration Declaration) ToString (indent int) (output string) {
+	output += declaration.name + ":"
+	output += declaration.what.ToString(indent, false)
 	return
 }
 
@@ -143,15 +216,13 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 				indent,
 				breakLine)
 	
-	case ArgumentKindObjectInitializationValues:
-		// this should only appear in contexts where breakLine is true
-		output += argument.value.(ObjectInitializationValues).
-				ToString(indent)
+	case ArgumentKindObjectDefaultValues:
+		output += argument.value.(ObjectDefaultValues).
+				ToString(indent, breakLine)
 	
-	case ArgumentKindArrayInitializationValues:
-		// this should only appear in contexts where breakLine is true
-		output += argument.value.(ArrayInitializationValues).
-				ToString(indent)
+	case ArgumentKindArrayDefaultValues:
+		output += argument.value.(ArrayDefaultValues).
+				ToString(indent, breakLine)
 	
 	case ArgumentKindIdentifier:
 		output += doIndent (
@@ -162,7 +233,7 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 	case ArgumentKindDeclaration:
 		output += doIndent (
 			indent,
-			argument.value.(Declaration).ToString())
+			argument.value.(Declaration).ToString(indent))
 		if breakLine { output += "\n" }
 	
 	case ArgumentKindInt, ArgumentKindUInt, ArgumentKindFloat:
@@ -260,24 +331,12 @@ func (section DataSection) ToString (indent int) (output string) {
 		"data ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString())
-
-	isComplexInitialization :=
-		section.value.kind == ArgumentKindObjectInitializationValues ||
-		section.value.kind == ArgumentKindArrayInitializationValues
-
+		section.what.ToString(indent + 1, true), "\n")
+	
 	if section.external {
-		output += "\n"
 		output += doIndent(indent + 1, "external\n")
-	} else if section.value.value == nil {
-		output += "\n"
-	} else if isComplexInitialization {
-		output += "\n"
-		output += section.value.ToString(indent + 1, true)
-	} else {
-		output += " " + section.value.ToString(0, false)
-		output += "\n"
 	}
+	
 	return
 }
 
@@ -287,65 +346,10 @@ func (section TypeSection) ToString (indent int) (output string) {
 		"type ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString())
-
-	isComplexInitialization :=
-		section.value.kind == ArgumentKindObjectInitializationValues ||
-		section.value.kind == ArgumentKindArrayInitializationValues
-
-	if section.value.value == nil {
-		output += "\n"
-	} else if isComplexInitialization {
-		output += "\n"
-		output += section.value.ToString(indent + 1, true)
-	} else {
-		output += " " + section.value.ToString(0, false)
-		output += "\n"
-	}
+		section.what.ToString(indent + 1, true), "\n")
 	return
 }
 
-func (member ObjtMember) ToString (indent int) (output string) {
-	output += doIndent(indent)
-	
-	output += member.permission.ToString() + " "
-	output += member.name + ":"
-	output += member.what.ToString()
-
-	if member.bitWidth > 0 {
-		output += fmt.Sprint(" & ", member.bitWidth)
-	}
-	
-	isComplexInitialization :=
-		member.value.kind == ArgumentKindObjectInitializationValues ||
-		member.value.kind == ArgumentKindArrayInitializationValues
-	
-	if member.value.value == nil {
-		output += "\n"
-	} else if isComplexInitialization {
-		output += "\n"
-		output += member.value.ToString(indent + 1, true)
-	} else {
-		output += " " + member.value.ToString(0, false)
-		output += "\n"
-	}
-
-	return
-}
-
-func (section ObjtSection) ToString (indent int) (output string) {
-	output += doIndent (
-		indent,
-		"objt ",
-		section.permission.ToString(), " ",
-		section.name, ":",
-		section.inherits.ToString(), "\n")
-
-	for _, member := range section.members {
-		output += member.ToString(indent + 1)
-	}
-	return
-}
 
 func (section EnumSection) ToString (indent int) (output string) {
 	output += doIndent (
@@ -353,24 +357,22 @@ func (section EnumSection) ToString (indent int) (output string) {
 		"enum ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(), "\n")
+		section.what.ToString(indent + 1, true), "\n")
 
 	for _, member := range section.members {
-		output += doIndent(indent + 1, member.name)
+		output += doIndent(indent + 1, "- ", member.name)
 	
 		isComplexInitialization :=
-			member.value.kind == ArgumentKindObjectInitializationValues ||
-			member.value.kind == ArgumentKindArrayInitializationValues
+			member.value.kind == ArgumentKindObjectDefaultValues ||
+			member.value.kind == ArgumentKindArrayDefaultValues
 		
-		if member.value.value == nil {
-			output += "\n"
-		} else if isComplexInitialization {
-			output += "\n"
+		if isComplexInitialization {
+			output += ":\n"
 			output += member.value.ToString(indent + 2, true)
-		} else {
-			output += " " + member.value.ToString(0, false)
-			output += "\n"
+		} else if member.value.kind != ArgumentKindNil {
+			output += ":<" + member.value.ToString(0, false) + ">"
 		}
+		output += "\n"
 	}
 	return
 }
@@ -394,11 +396,11 @@ func (behavior FaceBehavior) ToString (indent int) (output string) {
 	output += doIndent(indent, behavior.name, "\n")
 	
 	for _, inputItem := range behavior.inputs {
-		output += doIndent(indent + 1, "> ", inputItem.ToString(), "\n")
+		output += doIndent(indent + 1, "> ", inputItem.ToString(indent), "\n")
 	}
 	
 	for _, outputItem := range behavior.outputs {
-		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
+		output += doIndent(indent + 1, "< ", outputItem.ToString(indent), "\n")
 	}
 
 	return
@@ -409,18 +411,9 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 		output += doIndent(indent)
 	}
 
-	var initializationValues Argument
-	
 	output += "[" + phrase.command.ToString(0, false)
 	for _, argument := range phrase.arguments {
-		isInitializationValue :=
-			argument.kind == ArgumentKindObjectInitializationValues ||
-			argument.kind == ArgumentKindArrayInitializationValues
-		if isInitializationValue {
-			initializationValues = argument
-		} else {
-			output += " " + argument.ToString(0, false)
-		}
+		output += " " + argument.ToString(0, false)
 	}
 	output += "]"
 
@@ -433,10 +426,9 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 
 	if ownLine {
 		output += "\n"
-		if initializationValues.kind != ArgumentKindNil {
-			output += initializationValues.ToString(indent + 1, true)
-		}
 		output += phrase.block.ToString(indent + 1)
+	} else if len(phrase.block) > 0 {
+		output += "NON-BLOCK-LEVEL-PHRASE-HAS-BLOCK"
 	}
 	return
 }
@@ -446,14 +438,6 @@ func (block Block) ToString (indent int) (output string) {
 		output += phrase.ToString(indent, true)
 	}
 
-	return
-}
-
-func (funcOutput FuncOutput) ToString () (output string) {
-	output += funcOutput.Declaration.ToString()
-	if funcOutput.value.kind != ArgumentKindNil {
-		output += " " + funcOutput.value.ToString(0, false)
-	}
 	return
 }
 
@@ -467,15 +451,15 @@ func (section FuncSection) ToString (indent int) (output string) {
 	if section.receiver != nil {
 		output += doIndent (
 			indent + 1,
-			"@ ", section.receiver.ToString(), "\n")
+			"@ ", section.receiver.ToString(indent), "\n")
 	}
 	
 	for _, inputItem := range section.inputs {
-		output += doIndent(indent + 1, "> ", inputItem.ToString(), "\n")
+		output += doIndent(indent + 1, "> ", inputItem.ToString(indent), "\n")
 	}
 	
 	for _, outputItem := range section.outputs {
-		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
+		output += doIndent(indent + 1, "< ", outputItem.ToString(indent), "\n")
 	}
 
 	output += doIndent(indent + 1, "---\n")

@@ -139,25 +139,16 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 			err = parser.expect(validDelimitedPhraseTokens...)
 			if err != nil { return }
 
+			// we are delimited so we can safely skip whitespace
+			err = parser.skipWhitespace()
+			if err != nil { return }
+
 			if parser.token.Is(lexer.TokenKindRBracket) {
 				// this is an ending delimiter
 				err = parser.nextToken()
 				if err != nil { return }
 				break
 				
-			} else if parser.token.Is(lexer.TokenKindNewline) {
-				// we are delimited, so we can safely skip
-				// newlines
-				err = parser.nextToken()
-				if err != nil { return }
-				continue
-				
-			} else if parser.token.Is(lexer.TokenKindIndent) {
-				// we are delimited, so we can safely skip
-				// indents
-				err = parser.nextToken()
-				if err != nil { return }
-				continue
 			}
 		} else {
 			// not delimited
@@ -176,7 +167,7 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 			}
 		}
 
-		// this is an argument
+		// if we've got this far, we are parsing an argument
 		var argument Argument
 		argument, err = parser.parseArgument()
 		phrase.arguments = append(phrase.arguments, argument)
@@ -213,18 +204,6 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 	err = parser.nextToken()
 	if err != nil { return }
 
-	// if this is a set phrase, parse initialization values under it
-	if phrase.kind == PhraseKindAssign {
-		var values Argument
-		values, err = parser.parseInitializationValues(indent)
-
-		if values.kind != ArgumentKindNil {
-			phrase.arguments = append(phrase.arguments, values)
-		}
-		
-		return
-	}
-
 	// if this is a control flow phrase, parse block under it
 	isControlFlow := false
 	for _, kind := range controlFlowKinds {
@@ -234,10 +213,9 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 		}
 	}
 
-	if !isControlFlow { return }
-
-	// if it is any of those, parse the block under it
-	phrase.block, err = parser.parseBlock(indent + 1)
+	if isControlFlow {
+		phrase.block, err = parser.parseBlock(indent + 1)
+	}
 
 	return
 }
@@ -330,6 +308,8 @@ func (parser *ParsingOperation) parsePhraseCommand () (
 		identifier := command.value.(Identifier)
 		if len(identifier.trail) == 1 {
 			switch identifier.trail[0] {
+			case "let":
+				kind = PhraseKindLet
 			case "loc":
 				kind = PhraseKindReference
 			case "defer":

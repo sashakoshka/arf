@@ -23,12 +23,6 @@ func (parser *ParsingOperation) parseBody () (err error) {
 			if err      != nil { return }
 			if parseErr != nil { return parseErr }
 			
-		case "objt":
-			section, parseErr := parser.parseObjtSection()
-			err = parser.tree.addSection(section)
-			if err      != nil { return }
-			if parseErr != nil { return parseErr }
-			
 		case "face":
 			section, parseErr := parser.parseFaceSection()
 			err = parser.tree.addSection(section)

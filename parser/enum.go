@@ -61,34 +61,62 @@ func (parser *ParsingOperation) parseEnumMembers (
 		// if we've left the block, stop parsing
 		if !parser.token.Is(lexer.TokenKindIndent) { return }
 		if parser.token.Value().(int) != 1         { return }
-
-		member := EnumMember { }
-		
-		// get name
-		err = parser.nextToken(lexer.TokenKindName)
+		err = parser.nextToken(lexer.TokenKindMinus)
 		if err != nil { return }
-		member.location = parser.token.Location()
-		member.name = parser.token.Value().(string)
+
+		var member EnumMember
+		member, err = parser.parseEnumMember()
+		into.members = append(into.members, member)
+		if err != nil { return }
+
+		err = parser.expect(lexer.TokenKindNewline)
+		if err != nil { return }
 		err = parser.nextToken()
 		if err != nil { return }
-	
-		// parse default value
-		if parser.token.Is(lexer.TokenKindNewline) {
-			err = parser.nextToken()
-			if err != nil { return }
+	}
+}
 
-			member.value, err = parser.parseInitializationValues(1)
-			into.members = append(into.members, member)
-			if err != nil { return }
-		} else {
-			member.value, err = parser.parseArgument()
-			into.members = append(into.members, member)
-			if err != nil { return }
+// parseEnumMember parses a single enum member. Indenttion level is assumed.
+func (parser *ParsingOperation) parseEnumMember () (
+	member EnumMember,
+	err error,
+) {
+	err = parser.expect(lexer.TokenKindMinus)
+	if err != nil { return }
 
-			err = parser.expect(lexer.TokenKindNewline)
+	// get name
+	err = parser.nextToken(lexer.TokenKindName)
+	if err != nil { return }
+	member.location = parser.token.Location()
+	member.name = parser.token.Value().(string)
+
+	// see if value exists
+	err = parser.nextToken (
+		lexer.TokenKindColon,
+		lexer.TokenKindNewline)
+	if err != nil { return }
+
+	if parser.token.Is(lexer.TokenKindColon) {
+		err = parser.nextToken()
+		if err != nil { return }
+		err = parser.skipWhitespace()
+		if err != nil { return }
+		err = parser.expect (
+			lexer.TokenKindLessThan,
+			lexer.TokenKindLParen)
+		if err != nil { return }
+
+		if parser.token.Is(lexer.TokenKindLessThan) {
+			// parse value
+			member.value, err = parser.parseBasicDefaultValue()
 			if err != nil { return }
-			err = parser.nextToken()
+			
+		} else if parser.token.Is(lexer.TokenKindLParen) {
+			// parse default values
+			member.value, err = parser.parseObjectDefaultValue()
 			if err != nil { return }
 		}
 	}
+
+	return
 }

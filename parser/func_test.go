@@ -8,13 +8,13 @@ func TestFunc (test *testing.T) {
 ---
 func ro aBasicExternal
 	> someInput:Int:mut
-	< someOutput:Int 4
+	< someOutput:Int:<4>
 	---
 	external
 func ro bMethod
 	@ bird:{Bird}
 	> someInput:Int:mut
-	< someOutput:Int 4
+	< someOutput:Int:<4>
 	---
 	external
 func ro cBasicPhrases
@@ -101,20 +101,9 @@ func ro gControlFlow
 			[otherThing]
 func ro hSetPhrase
 	---
-	[= x:Int 3]
-	[= y:{Int} [loc x]]
-	[= z:Int:8]
-		398
-		9
-		2309
-		983
-		-2387
-		478
-		555
-		123
-	[= bird:Bird]
-		.that
-			.whenYou 99999
-		.this 324
+	[let x:Int:<3>]
+	[let y:{Int}:<[loc x]>]
+	[let z:Int:8:<398 9 2309 983 -2387 478 555 123>]
+	[let bird:Bird:(.that:(.whenYou:<99999>) .this:<324>)]
 `, test)
 }

@@ -12,7 +12,7 @@ author "Sasha Koshka"
 license "GPLv3"
 require "` + filepath.Join(cwd, "./some/local/module") + `"
 require "/some/absolute/path/to/someModule"
-require "/usr/include/arf/someLibraryInstalledInStandardLocation"
+require "/usr/local/include/arf/someLibraryInstalledInStandardLocation"
 ---
 `, test)
 }

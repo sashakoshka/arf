@@ -32,21 +32,10 @@ func (parser *ParsingOperation) parseTypeSection () (
 	section.what, err = parser.parseType()
 	if err != nil { return }
 
-	// parse default values
-	if parser.token.Is(lexer.TokenKindNewline) {
-		err = parser.nextToken()
-		if err != nil { return }
-
-		section.value, err = parser.parseInitializationValues(0)
-		if err != nil { return }
-	} else {
-		section.value, err = parser.parseArgument()
-		if err != nil { return }
-
-		err = parser.expect(lexer.TokenKindNewline)
-		if err != nil { return }
-		err = parser.nextToken()
-		if err != nil { return }
-	}
+	parser.expect(lexer.TokenKindNewline)
+	if err != nil { return }
+	err = parser.nextToken()
+	if err != nil { return }
+	
 	return
 }
