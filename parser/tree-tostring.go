@@ -354,24 +354,22 @@ func (section EnumSection) ToString (indent int) (output string) {
 		"enum ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(indent, true), "\n")
+		section.what.ToString(indent + 1, true), "\n")
 
 	for _, member := range section.members {
-		output += doIndent(indent + 1, member.name)
+		output += doIndent(indent + 1, "- ", member.name)
 	
 		isComplexInitialization :=
 			member.value.kind == ArgumentKindObjectDefaultValues ||
 			member.value.kind == ArgumentKindArrayDefaultValues
 		
-		if member.value.value == nil {
-			output += "\n"
-		} else if isComplexInitialization {
+		if isComplexInitialization {
 			output += "\n"
 			output += member.value.ToString(indent + 2, true)
-		} else {
+		} else if member.value.kind != ArgumentKindNil {
 			output += " " + member.value.ToString(0, false)
-			output += "\n"
 		}
+		output += "\n"
 	}
 	return
 }

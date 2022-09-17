@@ -71,6 +71,8 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 		} else if parser.token.Is(lexer.TokenKindUInt) {
 			// parse fixed array length
 			what.length = parser.token.Value().(uint64)
+			err = parser.nextToken()
+			if err != nil { return }
 			
 		} else if parser.token.Is(lexer.TokenKindLessThan) {
 			// parse default value
@@ -84,9 +86,6 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 			err = parser.parseObjectDefaultValueAndMembers()
 			if err != nil { return }
 		}
-		
-		err = parser.nextToken()
-		if err != nil { return }
 	}
 
 	return
@@ -124,6 +123,10 @@ func (parser *ParsingOperation) parseBasicDefaultValue () (
 		if err != nil { return }
 		attributes = append(attributes, value)
 	}
+	
+	err = parser.nextToken()
+	if err != nil { return }
+	
 	return
 }
 
@@ -186,6 +189,9 @@ func (parser *ParsingOperation) parseObjectDefaultValueAndMembers () (
 		}
 	}
 	
+	err = parser.nextToken()
+	if err != nil { return }
+	
 	return
 }
 
@@ -228,6 +234,9 @@ func (parser *ParsingOperation) parseObjectDefaultValue () (
 		attributes[memberName] = memberValue
 	}
 	
+	err = parser.nextToken()
+	if err != nil { return }
+	
 	return
 }
 
@@ -262,9 +271,6 @@ func (parser *ParsingOperation) parseObjectInheritedMember () (
 		value, err = parser.parseObjectDefaultValue()
 		if err != nil { return }
 	}
-
-	err = parser.nextToken()
-	if err != nil { return }
 	
 	return
 }
@@ -296,7 +302,7 @@ func (parser *ParsingOperation) parseObjectNewMember () (
 	member.what, err = parser.parseType()
 	if err != nil { return }
 
-	// TODO: get bit width
+	// get bit width
 	if parser.token.Is(lexer.TokenKindBinaryAnd) {
 		err = parser.nextToken(lexer.TokenKindUInt)
 		if err != nil { return }
