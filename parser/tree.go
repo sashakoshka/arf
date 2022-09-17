@@ -260,12 +260,6 @@ type Phrase struct {
 // Block represents a scoped/indented block of code.
 type Block []Phrase
 
-// FuncOutput represents an input a function section. It is unlike an input in
-// that it can have a default value.
-type FuncOutput struct {
-	Declaration
-}
-
 // FuncSection represents a function section.
 type FuncSection struct {
 	locatable
@@ -274,7 +268,7 @@ type FuncSection struct {
 	
 	receiver *Declaration
 	inputs   []Declaration
-	outputs  []FuncOutput
+	outputs  []Declaration
 	root     Block
 
 	external bool

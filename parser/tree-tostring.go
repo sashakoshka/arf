@@ -438,13 +438,6 @@ func (block Block) ToString (indent int) (output string) {
 	return
 }
 
-func (funcOutput FuncOutput) ToString (indent int) (output string) {
-	output += doIndent (
-		indent + 1,
-		"< ", funcOutput.Declaration.ToString(indent), "\n")
-	return
-}
-
 func (section FuncSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
@@ -463,7 +456,7 @@ func (section FuncSection) ToString (indent int) (output string) {
 	}
 	
 	for _, outputItem := range section.outputs {
-		output += outputItem.ToString(indent + 1)
+		output += doIndent(indent + 1, "< ", outputItem.ToString(indent), "\n")
 	}
 
 	output += doIndent(indent + 1, "---\n")

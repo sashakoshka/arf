@@ -171,7 +171,7 @@ func (parser *ParsingOperation) parseFuncArguments (
 			if err != nil { return }
 			
 		case lexer.TokenKindLessThan:
-			output := FuncOutput { }
+			output := Declaration { }
 			output.location = parser.token.Location()
 			
 			// get name
@@ -186,6 +186,8 @@ func (parser *ParsingOperation) parseFuncArguments (
 			if err != nil { return }
 			output.what, err = parser.parseType()
 			if err != nil { return }
+			
+			into.outputs = append(into.outputs, output)
 
 			parser.expect(lexer.TokenKindNewline)
 			if err != nil { return }

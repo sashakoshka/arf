@@ -247,12 +247,6 @@ func (section FuncSection) OutputsLength () (length int) {
 	return
 }
 
-// Output returns the output at index.
-func (section FuncSection) Output (index int) (output FuncOutput) {
-	output = section.outputs[index]
-	return
-}
-
 // Root returns the root block of the section.
 func (section FuncSection) Root () (root Block) {
 	root = section.root
