@@ -5,18 +5,18 @@ require "io"
 ---
 
 # this is a global variable
-data pv helloText:String "Hello, world!"
+data pv helloText:String:<"Hello, world!">
 
 # this is a struct definition
-objt ro Greeter:Obj
-	rw text:String "Hi."
+type ro Greeter:Obj:(
+	.rw text:String:<"Hi.">)
 
 # this is a function
 func ro main
 	> arguments:{String ..}
-	< status:Int 0
+	< status:Int:<0>
 	---
-	= greeter:Greeter:mut
+	let greeter:Greeter:mut
 	greeter.setText helloText
 	greeter.greet
 
