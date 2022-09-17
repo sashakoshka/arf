@@ -122,7 +122,7 @@ func (member TypeMember) ToString (indent int, breakLine bool) (output string) {
 	
 	output += member.permission.ToString() + " "
 	output += member.name + ":"
-	output += member.what.ToString(indent, breakLine)
+	output += member.what.ToString(indent + 1, breakLine)
 
 	if member.bitWidth > 0 {
 		output += fmt.Sprint(" & ", member.bitWidth)
@@ -427,7 +427,7 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 		output += "\n"
 		output += phrase.block.ToString(indent + 1)
 	} else if len(phrase.block) > 0 {
-		output += "NON BLOCKLEVEL PHRASE HAS BLOCK"
+		output += "NON-BLOCK-LEVEL-PHRASE-HAS-BLOCK"
 	}
 	return
 }

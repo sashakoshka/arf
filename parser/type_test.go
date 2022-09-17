@@ -26,13 +26,18 @@ type ro dInitInherit:aBasic:
 	.that:<9384>
 	.this:<389>
 	)
-type ro cInitAndDefine:aBasic:
+type ro eInitAndDefine:aBasic:
 	(
 	.ro these:aBasic:
 		(
 		.ro born:Int:<4>
 		.ro in:Int
-		.ro the:Int:3:<9348 92384 92834>
+		.ro the:Int:3:
+			<
+			9348
+			92384
+			92834
+			>
 		):
 		(
 		.this:<98>
