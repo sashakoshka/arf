@@ -76,7 +76,9 @@ func (values ObjectDefaultValues) ToString (
 	output += doIndent(indent, "(")
 	if breakLine { output += "\n" }
 	
-	for _, name := range sortMapKeysAlphabetically(values) {
+	for index, name := range sortMapKeysAlphabetically(values) {
+		if index > 0 && !breakLine { output += " " }
+		
 		value := values[name]
 		
 		output += doIndent(indent, "." + name + ":")
@@ -109,7 +111,8 @@ func (values ArrayDefaultValues) ToString (
 	output += doIndent(indent, "<")
 	if breakLine { output += "\n" }
 	
-	for _, value := range values {
+	for index, value := range values {
+		if index > 0 && !breakLine { output += " " }
 		output += value.ToString(indent, breakLine)
 	}
 	

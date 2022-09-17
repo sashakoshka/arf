@@ -101,10 +101,9 @@ func ro gControlFlow
 			[otherThing]
 func ro hSetPhrase
 	---
-	let x:Int:<3>
-	let y:{Int}:<[loc x]>
-	let z:Int:8:<398 9 2309 983 -2387 478 555 123>
-	let bird:Bird:(.that:(.whenYou:<99999>) .this:<324>)
-
+	[let x:Int:<3>]
+	[let y:{Int}:<[loc x]>]
+	[let z:Int:8:<398 9 2309 983 -2387 478 555 123>]
+	[let bird:Bird:(.that:(.whenYou:<99999>) .this:<324>)]
 `, test)
 }
