@@ -1,5 +1,7 @@
 package analyzer
 
+import "path/filepath"
+
 // locator uniquely identifies a section in the section table.
 type locator struct {
 	modulePath string
@@ -38,10 +40,15 @@ const (
 
 // Section is a semantically analyzed section.
 type Section interface {
+	// Provided by sectionBase
+	Name       () (name string)
+	Complete   () (complete bool)
+	ModulePath () (path string)
+	ModuleName () (path string)
+
+	// Must be implemented by each individual section
 	Kind     () (kind SectionKind)
-	Name     () (name string)
 	ToString (indent int) (output string)
-	Complete () (complete bool)
 }
 
 // sectionBase is a struct that all sections must embed.
@@ -57,12 +64,16 @@ func (section sectionBase) Name () (name string) {
 }
 
 // ModulePath returns the full path of the module the section came from.
-func (section sectionBase) ModulePath () (name string) {
-	name = section.where.modulePath
+func (section sectionBase) ModulePath () (path string) {
+	path = section.where.modulePath
 	return
 }
 
-// TODO: ModuleName returns the name of the module where the section came from.
+// ModuleName returns the name of the module where the section came from.
+func (section sectionBase) ModuleName () (name string) {
+	name = filepath.Base(section.where.modulePath)
+	return
+}
 
 // Complete returns wether the section has been completed.
 func (section sectionBase) Complete () (complete bool) {
