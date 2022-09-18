@@ -15,6 +15,15 @@ func (where locator) ToString () (output string) {
 // and all sections that it requires from other modules.
 type SectionTable map[locator] Section
 
+// ToString returns the data stored in the table as a string.
+func (table SectionTable) ToString (indent int) (output string) {
+	for _, section := range table {
+		output += section.ToString(indent)
+	}
+
+	return
+} 
+
 // SectionKind differentiates Section interfaces.
 type SectionKind int
 
