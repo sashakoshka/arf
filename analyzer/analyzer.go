@@ -85,6 +85,11 @@ func (analyzer *AnalysisOperation) fetchSection (
 	analyzer.currentPosition = where
 	analyzer.currentSection  = parsedSection
 
+	defer func () {
+		analyzer.currentPosition = previousPosition
+		analyzer.currentSection  = previousSection
+	} ()
+
 	// TODO: analyze section. have analysis methods work on currentPosition
 	// and currentSection.
 	// 
@@ -94,15 +99,14 @@ func (analyzer *AnalysisOperation) fetchSection (
 	// scenarios.
 	switch parsedSection.Kind() {
 	case parser.SectionKindType:
-	case parser.SectionKindObjt:
+		section, err = analyzer.analyzeTypeSection()
+		if err != nil { return}
 	case parser.SectionKindEnum:
 	case parser.SectionKindFace:
 	case parser.SectionKindData:
 	case parser.SectionKindFunc:
 	}
 	
-	analyzer.currentPosition = previousPosition
-	analyzer.currentSection  = previousSection
 	return
 }
 
