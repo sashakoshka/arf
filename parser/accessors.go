@@ -65,6 +65,13 @@ func (identifier Identifier) Item (index int) (item string) {
 	return
 }
 
+// Bite removes the first item from the identifier and returns it.
+func (identifier *Identifier) Bite () (item string) {
+	item = identifier.trail[0]
+	identifier.trail = identifier.trail[1:]
+	return
+}
+
 // Kind returns the type's kind.
 func (what Type) Kind () (kind TypeKind) {
 	kind = what.kind
