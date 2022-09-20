@@ -1,6 +1,7 @@
 package analyzer
 
 import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/parser"
 
 // TypeKind represents what kind of type a type is.
 type TypeKind int
@@ -27,9 +28,8 @@ type ObjectMember struct {
 	// need to include it in the semantic analysis because we need to know
 	// how many members objects have.
 	permission types.Permission
-	
-	// TODO: create argument type similar to what's in the parser and have
-	// a defaultValue member here.
+
+	what Type
 }
 
 func (member ObjectMember) ToString (indent int) (output string) {
@@ -37,8 +37,8 @@ func (member ObjectMember) ToString (indent int) (output string) {
 		indent,
 		member.name, " ",
 		member.permission.ToString(),
-		// TODO: default value
 		"\n")
+	output += member.what.ToString(indent + 1)
 	return
 }
 
@@ -94,5 +94,18 @@ func (what Type) ToString (indent int) (output string) {
 	if what.actual != nil {
 		output += what.actual.Name()
 	}
+	return
+}
+
+// analyzeType analyzes a type specifier.
+func (analyzer AnalysisOperation) analyzeType (
+	inputType parser.Type,
+) (
+	outputType Type,
+	err error,
+) {
+	// TODO
+	outputType.mutable = inputType.Mutable()
+	
 	return
 }

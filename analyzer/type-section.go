@@ -40,6 +40,7 @@ func (analyzer AnalysisOperation) analyzeTypeSection () (
 	outputSection.where = analyzer.currentPosition
 
 	outputSection.what, err = analyzer.analyzeType(inputSection.Type())
+	if err != nil { return }
 
 	outputSection.complete = true
 	return
