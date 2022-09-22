@@ -2,6 +2,7 @@ package analyzer
 
 import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/parser"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // TypeKind represents what kind of type a type is.
 type TypeKind int
@@ -104,8 +105,22 @@ func (analyzer AnalysisOperation) analyzeType (
 	outputType Type,
 	err error,
 ) {
-	// TODO
 	outputType.mutable = inputType.Mutable()
+	if outputType.length < 1 {
+		err = inputType.NewError (
+			"cannot specify a length of zero",
+			infoerr.ErrorKindError)
+		return
+	}
+
+	// analyze type this type points to, if it exists
+	if inputType.Kind() != parser.TypeKindBasic {
+		var points Type
+		points, err = analyzer.analyzeType(inputType.Points())
+		outputType.points = &points
+	}
+	
+	// TODO
 	
 	return
 }
