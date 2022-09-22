@@ -24,6 +24,6 @@ var BuiltInString = createPrimitive("String", Type {
 // list.
 func createPrimitive (name string, inherits Type) (primitive TypeSection) {
 	primitive.where = locator { name: name }
-	primitive.inherits = inherits
+	primitive.what  = inherits
 	return
 }

@@ -15,22 +15,10 @@ type SyntaxTree struct {
 	sections map[string] Section
 }
 
-// SectionKind differentiates Section interfaces.
-type SectionKind int
-
-const (
-	SectionKindType = iota
-	SectionKindEnum
-	SectionKindFace
-	SectionKindData
-	SectionKindFunc
-)
-
 // Section can be any kind of section. You can find out what type of section it
 // is with the Kind method.
 type Section interface {
 	Location   () (location file.Location)
-	Kind       () (kind SectionKind)
 	Permission () (permission types.Permission)
 	Name       () (name string)
 	NewError   (message string, kind infoerr.ErrorKind) (err error)

@@ -101,14 +101,14 @@ func (analyzer *AnalysisOperation) fetchSection (
 	// table as soon as the vital details are acquired, and mark it as
 	// incomplete. that way, it can still be referenced by itself in certain
 	// scenarios.
-	switch parsedSection.Kind() {
-	case parser.SectionKindType:
+	switch parsedSection.(type) {
+	case parser.TypeSection:
 		section, err = analyzer.analyzeTypeSection()
 		if err != nil { return}
-	case parser.SectionKindEnum:
-	case parser.SectionKindFace:
-	case parser.SectionKindData:
-	case parser.SectionKindFunc:
+	case parser.EnumSection:
+	case parser.FaceSection:
+	case parser.DataSection:
+	case parser.FuncSection:
 	}
 	
 	return

@@ -26,18 +26,6 @@ func (table SectionTable) ToString (indent int) (output string) {
 	return
 } 
 
-// SectionKind differentiates Section interfaces.
-type SectionKind int
-
-const (
-	SectionKindType SectionKind = iota
-	SectionKindObjt
-	SectionKindEnum
-	SectionKindFace
-	SectionKindData
-	SectionKindFunc
-)
-
 // Section is a semantically analyzed section.
 type Section interface {
 	// Provided by sectionBase
@@ -47,7 +35,6 @@ type Section interface {
 	ModuleName () (path string)
 
 	// Must be implemented by each individual section
-	Kind     () (kind SectionKind)
 	ToString (indent int) (output string)
 }
 
