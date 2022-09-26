@@ -52,6 +52,7 @@ type TypeMember struct {
 	nameable
 	typeable
 	permissionable
+	valuable
 	
 	bitWidth uint64
 }
@@ -72,9 +73,6 @@ type Type struct {
 
 	// if non-nil, this type defines new members.
 	members []TypeMember
-
-	// the default value of the type.
-	defaultValue Argument
 }
 
 // Declaration represents a variable declaration.
@@ -83,13 +81,6 @@ type Declaration struct {
 	nameable
 	typeable
 }
-
-// ObjectDefaultValues represents a list of object member initialization
-// attributes.
-type ObjectDefaultValues map[string] Argument
-
-// ArrayDefaultValues represents a list of elements initializing an array.
-type ArrayDefaultValues []Argument
 
 // ArgumentKind specifies the type of thing the value of an argument should be
 // cast to.
@@ -108,13 +99,6 @@ const (
 	
 	// {name 23}
 	ArgumentKindSubscript
-
-	// (.name <value>)
-	// (.name <value> .name (.name <value))
-	ArgumentKindObjectDefaultValues
-
-	// <4 32 98 5>
-	ArgumentKindArrayDefaultValues
 
 	// name.name
 	// name.name.name
@@ -248,6 +232,13 @@ type Phrase struct {
 
 // Block represents a scoped/indented block of code.
 type Block []Phrase
+
+// FuncOutput represents a function output declaration. It allows for a default
+// value.
+type FuncOutput struct {
+	Declaration
+	valuable
+}
 
 // FuncSection represents a function section.
 type FuncSection struct {

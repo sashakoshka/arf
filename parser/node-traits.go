@@ -60,11 +60,17 @@ func (trait permissionable) Permission () (permission types.Permission) {
 
 // valuable allows a node to have an argument value.
 type valuable struct {
-	value Argument
+	values []Argument
 }
 
-// Value returns the value argument of the node.
-func (trait valuable) Value () (value Argument) {
-	value = trait.value
+// Length returns the amount of default values in the node.
+func (node valuable) Length () (length int) {
+	length = len(node.values)
+	return
+} 
+
+// Value returns the default value at the specified index.
+func (node valuable) Value (index int) (value Argument) {
+	value = node.values[index]
 	return
 }
