@@ -2,7 +2,6 @@ package parser
 
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
-import "git.tebibyte.media/arf/arf/types"
 
 // parseType parses a type notation of the form Name, {Name}, etc.
 func (parser *ParsingOperation) parseType () (what Type, err error) {
