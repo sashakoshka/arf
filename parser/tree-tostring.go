@@ -185,8 +185,10 @@ func (section DataSection) ToString (indent int) (output string) {
 		section.permission.ToString(), " ",
 		section.name, ":",
 		section.what.ToString(), "\n")
-
-	output += section.argument.ToString(indent + 1, true)
+	
+	if section.argument.kind != ArgumentKindNil {
+		output += section.argument.ToString(indent + 1, true)
+	}
 	
 	if section.external {
 		output += doIndent(indent + 1, "external\n")
@@ -202,8 +204,10 @@ func (section TypeSection) ToString (indent int) (output string) {
 		section.permission.ToString(), " ",
 		section.name, ":",
 		section.what.ToString(), "\n")
-
-	output += section.argument.ToString(indent + 1, true)
+	
+	if section.argument.kind != ArgumentKindNil {
+		output += section.argument.ToString(indent + 1, true)
+	}
 	return
 }
 
