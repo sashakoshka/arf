@@ -91,32 +91,19 @@ func (parser *ParsingOperation) parseEnumMember () (
 	member.name = parser.token.Value().(string)
 
 	// see if value exists
-	err = parser.nextToken (
-		lexer.TokenKindColon,
-		lexer.TokenKindNewline)
+	err = parser.nextToken()
 	if err != nil { return }
-
-	if parser.token.Is(lexer.TokenKindColon) {
-		err = parser.nextToken()
-		if err != nil { return }
-		err = parser.skipWhitespace()
-		if err != nil { return }
-		err = parser.expect (
-			lexer.TokenKindLessThan,
-			lexer.TokenKindLParen)
-		if err != nil { return }
-
-		if parser.token.Is(lexer.TokenKindLessThan) {
-			// parse value
-			member.value, err = parser.parseBasicDefaultValue()
-			if err != nil { return }
-			
-		} else if parser.token.Is(lexer.TokenKindLParen) {
-			// parse default values
-			member.value, err = parser.parseObjectDefaultValue()
-			if err != nil { return }
-		}
+	if parser.token.Is(lexer.TokenKindNewline) {
+		parser.nextToken()
+		// if we have exited the member, return
+		if !parser.token.Is(lexer.TokenKindIndent) { return }
+		if parser.token.Value().(int) != 2         { return }
 	}
 
+	// get value
+	member.argument, err = parser.parseArgument()
+	err = parser.expect(lexer.TokenKindNewline)
+	if err != nil { return }
+	
 	return
 }
