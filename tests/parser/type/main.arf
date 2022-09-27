@@ -8,7 +8,7 @@ type ro bBitFields:Obj
 	ro that:Int     & 1
 	ro this:Int 298 & 24
 
-type ro cInit:Obj:(
+type ro cInit:Obj
 	ro that:String "hello world"
 	ro this:Int    23
 

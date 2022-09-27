@@ -26,6 +26,12 @@ data ro jObject:Obj
 	(324
 	438)
 
+# TODO: at some point, have this syntax for object literals. terminate members
+# with newlines.
+# data ro jObject:Bird (
+	# .this 324
+	# .that 438)
+
 data ro lMutIntegerArray16:Int:16:mut
 
 data ro mExternalData:Int:8
