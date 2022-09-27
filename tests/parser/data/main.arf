@@ -1,9 +1,9 @@
 :arf
 ---
 
-data ro aInteger:Int: 3202
+data ro aInteger:Int 3202
 
-data ro bMutInteger:Int:mut: 3202
+data ro bMutInteger:Int:mut 3202
 
 data ro cIntegerPointer:{Int}
 
