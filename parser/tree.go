@@ -154,6 +154,7 @@ type DataSection struct {
 	nameable
 	typeable
 	permissionable
+	valuable
 
 	external bool
 }
@@ -164,6 +165,7 @@ type TypeSection struct {
 	nameable
 	typeable
 	permissionable
+	valuable
 }
 
 // EnumMember represents a member of an enum section.

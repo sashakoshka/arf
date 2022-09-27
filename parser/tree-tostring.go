@@ -66,66 +66,12 @@ func (identifier Identifier) ToString () (output string) {
 	return
 }
 
-func (values ObjectDefaultValues) ToString (
-	indent int,
-	breakLine bool,
-) (
-	output string,
-) {
-	if !breakLine { indent = 0 }
-	output += doIndent(indent, "(")
-	if breakLine { output += "\n" }
-	
-	for index, name := range sortMapKeysAlphabetically(values) {
-		if index > 0 && !breakLine { output += " " }
-		
-		value := values[name]
-		
-		output += doIndent(indent, "." + name + ":")
-		
-		isComplexDefaultValue :=
-			value.kind == ArgumentKindObjectDefaultValues ||
-			value.kind == ArgumentKindArrayDefaultValues
-		
-		if isComplexDefaultValue {
-			if breakLine { output += "\n" }
-			output += value.ToString(indent + 1, breakLine)
-		} else {
-			output += "<"
-			output += value.ToString(indent + 1, false)
-			output += ">"
-		}
-		if breakLine { output += "\n" }
-	}
-	output += doIndent(indent, ")")
-	return
-}
-
-func (values ArrayDefaultValues) ToString (
-	indent int,
-	breakLine bool,
-) (
-	output string,
-) {
-	if !breakLine { indent = 0 }
-	output += doIndent(indent, "<")
-	if breakLine { output += "\n" }
-	
-	for index, value := range values {
-		if index > 0 && !breakLine { output += " " }
-		output += value.ToString(indent, breakLine)
-	}
-	
-	output += doIndent(indent, ">")
-	return
-}
-
 func (member TypeMember) ToString (indent int, breakLine bool) (output string) {
 	output += doIndent(indent, ".")
 	
 	output += member.permission.ToString() + " "
 	output += member.name + ":"
-	output += member.what.ToString(indent + 1, breakLine)
+	output += member.what.ToString()
 
 	if member.bitWidth > 0 {
 		output += fmt.Sprint(" & ", member.bitWidth)
@@ -138,12 +84,12 @@ func (member TypeMember) ToString (indent int, breakLine bool) (output string) {
 	return
 }
 
-func (what Type) ToString (indent int, breakLine bool) (output string) {
+func (what Type) ToString () (output string) {
 	if what.kind == TypeKindBasic {
 		output += what.name.ToString()
 	} else {
 		output += "{"
-		output += what.points.ToString(indent, breakLine)
+		output += what.points.ToString()
 
 		if what.kind == TypeKindVariableArray {
 			output += " .."
@@ -159,46 +105,26 @@ func (what Type) ToString (indent int, breakLine bool) (output string) {
 	if what.mutable {
 		output += ":mut"
 	}
-
-	if what.members != nil {
-		if breakLine {
-			output += ":\n" + doIndent(indent, "(\n")
-			for _, member := range what.members {
-				output += member.ToString(indent, breakLine)
-			}
-			output += doIndent(indent, ")")
-		} else {
-			output += ":("
-			for index, member := range what.members {
-				if index > 0 { output += " " }
-				output += member.ToString(indent, breakLine)
-			}
-			output += ")"
-		}
-	}
-
-	defaultValueKind := what.defaultValue.kind
-	if defaultValueKind != ArgumentKindNil {
-		isComplexDefaultValue :=
-			defaultValueKind == ArgumentKindObjectDefaultValues ||
-			defaultValueKind == ArgumentKindArrayDefaultValues
-		
-		if isComplexDefaultValue {
-			output += ":"
-			if breakLine { output += "\n" }
-			output += what.defaultValue.ToString(indent, breakLine)
-		} else {
-			output += ":<"
-			output += what.defaultValue.ToString(indent, false)
-			output += ">"
-		}
-	}
 	return
 }
 
 func (declaration Declaration) ToString (indent int) (output string) {
 	output += declaration.name + ":"
-	output += declaration.what.ToString(indent, false)
+	output += declaration.what.ToString()
+	return
+}
+
+func (list List) ToString (indent int, breakline bool) (output string) {
+	if !breakline { indent = 0 }
+	output += doIndent(indent, "(")
+	if breakline { output += "\n" }
+
+	for _, argument := range list.arguments {
+		output += argument.ToString(indent, breakline)
+	}
+
+	output += doIndent(indent, "(")
+	if breakline { output += "\n" }
 	return
 }
 
@@ -216,13 +142,8 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 				indent,
 				breakLine)
 	
-	case ArgumentKindObjectDefaultValues:
-		output += argument.value.(ObjectDefaultValues).
-				ToString(indent, breakLine)
-	
-	case ArgumentKindArrayDefaultValues:
-		output += argument.value.(ArrayDefaultValues).
-				ToString(indent, breakLine)
+	case ArgumentKindList:
+		output += argument.value.(List).ToString(indent, breakLine)
 	
 	case ArgumentKindIdentifier:
 		output += doIndent (
@@ -251,75 +172,6 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 			indent,
 			"'" + string(argument.value.(rune)) + "'")
 		if breakLine { output += "\n" }
-		
-	case ArgumentKindOperator:
-		var stringValue string
-		switch argument.value.(lexer.TokenKind) {
-	        case lexer.TokenKindColon:
-	        	stringValue = ":"
-	        case lexer.TokenKindPlus:
-	        	stringValue = "+"
-	        case lexer.TokenKindMinus:
-	        	stringValue = "-"
-	        case lexer.TokenKindIncrement:
-	        	stringValue = "++"
-	        case lexer.TokenKindDecrement:
-	        	stringValue = "--"
-	        case lexer.TokenKindAsterisk:
-	        	stringValue = "*"
-	        case lexer.TokenKindSlash:
-	        	stringValue = "/"
-	        case lexer.TokenKindExclamation:
-	        	stringValue = "!"
-	        case lexer.TokenKindPercent:
-	        	stringValue = "%"
-	        case lexer.TokenKindPercentAssignment:
-	        	stringValue = "%="
-	        case lexer.TokenKindTilde:
-	        	stringValue = "~"
-	        case lexer.TokenKindTildeAssignment:
-	        	stringValue = "~="
-	        case lexer.TokenKindAssignment:
-	        	stringValue = "="
-	        case lexer.TokenKindEqualTo:
-	        	stringValue = "=="
-	        case lexer.TokenKindNotEqualTo:
-	        	stringValue = "!="
-	        case lexer.TokenKindLessThanEqualTo:
-	        	stringValue = "<="
-	        case lexer.TokenKindLessThan:
-	        	stringValue = "<"
-	        case lexer.TokenKindLShift:
-	        	stringValue = "<<"
-	        case lexer.TokenKindLShiftAssignment:
-	        	stringValue = "<<="
-	        case lexer.TokenKindGreaterThan:
-	        	stringValue = ">"
-	        case lexer.TokenKindGreaterThanEqualTo:
-	        	stringValue = ">="
-	        case lexer.TokenKindRShift:
-	        	stringValue = ">>"
-	        case lexer.TokenKindRShiftAssignment:
-	        	stringValue = ">>="
-	        case lexer.TokenKindBinaryOr:
-	        	stringValue = "|"
-	        case lexer.TokenKindBinaryOrAssignment:
-	        	stringValue = "|="
-	        case lexer.TokenKindLogicalOr:
-	        	stringValue = "||"
-	        case lexer.TokenKindBinaryAnd:
-	        	stringValue = "&"
-	        case lexer.TokenKindBinaryAndAssignment:
-	        	stringValue = "&="
-	        case lexer.TokenKindLogicalAnd:
-	        	stringValue = "&&"
-	        case lexer.TokenKindBinaryXor:
-	        	stringValue = "^"
-	        case lexer.TokenKindBinaryXorAssignment:
-	        	stringValue = "^="
-		}
-		output += doIndent(indent, stringValue)
-		if breakLine { output += "\n" }
 	}
 
 	return
@@ -331,7 +183,9 @@ func (section DataSection) ToString (indent int) (output string) {
 		"data ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(indent + 1, true), "\n")
+		section.what.ToString(), "\n")
+
+	output += section.argument.ToString(indent + 1, true)
 	
 	if section.external {
 		output += doIndent(indent + 1, "external\n")
@@ -346,10 +200,11 @@ func (section TypeSection) ToString (indent int) (output string) {
 		"type ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(indent + 1, true), "\n")
+		section.what.ToString(), "\n")
+
+	output += section.argument.ToString(indent + 1, true)
 	return
 }
-
 
 func (section EnumSection) ToString (indent int) (output string) {
 	output += doIndent (
@@ -357,21 +212,11 @@ func (section EnumSection) ToString (indent int) (output string) {
 		"enum ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(indent + 1, true), "\n")
+		section.what.ToString(), "\n")
 
 	for _, member := range section.members {
-		output += doIndent(indent + 1, "- ", member.name)
-	
-		isComplexInitialization :=
-			member.value.kind == ArgumentKindObjectDefaultValues ||
-			member.value.kind == ArgumentKindArrayDefaultValues
-		
-		if isComplexInitialization {
-			output += ":\n"
-			output += member.value.ToString(indent + 2, true)
-		} else if member.value.kind != ArgumentKindNil {
-			output += ":<" + member.value.ToString(0, false) + ">"
-		}
+		output += doIndent(indent + 1, "- ", member.name, "")
+		output += member.argument.ToString(indent, false)
 		output += "\n"
 	}
 	return
@@ -411,7 +256,83 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 		output += doIndent(indent)
 	}
 
-	output += "[" + phrase.command.ToString(0, false)
+	output += "["
+
+	switch phrase.kind {
+	case
+		PhraseKindOperator,
+		PhraseKindLet,
+		PhraseKindAssign:
+		
+		switch phrase.operator {
+	        case lexer.TokenKindColon:
+	        	output += ":"
+	        case lexer.TokenKindPlus:
+	        	output += "+"
+	        case lexer.TokenKindMinus:
+	        	output += "-"
+	        case lexer.TokenKindIncrement:
+	        	output += "++"
+	        case lexer.TokenKindDecrement:
+	        	output += "--"
+	        case lexer.TokenKindAsterisk:
+	        	output += "*"
+	        case lexer.TokenKindSlash:
+	        	output += "/"
+	        case lexer.TokenKindExclamation:
+	        	output += "!"
+	        case lexer.TokenKindPercent:
+	        	output += "%"
+	        case lexer.TokenKindPercentAssignment:
+	        	output += "%="
+	        case lexer.TokenKindTilde:
+	        	output += "~"
+	        case lexer.TokenKindTildeAssignment:
+	        	output += "~="
+	        case lexer.TokenKindAssignment:
+	        	output += "="
+	        case lexer.TokenKindEqualTo:
+	        	output += "=="
+	        case lexer.TokenKindNotEqualTo:
+	        	output += "!="
+	        case lexer.TokenKindLessThanEqualTo:
+	        	output += "<="
+	        case lexer.TokenKindLessThan:
+	        	output += "<"
+	        case lexer.TokenKindLShift:
+	        	output += "<<"
+	        case lexer.TokenKindLShiftAssignment:
+	        	output += "<<="
+	        case lexer.TokenKindGreaterThan:
+	        	output += ">"
+	        case lexer.TokenKindGreaterThanEqualTo:
+	        	output += ">="
+	        case lexer.TokenKindRShift:
+	        	output += ">>"
+	        case lexer.TokenKindRShiftAssignment:
+	        	output += ">>="
+	        case lexer.TokenKindBinaryOr:
+	        	output += "|"
+	        case lexer.TokenKindBinaryOrAssignment:
+	        	output += "|="
+	        case lexer.TokenKindLogicalOr:
+	        	output += "||"
+	        case lexer.TokenKindBinaryAnd:
+	        	output += "&"
+	        case lexer.TokenKindBinaryAndAssignment:
+	        	output += "&="
+	        case lexer.TokenKindLogicalAnd:
+	        	output += "&&"
+	        case lexer.TokenKindBinaryXor:
+	        	output += "^"
+	        case lexer.TokenKindBinaryXorAssignment:
+	        	output += "^="
+		}
+		
+	default:
+		output += phrase.command.ToString(0, false)
+	}
+	
 	for _, argument := range phrase.arguments {
 		output += " " + argument.ToString(0, false)
 	}
