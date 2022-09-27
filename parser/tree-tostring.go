@@ -215,8 +215,10 @@ func (section EnumSection) ToString (indent int) (output string) {
 		section.what.ToString(), "\n")
 
 	for _, member := range section.members {
-		output += doIndent(indent + 1, "- ", member.name, "")
-		output += member.argument.ToString(indent, false)
+		output += doIndent(indent + 1, "- ", member.name)
+		if member.argument.kind != ArgumentKindNil {
+			output += " " + member.argument.ToString(indent, false)
+		}
 		output += "\n"
 	}
 	return
