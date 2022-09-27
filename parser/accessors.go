@@ -169,18 +169,6 @@ func (phrase Phrase) Kind () (kind PhraseKind) {
 	return
 }
 
-// ArgumentsLength returns the amount of arguments in the phrase.
-func (phrase Phrase) ArgumentsLength () (length int) {
-	length = len(phrase.arguments)
-	return
-}
-
-// Argument returns the argument at index.
-func (phrase Phrase) Argument (index int) (argument Argument) {
-	argument = phrase.arguments[index]
-	return
-}
-
 // ReturneesLength returns the amount of things the phrase returns to.
 func (phrase Phrase) ReturneesLength () (length int) {
 	length = len(phrase.returnees)

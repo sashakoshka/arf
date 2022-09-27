@@ -82,6 +82,12 @@ type Declaration struct {
 	typeable
 }
 
+// List represents an array or object literal.
+type List struct {
+	locatable
+	multiValuable
+}
+
 // ArgumentKind specifies the type of thing the value of an argument should be
 // cast to.
 type ArgumentKind int
@@ -93,6 +99,9 @@ const (
 	// [name argument argument]
 	// etc...
 	ArgumentKindPhrase
+
+	// (argument argument argument)
+	ArgumentKindList
 
 	// {name}
 	ArgumentKindDereference
@@ -221,8 +230,8 @@ const (
 type Phrase struct {
 	location  file.Location
 	command   Argument
-	arguments []Argument
 	returnees []Argument
+	multiValuable
 
 	kind PhraseKind
 

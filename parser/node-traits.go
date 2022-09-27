@@ -43,7 +43,7 @@ type typeable struct {
 
 // Type returns the type of the node.
 func (trait typeable) Type () (what Type) {
-	what =  trait.what
+	what = trait.what
 	return
 }
 
@@ -60,17 +60,28 @@ func (trait permissionable) Permission () (permission types.Permission) {
 
 // valuable allows a node to have an argument value.
 type valuable struct {
+	value Argument
+}
+
+// Value returns the value argument of the node.
+func (trait valuable) Value () (value Argument) {
+	value = trait.value
+	return
+}
+
+// multiValuable allows a node to have several argument values.
+type multiValuable struct {
 	values []Argument
 }
 
-// Length returns the amount of default values in the node.
-func (node valuable) Length () (length int) {
-	length = len(node.values)
+// Value returns the value at index.
+func (trait multiValuable) Value (index int) (value Argument) {
+	value = trait.values[index]
 	return
-} 
+}
 
-// Value returns the default value at the specified index.
-func (node valuable) Value (index int) (value Argument) {
-	value = node.values[index]
+// Length returns the amount of values in the mode.
+func (trait multiValuable) Length () (length int) {
+	length = len(trait.values)
 	return
 }
