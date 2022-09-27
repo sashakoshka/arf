@@ -2,6 +2,7 @@ package parser
 
 import "git.tebibyte.media/arf/arf/file"
 import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // SyntaxTree represents an abstract syntax tree. It covers an entire module. It
@@ -135,10 +136,6 @@ const (
 
 	// 'S'
 	ArgumentKindRune
-
-	// + - * / etc...
-	// this is only used as a phrase command
-	ArgumentKindOperator
 )
 
 // Argument represents a value that can be placed anywhere a value goes. This
@@ -229,11 +226,15 @@ const (
 // syntactical concept.
 type Phrase struct {
 	location  file.Location
-	command   Argument
 	returnees []Argument
 	multiValuable
-
+	
 	kind PhraseKind
+	
+	command Argument
+
+	// only applicable for PhraseKindOperator
+	operator lexer.TokenKind
 
 	// only applicable for control flow phrases
 	block Block
