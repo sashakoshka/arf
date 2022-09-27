@@ -119,11 +119,12 @@ func (list List) ToString (indent int, breakline bool) (output string) {
 	output += doIndent(indent, "(")
 	if breakline { output += "\n" }
 
-	for _, argument := range list.arguments {
+	for index, argument := range list.arguments {
+		if !breakline && index > 0 { output += " "}
 		output += argument.ToString(indent, breakline)
 	}
 
-	output += doIndent(indent, "(")
+	output += doIndent(indent, ")")
 	if breakline { output += "\n" }
 	return
 }
