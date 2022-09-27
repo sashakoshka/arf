@@ -86,6 +86,9 @@ type Declaration struct {
 // List represents an array or object literal.
 type List struct {
 	locatable
+
+	// TODO: have an array of unnamed arguments, and a map of named
+	// arguments
 	multiValuable
 }
 
