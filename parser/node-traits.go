@@ -60,28 +60,28 @@ func (node permissionable) Permission () (permission types.Permission) {
 
 // valuable allows a node to have an argument value.
 type valuable struct {
-	value Argument
+	argument Argument
 }
 
-// Value returns the value argument of the node.
-func (node valuable) Value () (value Argument) {
-	value = node.value
+// Argument returns the value argument of the node.
+func (node valuable) Argument () (argument Argument) {
+	argument = node.argument
 	return
 }
 
 // multiValuable allows a node to have several argument values.
 type multiValuable struct {
-	values []Argument
+	arguments []Argument
 }
 
-// Value returns the value at index.
-func (node multiValuable) Value (index int) (value Argument) {
-	value = node.values[index]
+// Argument returns the argument at index.
+func (node multiValuable) Argument (index int) (argument Argument) {
+	argument = node.arguments[index]
 	return
 }
 
-// Length returns the amount of values in the mode.
+// Length returns the amount of arguments in the mode.
 func (node multiValuable) Length () (length int) {
-	length = len(node.values)
+	length = len(node.arguments)
 	return
 }
