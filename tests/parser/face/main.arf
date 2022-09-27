@@ -13,3 +13,5 @@ face ro ReadWriter:Face
 
 face ro Destroyer:Face
 	destroy
+
+# TODO: add test case for func interface
