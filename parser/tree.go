@@ -47,17 +47,6 @@ const (
 	TypeKindVariableArray
 )
 
-// TypeMember represents a member variable of a type specifier.
-type TypeMember struct {
-	locatable
-	nameable
-	typeable
-	permissionable
-	valuable
-	
-	bitWidth uint64
-}
-
 // Type represents a type specifier
 type Type struct {
 	locatable
@@ -71,9 +60,6 @@ type Type struct {
 
 	// not applicable for basic.
 	points *Type
-
-	// if non-nil, this type defines new members.
-	members []TypeMember
 }
 
 // Declaration represents a variable declaration.
@@ -162,6 +148,17 @@ type DataSection struct {
 	external bool
 }
 
+// TypeSectionMember represents a member variable of a type section.
+type TypeSectionMember struct {
+	locatable
+	nameable
+	typeable
+	permissionable
+	valuable
+	
+	bitWidth uint64
+}
+
 // TypeSection represents a type definition.
 type TypeSection struct {
 	locatable
@@ -169,6 +166,9 @@ type TypeSection struct {
 	typeable
 	permissionable
 	valuable
+
+	// if non-nil, this type defines new members.
+	members []TypeSectionMember
 }
 
 // EnumMember represents a member of an enum section.
