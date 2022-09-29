@@ -278,9 +278,13 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 	output += "["
 
 	switch phrase.kind {
-	case
-		PhraseKindOperator,
-		PhraseKindAssign:
+	case PhraseKindCase:
+        	output += ":"
+        
+	case PhraseKindAssign:
+        	output += "="
+	
+	case PhraseKindOperator:
 		
 		switch phrase.operator {
 	        case lexer.TokenKindColon:
