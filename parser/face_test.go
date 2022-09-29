@@ -1,7 +1,12 @@
-:arf
----
+package parser
 
-face ro aReadWriter:Face
+import "testing"
+
+func TestFace (test *testing.T) {
+	checkTree ("../tests/parser/face", false,
+`:arf
+---
+face ro ReadWriter:Face
 	write
 		> data:{Byte ..}
 		< wrote:Int
@@ -10,11 +15,11 @@ face ro aReadWriter:Face
 		> into:{Byte ..}
 		< read:Int
 		< err:Error
-
-face ro bDestroyer:Face
+face ro Destroyer:Face
 	destroy
-
 face ro cFuncInterface
 	> something:Int
 	< someOutput:Int
 	< otherOutput:String
+`, test)
+}
