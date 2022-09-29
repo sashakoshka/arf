@@ -85,6 +85,11 @@ func (member TypeSectionMember) ToString (indent int, breakLine bool) (output st
 }
 
 func (what Type) ToString () (output string) {
+	if what.kind == TypeKindNil {
+		output += "NIL-TYPE"
+		return
+	}
+
 	if what.kind == TypeKindBasic {
 		output += what.name.ToString()
 	} else {
