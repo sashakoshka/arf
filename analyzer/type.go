@@ -1,6 +1,6 @@
 package analyzer
 
-import "git.tebibyte.media/arf/arf/types"
+// import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/parser"
 import "git.tebibyte.media/arf/arf/infoerr"
 
@@ -21,28 +21,6 @@ const (
 	TypeKindObject
 )
 
-// ObjectMember is a member of an object type. 
-type ObjectMember struct {
-	name string
-	
-	// even if there is a private permission in another module, we still
-	// need to include it in the semantic analysis because we need to know
-	// how many members objects have.
-	permission types.Permission
-
-	what Type
-}
-
-func (member ObjectMember) ToString (indent int) (output string) {
-	output += doIndent (
-		indent,
-		member.name, " ",
-		member.permission.ToString(),
-		"\n")
-	output += member.what.ToString(indent + 1)
-	return
-}
-
 // Type represents a description of a type. It must eventually point to a
 // TypeSection.
 type Type struct {
@@ -57,14 +35,6 @@ type Type struct {
 	// of whatever the type is. even if the type is a variable length array.
 	// because literally why not.
 	length uint64
-
-	// this is only applicable for a TypeKindObject where new members are
-	// defined.
-	// TODO: do not add members from parent type. instead have a member
-	// function to discern whether this type contains a particular member,
-	// and have it recurse all the way up the family tree. it will be the
-	// translator's job to worry about what members are placed where.
-	members []ObjectMember
 }
 
 // ToString returns all data stored within the type, in string form.

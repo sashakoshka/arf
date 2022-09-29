@@ -1,4 +1,4 @@
 :arf
 ---
 
-type basicInt:Int:<5>
+type ro basicInt:Int 5

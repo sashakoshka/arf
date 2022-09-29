@@ -29,8 +29,7 @@ func (analyzer AnalysisOperation) analyzeArgument (
 ) {
 	switch inputArgument.Kind() {
 	case parser.ArgumentKindNil:
-		panic (
-			"invalid state: attempt to analyze nil argument")
+		panic("invalid state: attempt to analyze nil argument")
 		
 	case parser.ArgumentKindPhrase:
 		// TODO
@@ -41,10 +40,7 @@ func (analyzer AnalysisOperation) analyzeArgument (
 	case parser.ArgumentKindSubscript:
 		// TODO
 		
-	case parser.ArgumentKindObjectDefaultValues:
-		// TODO
-		
-	case parser.ArgumentKindArrayDefaultValues:
+	case parser.ArgumentKindList:
 		// TODO
 		
 	case parser.ArgumentKindIdentifier:
@@ -67,11 +63,6 @@ func (analyzer AnalysisOperation) analyzeArgument (
 		
 	case parser.ArgumentKindRune:
 		outputArgument = RuneLiteral(inputArgument.Value().(rune))
-		
-	case parser.ArgumentKindOperator:
-		panic (
-			"invalid state: attempt to analyze operator argument " +
-			"directly")
 	}
 	return
 }

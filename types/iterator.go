@@ -39,7 +39,7 @@ func (iterator Iterator[VALUE_TYPE]) Value () (value VALUE_TYPE) {
 }
 
 // Next advances the iterator by 1.
-func (iterator Iterator[VALUE_TYPE]) Next () {
+func (iterator *Iterator[VALUE_TYPE]) Next () {
 	iterator.index ++
 }
 

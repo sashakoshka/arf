@@ -69,8 +69,6 @@ func (parser *ParsingOperation) parseTypeSection () (
 		section.members = append(section.members, member)
 		if err != nil { return }
 	}
-	
-	return
 }
 
 // parseTypeSectionMember parses a type section member variable.
