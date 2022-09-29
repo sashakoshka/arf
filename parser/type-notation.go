@@ -8,6 +8,7 @@ func (parser *ParsingOperation) parseType () (what Type, err error) {
 	err = parser.expect(lexer.TokenKindName, lexer.TokenKindLBrace)
 	if err != nil { return }
 	what.location = parser.token.Location()
+	what.kind = TypeKindBasic
 
 	if parser.token.Is(lexer.TokenKindLBrace) {
 		what.kind = TypeKindPointer
