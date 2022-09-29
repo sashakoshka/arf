@@ -10,19 +10,19 @@ type locatable struct {
 }
 
 // Location returns the location of the node.
-func (trait locatable) Location () (location file.Location) {
-	location = trait.location
+func (node locatable) Location () (location file.Location) {
+	location = node.location
 	return
 }
 
 // NewError creates a new error at the node's location.
-func (trait locatable) NewError (
+func (node locatable) NewError (
 	message string,
 	kind    infoerr.ErrorKind,
 ) (
 	err error,
 ) {
-	err = infoerr.NewError(trait.location, message, kind)
+	err = infoerr.NewError(node.location, message, kind)
 	return
 }
 
@@ -32,8 +32,8 @@ type nameable struct {
 }
 
 // Name returns the name of the node.
-func (trait nameable) Name () (name string) {
-	name = trait.name
+func (node nameable) Name () (name string) {
+	name = node.name
 	return
 }
 // typeable allows a node to have a type.
@@ -42,8 +42,8 @@ type typeable struct {
 }
 
 // Type returns the type of the node.
-func (trait typeable) Type () (what Type) {
-	what =  trait.what
+func (node typeable) Type () (what Type) {
+	what = node.what
 	return
 }
 
@@ -53,18 +53,35 @@ type permissionable struct {
 }
 
 // Permission returns the permision of the node.
-func (trait permissionable) Permission () (permission types.Permission) {
-	permission = trait.permission
+func (node permissionable) Permission () (permission types.Permission) {
+	permission = node.permission
 	return
 }
 
 // valuable allows a node to have an argument value.
 type valuable struct {
-	value Argument
+	argument Argument
 }
 
-// Value returns the value argument of the node.
-func (trait valuable) Value () (value Argument) {
-	value = trait.value
+// Argument returns the value argument of the node.
+func (node valuable) Argument () (argument Argument) {
+	argument = node.argument
+	return
+}
+
+// multiValuable allows a node to have several argument values.
+type multiValuable struct {
+	arguments []Argument
+}
+
+// Argument returns the argument at index.
+func (node multiValuable) Argument (index int) (argument Argument) {
+	argument = node.arguments[index]
+	return
+}
+
+// Length returns the amount of arguments in the mode.
+func (node multiValuable) Length () (length int) {
+	length = len(node.arguments)
 	return
 }

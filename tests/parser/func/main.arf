@@ -2,14 +2,14 @@
 ---
 func ro aBasicExternal
 	> someInput:Int:mut
-	< someOutput:Int:<4>
+	< someOutput:Int 4
 	---
 	external
 
 func ro bMethod
 	@ bird:{Bird}
 	> someInput:Int:mut
-	< someOutput:Int:<4>
+	< someOutput:Int 4
 	---
 	external
 
@@ -122,14 +122,13 @@ func ro gControlFlow
 		else
 			otherThing
 
-func ro hSetPhrase
+func ro hDataInit
 	---
-	let x:Int:<3>
+	= x:Int 3
 	# loc is a reference, similar to * in C
-	let y:{Int}:<[loc x]>
-	let z:Int:8:
-		<398 9 2309 983 -2387
-		478 555 123>
-	let bird:Bird:(
-		.that:(.whenYou:<99999>)
-		.this:<324>)
+	= y:{Int} [loc x]
+	= z:Int:8 (398 9 2309 983 -2387
+		478 555 123)
+	= bird:Bird (
+		(99999)
+		324)

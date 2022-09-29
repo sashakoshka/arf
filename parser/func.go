@@ -171,7 +171,7 @@ func (parser *ParsingOperation) parseFuncArguments (
 			if err != nil { return }
 			
 		case lexer.TokenKindLessThan:
-			output := Declaration { }
+			output := FuncOutput { }
 			output.location = parser.token.Location()
 			
 			// get name
@@ -186,11 +186,32 @@ func (parser *ParsingOperation) parseFuncArguments (
 			if err != nil { return }
 			output.what, err = parser.parseType()
 			if err != nil { return }
-			
-			into.outputs = append(into.outputs, output)
 
-			parser.expect(lexer.TokenKindNewline)
+			// skip newline if it is there
+			if parser.token.Is(lexer.TokenKindNewline) {
+				parser.nextToken()
+				// if we have exited the output, break
+				exited :=
+					!parser.token.Is(lexer.TokenKindIndent) ||
+					parser.token.Value().(int) != 2
+
+				if exited {
+					into.outputs = append(into.outputs, output)
+					break
+				}
+				
+				err = parser.nextToken()
+				if err != nil { return }
+			}
+
+			// get default value
+			output.argument, err = parser.parseArgument()
+			into.outputs = append(into.outputs, output)
 			if err != nil { return }
+			
+			err = parser.expect(lexer.TokenKindNewline)
+			if err != nil { return }
+			
 			err = parser.nextToken()
 			if err != nil { return }
 		}

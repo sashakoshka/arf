@@ -61,17 +61,10 @@ func (parser *ParsingOperation) parseEnumMembers (
 		// if we've left the block, stop parsing
 		if !parser.token.Is(lexer.TokenKindIndent) { return }
 		if parser.token.Value().(int) != 1         { return }
-		err = parser.nextToken(lexer.TokenKindMinus)
-		if err != nil { return }
 
 		var member EnumMember
 		member, err = parser.parseEnumMember()
 		into.members = append(into.members, member)
-		if err != nil { return }
-
-		err = parser.expect(lexer.TokenKindNewline)
-		if err != nil { return }
-		err = parser.nextToken()
 		if err != nil { return }
 	}
 }
@@ -81,7 +74,7 @@ func (parser *ParsingOperation) parseEnumMember () (
 	member EnumMember,
 	err error,
 ) {
-	err = parser.expect(lexer.TokenKindMinus)
+	err = parser.nextToken(lexer.TokenKindMinus)
 	if err != nil { return }
 
 	// get name
@@ -91,32 +84,25 @@ func (parser *ParsingOperation) parseEnumMember () (
 	member.name = parser.token.Value().(string)
 
 	// see if value exists
-	err = parser.nextToken (
-		lexer.TokenKindColon,
-		lexer.TokenKindNewline)
+	err = parser.nextToken()
 	if err != nil { return }
-
-	if parser.token.Is(lexer.TokenKindColon) {
+	if parser.token.Is(lexer.TokenKindNewline) {
+		parser.nextToken()
+		// if we have exited the member, return
+		if !parser.token.Is(lexer.TokenKindIndent) { return }
+		if parser.token.Value().(int) != 2         { return }
+		
 		err = parser.nextToken()
 		if err != nil { return }
-		err = parser.skipWhitespace()
-		if err != nil { return }
-		err = parser.expect (
-			lexer.TokenKindLessThan,
-			lexer.TokenKindLParen)
-		if err != nil { return }
-
-		if parser.token.Is(lexer.TokenKindLessThan) {
-			// parse value
-			member.value, err = parser.parseBasicDefaultValue()
-			if err != nil { return }
-			
-		} else if parser.token.Is(lexer.TokenKindLParen) {
-			// parse default values
-			member.value, err = parser.parseObjectDefaultValue()
-			if err != nil { return }
-		}
 	}
 
+	// get value
+	member.argument, err = parser.parseArgument()
+	err = parser.expect(lexer.TokenKindNewline)
+	if err != nil { return }
+	
+	err = parser.nextToken()
+	if err != nil { return }
+	
 	return
 }

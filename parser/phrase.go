@@ -129,7 +129,10 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 	// get command
 	err = parser.expect(validPhraseStartTokens...)
 	if err != nil { return }
-	phrase.command, phrase.kind, err = parser.parsePhraseCommand()
+	phrase.command,
+	phrase.kind,
+	phrase.operator,
+	err = parser.parsePhraseCommand()
 	if err != nil { return }
 
 	for {
@@ -233,7 +236,10 @@ func (parser *ParsingOperation) parseArgumentLevelPhrase () (
 	// get command
 	err = parser.nextToken(validPhraseStartTokens...)
 	if err != nil { return }
-	phrase.command, phrase.kind, err = parser.parsePhraseCommand()
+	phrase.command,
+	phrase.kind,
+	phrase.operator,
+	err = parser.parsePhraseCommand()
 	if err != nil { return }
 
 	for {
@@ -272,17 +278,14 @@ func (parser *ParsingOperation) parseArgumentLevelPhrase () (
 
 // parsePhraseCommand parses the command argument of a phrase.
 func (parser *ParsingOperation) parsePhraseCommand () (
-	command Argument,
-	kind    PhraseKind,
-	err     error,
+	command  Argument,
+	kind     PhraseKind,
+	operator lexer.TokenKind,
+	err      error,
 ) {
 	if isTokenOperator(parser.token) {
 		err = parser.expect(operatorTokens...)
 		if err != nil { return }
-
-		command.location = parser.token.Location()
-		command.kind     = ArgumentKindOperator
-		command.value    = parser.token.Kind()
 
 		if parser.token.Is(lexer.TokenKindColon) {
 			kind = PhraseKindCase
@@ -290,6 +293,7 @@ func (parser *ParsingOperation) parsePhraseCommand () (
 			kind = PhraseKindAssign
 		} else {
 			kind = PhraseKindOperator
+			operator = parser.token.Kind()
 		}
 		
 		err = parser.nextToken()
@@ -308,8 +312,6 @@ func (parser *ParsingOperation) parsePhraseCommand () (
 		identifier := command.value.(Identifier)
 		if len(identifier.trail) == 1 {
 			switch identifier.trail[0] {
-			case "let":
-				kind = PhraseKindLet
 			case "loc":
 				kind = PhraseKindReference
 			case "defer":

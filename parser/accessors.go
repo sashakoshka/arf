@@ -82,22 +82,22 @@ func (what Type) Points () (points Type) {
 	return
 }
 
-// MembersLength returns the amount of new members the type specifier defines.
+// MembersLength returns the amount of new members the type section defines.
 // If it defines no new members, it returns zero.
-func (what Type) MembersLength () (length int) {
-	length = len(what.members)
+func (section TypeSection) MembersLength () (length int) {
+	length = len(section.members)
 	return
 }
 
 // Member returns the member at index.
-func (what Type) Member (index int) (member TypeMember) {
-	member = what.members[index]
+func (section TypeSection) Member (index int) (member TypeSectionMember) {
+	member = section.members[index]
 	return
 }
 
 // BitWidth returns the bit width of the type member. If it is zero, it should
 // be treated as unspecified.
-func (member TypeMember) BitWidth () (width uint64) {
+func (member TypeSectionMember) BitWidth () (width uint64) {
 	width = member.bitWidth
 	return
 }
@@ -166,18 +166,6 @@ func (section DataSection) External () (external bool) {
 // Kind returns what kind of phrase it is.
 func (phrase Phrase) Kind () (kind PhraseKind) {
 	kind = phrase.kind
-	return
-}
-
-// ArgumentsLength returns the amount of arguments in the phrase.
-func (phrase Phrase) ArgumentsLength () (length int) {
-	length = len(phrase.arguments)
-	return
-}
-
-// Argument returns the argument at index.
-func (phrase Phrase) Argument (index int) (argument Argument) {
-	argument = phrase.arguments[index]
 	return
 }
 

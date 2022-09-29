@@ -2,6 +2,7 @@ package parser
 
 import "git.tebibyte.media/arf/arf/file"
 import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // SyntaxTree represents an abstract syntax tree. It covers an entire module. It
@@ -35,9 +36,12 @@ type Identifier struct {
 type TypeKind int
 
 const (
+	// TypeKindNil means that the type is unspecified.
+	TypeKindNil TypeKind = iota
+
 	// TypeKindBasic means its a normal type and inherits from something.
 	// Basic types can define new members on their parent types.
-	TypeKindBasic TypeKind = iota
+	TypeKindBasic
 
 	// TypeKindPointer means it's a pointer.
 	TypeKindPointer
@@ -45,16 +49,6 @@ const (
 	// TypeKindVariableArray means it's an array of variable length.
 	TypeKindVariableArray
 )
-
-// TypeMember represents a member variable of a type specifier.
-type TypeMember struct {
-	locatable
-	nameable
-	typeable
-	permissionable
-	
-	bitWidth uint64
-}
 
 // Type represents a type specifier
 type Type struct {
@@ -69,12 +63,6 @@ type Type struct {
 
 	// not applicable for basic.
 	points *Type
-
-	// if non-nil, this type defines new members.
-	members []TypeMember
-
-	// the default value of the type.
-	defaultValue Argument
 }
 
 // Declaration represents a variable declaration.
@@ -84,12 +72,14 @@ type Declaration struct {
 	typeable
 }
 
-// ObjectDefaultValues represents a list of object member initialization
-// attributes.
-type ObjectDefaultValues map[string] Argument
+// List represents an array or object literal.
+type List struct {
+	locatable
 
-// ArrayDefaultValues represents a list of elements initializing an array.
-type ArrayDefaultValues []Argument
+	// TODO: have an array of unnamed arguments, and a map of named
+	// arguments
+	multiValuable
+}
 
 // ArgumentKind specifies the type of thing the value of an argument should be
 // cast to.
@@ -103,18 +93,14 @@ const (
 	// etc...
 	ArgumentKindPhrase
 
+	// (argument argument argument)
+	ArgumentKindList
+
 	// {name}
 	ArgumentKindDereference
 	
 	// {name 23}
 	ArgumentKindSubscript
-
-	// (.name <value>)
-	// (.name <value> .name (.name <value))
-	ArgumentKindObjectDefaultValues
-
-	// <4 32 98 5>
-	ArgumentKindArrayDefaultValues
 
 	// name.name
 	// name.name.name
@@ -142,10 +128,6 @@ const (
 
 	// 'S'
 	ArgumentKindRune
-
-	// + - * / etc...
-	// this is only used as a phrase command
-	ArgumentKindOperator
 )
 
 // Argument represents a value that can be placed anywhere a value goes. This
@@ -164,8 +146,20 @@ type DataSection struct {
 	nameable
 	typeable
 	permissionable
+	valuable
 
 	external bool
+}
+
+// TypeSectionMember represents a member variable of a type section.
+type TypeSectionMember struct {
+	locatable
+	nameable
+	typeable
+	permissionable
+	valuable
+	
+	bitWidth uint64
 }
 
 // TypeSection represents a type definition.
@@ -174,6 +168,10 @@ type TypeSection struct {
 	nameable
 	typeable
 	permissionable
+	valuable
+
+	// if non-nil, this type defines new members.
+	members []TypeSectionMember
 }
 
 // EnumMember represents a member of an enum section.
@@ -193,6 +191,16 @@ type EnumSection struct {
 	members []EnumMember
 }
 
+// FaceKind determines if an interface is a type interface or an function
+// interface.
+type FaceKind int
+
+const (
+	FaceKindEmpty FaceKind = iota
+	FaceKindType
+	FaceKindFunc
+)
+
 // FaceBehavior represents a behavior of an interface section.
 type FaceBehavior struct {
 	locatable
@@ -208,8 +216,11 @@ type FaceSection struct {
 	nameable
 	permissionable
 	inherits Identifier
-	
+
+	kind FaceKind
+
 	behaviors map[string] FaceBehavior
+	FaceBehavior
 }
 
 // PhraseKind determines what semantic role a phrase plays.
@@ -219,7 +230,6 @@ const (
 	PhraseKindCall = iota
 	PhraseKindCallExternal
 	PhraseKindOperator
-	PhraseKindLet
 	PhraseKindAssign
 	PhraseKindReference
 	PhraseKindDefer
@@ -236,11 +246,17 @@ const (
 // syntactical concept.
 type Phrase struct {
 	location  file.Location
-	command   Argument
-	arguments []Argument
 	returnees []Argument
-
+	multiValuable
+	
 	kind PhraseKind
+
+	// TODO: do not have this be an argument. make a string version, and
+	// and identifier version.
+	command Argument
+
+	// only applicable for PhraseKindOperator
+	operator lexer.TokenKind
 
 	// only applicable for control flow phrases
 	block Block
@@ -248,6 +264,13 @@ type Phrase struct {
 
 // Block represents a scoped/indented block of code.
 type Block []Phrase
+
+// FuncOutput represents a function output declaration. It allows for a default
+// value.
+type FuncOutput struct {
+	Declaration
+	valuable
+}
 
 // FuncSection represents a function section.
 type FuncSection struct {
@@ -257,7 +280,7 @@ type FuncSection struct {
 	
 	receiver *Declaration
 	inputs   []Declaration
-	outputs  []Declaration
+	outputs  []FuncOutput
 	root     Block
 
 	external bool

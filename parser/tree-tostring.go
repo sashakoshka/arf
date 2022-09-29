@@ -41,7 +41,8 @@ func (tree SyntaxTree) ToString (indent int) (output string) {
 		output += doIndent(indent, "license \"", tree.license, "\"\n")
 	}
 
-	for _, require := range tree.requires {
+	for _, name := range sortMapKeysAlphabetically(tree.requires) {
+		require := tree.requires[name]
 		output += doIndent(indent, "require \"", require, "\"\n")
 	}
 	
@@ -66,84 +67,17 @@ func (identifier Identifier) ToString () (output string) {
 	return
 }
 
-func (values ObjectDefaultValues) ToString (
-	indent int,
-	breakLine bool,
-) (
-	output string,
-) {
-	if !breakLine { indent = 0 }
-	output += doIndent(indent, "(")
-	if breakLine { output += "\n" }
-	
-	for index, name := range sortMapKeysAlphabetically(values) {
-		if index > 0 && !breakLine { output += " " }
-		
-		value := values[name]
-		
-		output += doIndent(indent, "." + name + ":")
-		
-		isComplexDefaultValue :=
-			value.kind == ArgumentKindObjectDefaultValues ||
-			value.kind == ArgumentKindArrayDefaultValues
-		
-		if isComplexDefaultValue {
-			if breakLine { output += "\n" }
-			output += value.ToString(indent + 1, breakLine)
-		} else {
-			output += "<"
-			output += value.ToString(indent + 1, false)
-			output += ">"
-		}
-		if breakLine { output += "\n" }
-	}
-	output += doIndent(indent, ")")
-	return
-}
-
-func (values ArrayDefaultValues) ToString (
-	indent int,
-	breakLine bool,
-) (
-	output string,
-) {
-	if !breakLine { indent = 0 }
-	output += doIndent(indent, "<")
-	if breakLine { output += "\n" }
-	
-	for index, value := range values {
-		if index > 0 && !breakLine { output += " " }
-		output += value.ToString(indent, breakLine)
-	}
-	
-	output += doIndent(indent, ">")
-	return
-}
-
-func (member TypeMember) ToString (indent int, breakLine bool) (output string) {
-	output += doIndent(indent, ".")
-	
-	output += member.permission.ToString() + " "
-	output += member.name + ":"
-	output += member.what.ToString(indent + 1, breakLine)
-
-	if member.bitWidth > 0 {
-		output += fmt.Sprint(" & ", member.bitWidth)
+func (what Type) ToString () (output string) {
+	if what.kind == TypeKindNil {
+		output += "NIL-TYPE"
+		return
 	}
 
-	if breakLine {
-		output += "\n"
-	}
-
-	return
-}
-
-func (what Type) ToString (indent int, breakLine bool) (output string) {
 	if what.kind == TypeKindBasic {
 		output += what.name.ToString()
 	} else {
 		output += "{"
-		output += what.points.ToString(indent, breakLine)
+		output += what.points.ToString()
 
 		if what.kind == TypeKindVariableArray {
 			output += " .."
@@ -159,46 +93,27 @@ func (what Type) ToString (indent int, breakLine bool) (output string) {
 	if what.mutable {
 		output += ":mut"
 	}
-
-	if what.members != nil {
-		if breakLine {
-			output += ":\n" + doIndent(indent, "(\n")
-			for _, member := range what.members {
-				output += member.ToString(indent, breakLine)
-			}
-			output += doIndent(indent, ")")
-		} else {
-			output += ":("
-			for index, member := range what.members {
-				if index > 0 { output += " " }
-				output += member.ToString(indent, breakLine)
-			}
-			output += ")"
-		}
-	}
-
-	defaultValueKind := what.defaultValue.kind
-	if defaultValueKind != ArgumentKindNil {
-		isComplexDefaultValue :=
-			defaultValueKind == ArgumentKindObjectDefaultValues ||
-			defaultValueKind == ArgumentKindArrayDefaultValues
-		
-		if isComplexDefaultValue {
-			output += ":"
-			if breakLine { output += "\n" }
-			output += what.defaultValue.ToString(indent, breakLine)
-		} else {
-			output += ":<"
-			output += what.defaultValue.ToString(indent, false)
-			output += ">"
-		}
-	}
 	return
 }
 
-func (declaration Declaration) ToString (indent int) (output string) {
+func (declaration Declaration) ToString () (output string) {
 	output += declaration.name + ":"
-	output += declaration.what.ToString(indent, false)
+	output += declaration.what.ToString()
+	return
+}
+
+func (list List) ToString (indent int, breakline bool) (output string) {
+	if !breakline { indent = 0 }
+	output += doIndent(indent, "(")
+	if breakline { output += "\n" }
+
+	for index, argument := range list.arguments {
+		if !breakline && index > 0 { output += " "}
+		output += argument.ToString(indent, breakline)
+	}
+
+	output += doIndent(indent, ")")
+	if breakline { output += "\n" }
 	return
 }
 
@@ -216,13 +131,8 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 				indent,
 				breakLine)
 	
-	case ArgumentKindObjectDefaultValues:
-		output += argument.value.(ObjectDefaultValues).
-				ToString(indent, breakLine)
-	
-	case ArgumentKindArrayDefaultValues:
-		output += argument.value.(ArrayDefaultValues).
-				ToString(indent, breakLine)
+	case ArgumentKindList:
+		output += argument.value.(List).ToString(indent, breakLine)
 	
 	case ArgumentKindIdentifier:
 		output += doIndent (
@@ -233,7 +143,7 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 	case ArgumentKindDeclaration:
 		output += doIndent (
 			indent,
-			argument.value.(Declaration).ToString(indent))
+			argument.value.(Declaration).ToString())
 		if breakLine { output += "\n" }
 	
 	case ArgumentKindInt, ArgumentKindUInt, ArgumentKindFloat:
@@ -251,75 +161,6 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 			indent,
 			"'" + string(argument.value.(rune)) + "'")
 		if breakLine { output += "\n" }
-		
-	case ArgumentKindOperator:
-		var stringValue string
-		switch argument.value.(lexer.TokenKind) {
-	        case lexer.TokenKindColon:
-	        	stringValue = ":"
-	        case lexer.TokenKindPlus:
-	        	stringValue = "+"
-	        case lexer.TokenKindMinus:
-	        	stringValue = "-"
-	        case lexer.TokenKindIncrement:
-	        	stringValue = "++"
-	        case lexer.TokenKindDecrement:
-	        	stringValue = "--"
-	        case lexer.TokenKindAsterisk:
-	        	stringValue = "*"
-	        case lexer.TokenKindSlash:
-	        	stringValue = "/"
-	        case lexer.TokenKindExclamation:
-	        	stringValue = "!"
-	        case lexer.TokenKindPercent:
-	        	stringValue = "%"
-	        case lexer.TokenKindPercentAssignment:
-	        	stringValue = "%="
-	        case lexer.TokenKindTilde:
-	        	stringValue = "~"
-	        case lexer.TokenKindTildeAssignment:
-	        	stringValue = "~="
-	        case lexer.TokenKindAssignment:
-	        	stringValue = "="
-	        case lexer.TokenKindEqualTo:
-	        	stringValue = "=="
-	        case lexer.TokenKindNotEqualTo:
-	        	stringValue = "!="
-	        case lexer.TokenKindLessThanEqualTo:
-	        	stringValue = "<="
-	        case lexer.TokenKindLessThan:
-	        	stringValue = "<"
-	        case lexer.TokenKindLShift:
-	        	stringValue = "<<"
-	        case lexer.TokenKindLShiftAssignment:
-	        	stringValue = "<<="
-	        case lexer.TokenKindGreaterThan:
-	        	stringValue = ">"
-	        case lexer.TokenKindGreaterThanEqualTo:
-	        	stringValue = ">="
-	        case lexer.TokenKindRShift:
-	        	stringValue = ">>"
-	        case lexer.TokenKindRShiftAssignment:
-	        	stringValue = ">>="
-	        case lexer.TokenKindBinaryOr:
-	        	stringValue = "|"
-	        case lexer.TokenKindBinaryOrAssignment:
-	        	stringValue = "|="
-	        case lexer.TokenKindLogicalOr:
-	        	stringValue = "||"
-	        case lexer.TokenKindBinaryAnd:
-	        	stringValue = "&"
-	        case lexer.TokenKindBinaryAndAssignment:
-	        	stringValue = "&="
-	        case lexer.TokenKindLogicalAnd:
-	        	stringValue = "&&"
-	        case lexer.TokenKindBinaryXor:
-	        	stringValue = "^"
-	        case lexer.TokenKindBinaryXorAssignment:
-	        	stringValue = "^="
-		}
-		output += doIndent(indent, stringValue)
-		if breakLine { output += "\n" }
 	}
 
 	return
@@ -331,12 +172,37 @@ func (section DataSection) ToString (indent int) (output string) {
 		"data ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(indent + 1, true), "\n")
+		section.what.ToString(), "\n")
+	
+	if section.argument.kind != ArgumentKindNil {
+		output += section.argument.ToString(indent + 1, true)
+	}
 	
 	if section.external {
 		output += doIndent(indent + 1, "external\n")
 	}
 	
+	return
+}
+
+func (member TypeSectionMember) ToString (indent int) (output string) {
+	output += doIndent(indent, member.permission.ToString())
+	output += " " + member.name
+
+	if member.what.kind != TypeKindNil {
+		output += ":" + member.what.ToString()
+	}
+
+	if member.argument.kind != ArgumentKindNil {
+		output += " " + member.argument.ToString(indent, false)
+	}
+
+	if member.bitWidth > 0 {
+		output += fmt.Sprint(" & ", member.bitWidth)
+	}
+
+	output += "\n"
+
 	return
 }
 
@@ -346,10 +212,17 @@ func (section TypeSection) ToString (indent int) (output string) {
 		"type ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(indent + 1, true), "\n")
+		section.what.ToString(), "\n")
+	
+	if section.argument.kind != ArgumentKindNil {
+		output += section.argument.ToString(indent + 1, true)
+	}
+
+	for _, member := range section.members {
+		output += member.ToString(indent + 1)
+	}
 	return
 }
-
 
 func (section EnumSection) ToString (indent int) (output string) {
 	output += doIndent (
@@ -357,20 +230,12 @@ func (section EnumSection) ToString (indent int) (output string) {
 		"enum ",
 		section.permission.ToString(), " ",
 		section.name, ":",
-		section.what.ToString(indent + 1, true), "\n")
+		section.what.ToString(), "\n")
 
 	for _, member := range section.members {
 		output += doIndent(indent + 1, "- ", member.name)
-	
-		isComplexInitialization :=
-			member.value.kind == ArgumentKindObjectDefaultValues ||
-			member.value.kind == ArgumentKindArrayDefaultValues
-		
-		if isComplexInitialization {
-			output += ":\n"
-			output += member.value.ToString(indent + 2, true)
-		} else if member.value.kind != ArgumentKindNil {
-			output += ":<" + member.value.ToString(0, false) + ">"
+		if member.argument.kind != ArgumentKindNil {
+			output += " " + member.argument.ToString(indent, false)
 		}
 		output += "\n"
 	}
@@ -385,10 +250,21 @@ func (section FaceSection) ToString (indent int) (output string) {
 		section.name, ":",
 		section.inherits.ToString(), "\n")
 
-	for _, name := range sortMapKeysAlphabetically(section.behaviors) {
-		behavior := section.behaviors[name]
-		output += behavior.ToString(indent + 1)
+	if section.kind == FaceKindType {
+		for _, name := range sortMapKeysAlphabetically(section.behaviors) {
+			behavior := section.behaviors[name]
+			output += behavior.ToString(indent + 1)
+		}
+	} else if section.kind == FaceKindFunc {
+		for _, inputItem := range section.inputs {
+			output += doIndent(indent + 1, "> ", inputItem.ToString(), "\n")
+		}
+		
+		for _, outputItem := range section.outputs {
+			output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
+		}
 	}
+
 	return
 }
 
@@ -396,11 +272,11 @@ func (behavior FaceBehavior) ToString (indent int) (output string) {
 	output += doIndent(indent, behavior.name, "\n")
 	
 	for _, inputItem := range behavior.inputs {
-		output += doIndent(indent + 1, "> ", inputItem.ToString(indent), "\n")
+		output += doIndent(indent + 1, "> ", inputItem.ToString(), "\n")
 	}
 	
 	for _, outputItem := range behavior.outputs {
-		output += doIndent(indent + 1, "< ", outputItem.ToString(indent), "\n")
+		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
 	}
 
 	return
@@ -411,7 +287,86 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 		output += doIndent(indent)
 	}
 
-	output += "[" + phrase.command.ToString(0, false)
+	output += "["
+
+	switch phrase.kind {
+	case PhraseKindCase:
+        	output += ":"
+        
+	case PhraseKindAssign:
+        	output += "="
+	
+	case PhraseKindOperator:
+		
+		switch phrase.operator {
+	        case lexer.TokenKindColon:
+	        	output += ":"
+	        case lexer.TokenKindPlus:
+	        	output += "+"
+	        case lexer.TokenKindMinus:
+	        	output += "-"
+	        case lexer.TokenKindIncrement:
+	        	output += "++"
+	        case lexer.TokenKindDecrement:
+	        	output += "--"
+	        case lexer.TokenKindAsterisk:
+	        	output += "*"
+	        case lexer.TokenKindSlash:
+	        	output += "/"
+	        case lexer.TokenKindExclamation:
+	        	output += "!"
+	        case lexer.TokenKindPercent:
+	        	output += "%"
+	        case lexer.TokenKindPercentAssignment:
+	        	output += "%="
+	        case lexer.TokenKindTilde:
+	        	output += "~"
+	        case lexer.TokenKindTildeAssignment:
+	        	output += "~="
+	        case lexer.TokenKindAssignment:
+	        	output += "="
+	        case lexer.TokenKindEqualTo:
+	        	output += "=="
+	        case lexer.TokenKindNotEqualTo:
+	        	output += "!="
+	        case lexer.TokenKindLessThanEqualTo:
+	        	output += "<="
+	        case lexer.TokenKindLessThan:
+	        	output += "<"
+	        case lexer.TokenKindLShift:
+	        	output += "<<"
+	        case lexer.TokenKindLShiftAssignment:
+	        	output += "<<="
+	        case lexer.TokenKindGreaterThan:
+	        	output += ">"
+	        case lexer.TokenKindGreaterThanEqualTo:
+	        	output += ">="
+	        case lexer.TokenKindRShift:
+	        	output += ">>"
+	        case lexer.TokenKindRShiftAssignment:
+	        	output += ">>="
+	        case lexer.TokenKindBinaryOr:
+	        	output += "|"
+	        case lexer.TokenKindBinaryOrAssignment:
+	        	output += "|="
+	        case lexer.TokenKindLogicalOr:
+	        	output += "||"
+	        case lexer.TokenKindBinaryAnd:
+	        	output += "&"
+	        case lexer.TokenKindBinaryAndAssignment:
+	        	output += "&="
+	        case lexer.TokenKindLogicalAnd:
+	        	output += "&&"
+	        case lexer.TokenKindBinaryXor:
+	        	output += "^"
+	        case lexer.TokenKindBinaryXorAssignment:
+	        	output += "^="
+		}
+		
+	default:
+		output += phrase.command.ToString(0, false)
+	}
+	
 	for _, argument := range phrase.arguments {
 		output += " " + argument.ToString(0, false)
 	}
@@ -433,6 +388,17 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 	return
 }
 
+func (funcOutput FuncOutput) ToString (indent int) (output string) {
+	output += doIndent(indent + 1)
+	output += "< " + funcOutput.Declaration.ToString()
+	if funcOutput.argument.kind != ArgumentKindNil {
+		output += " " + funcOutput.argument.ToString(indent, false)
+	}
+	output += "\n"
+
+	return
+}
+
 func (block Block) ToString (indent int) (output string) {
 	for _, phrase := range block {
 		output += phrase.ToString(indent, true)
@@ -451,15 +417,15 @@ func (section FuncSection) ToString (indent int) (output string) {
 	if section.receiver != nil {
 		output += doIndent (
 			indent + 1,
-			"@ ", section.receiver.ToString(indent), "\n")
+			"@ ", section.receiver.ToString(), "\n")
 	}
 	
 	for _, inputItem := range section.inputs {
-		output += doIndent(indent + 1, "> ", inputItem.ToString(indent), "\n")
+		output += doIndent(indent + 1, "> ", inputItem.ToString(), "\n")
 	}
 	
 	for _, outputItem := range section.outputs {
-		output += doIndent(indent + 1, "< ", outputItem.ToString(indent), "\n")
+		output += outputItem.ToString(indent)
 	}
 
 	output += doIndent(indent + 1, "---\n")
