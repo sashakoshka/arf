@@ -196,7 +196,8 @@ type EnumSection struct {
 type FaceKind int
 
 const (
-	FaceKindType FaceKind = iota
+	FaceKindEmpty FaceKind = iota
+	FaceKindType
 	FaceKindFunc
 )
 

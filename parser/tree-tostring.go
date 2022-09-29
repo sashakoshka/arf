@@ -250,10 +250,21 @@ func (section FaceSection) ToString (indent int) (output string) {
 		section.name, ":",
 		section.inherits.ToString(), "\n")
 
-	for _, name := range sortMapKeysAlphabetically(section.behaviors) {
-		behavior := section.behaviors[name]
-		output += behavior.ToString(indent + 1)
+	if section.kind == FaceKindType {
+		for _, name := range sortMapKeysAlphabetically(section.behaviors) {
+			behavior := section.behaviors[name]
+			output += behavior.ToString(indent + 1)
+		}
+	} else if section.kind == FaceKindFunc {
+		for _, inputItem := range section.inputs {
+			output += doIndent(indent + 1, "> ", inputItem.ToString(), "\n")
+		}
+		
+		for _, outputItem := range section.outputs {
+			output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
+		}
 	}
+
 	return
 }
 

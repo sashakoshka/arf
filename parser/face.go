@@ -47,11 +47,13 @@ func (parser *ParsingOperation) parseFaceSection () (
 
 	if parser.token.Is(lexer.TokenKindName) {
 		// parse type interface
+		section.kind = FaceKindType
 		parser.previousToken()
 		section.behaviors, err = parser.parseFaceBehaviors()
 		if err != nil { return }
 	} else {
 		// parse function interface
+		section.kind = FaceKindFunc
 		parser.previousToken()
 		section.inputs,
 		section.outputs, err = parser.parseFaceBehaviorArguments(1)
@@ -157,15 +159,16 @@ func (parser *ParsingOperation) parseFaceBehaviorArguments (
 		if err != nil { return }
 		declaration.what, err = parser.parseType()
 		if err != nil { return }
-		err = parser.expect(lexer.TokenKindNewline)
-		if err != nil { return }
-		err = parser.nextToken()
-		if err != nil { return }
 
 		if kind == lexer.TokenKindGreaterThan {
 			inputs = append(inputs, declaration)
 		} else {
 			outputs = append(outputs, declaration)
 		}
+		
+		err = parser.expect(lexer.TokenKindNewline)
+		if err != nil { return }
+		err = parser.nextToken()
+		if err != nil { return }
 	}
 }
