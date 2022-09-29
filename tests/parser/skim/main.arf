@@ -20,7 +20,9 @@ data ro eIntegerArrayInitialized:Int:16:mut
 func ro fComplexFunction
 	---
 	= x:Int 3
-	= y:{Int} [loc x]
+	= y:{Int
+} [loc x
+]
 	= z:Int:8 (
 		398 9 2309 983 -2387
 		478 555 123)
