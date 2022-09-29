@@ -66,24 +66,6 @@ func (identifier Identifier) ToString () (output string) {
 	return
 }
 
-func (member TypeSectionMember) ToString (indent int, breakLine bool) (output string) {
-	output += doIndent(indent, ".")
-	
-	output += member.permission.ToString() + " "
-	output += member.name + ":"
-	output += member.what.ToString()
-
-	if member.bitWidth > 0 {
-		output += fmt.Sprint(" & ", member.bitWidth)
-	}
-
-	if breakLine {
-		output += "\n"
-	}
-
-	return
-}
-
 func (what Type) ToString () (output string) {
 	if what.kind == TypeKindNil {
 		output += "NIL-TYPE"
@@ -202,6 +184,27 @@ func (section DataSection) ToString (indent int) (output string) {
 	return
 }
 
+func (member TypeSectionMember) ToString (indent int) (output string) {
+	output += doIndent(indent, member.permission.ToString())
+
+	if member.what.kind != TypeKindNil {
+		output += " " + member.name + ":"
+		output += member.what.ToString()
+	}
+
+	if member.argument.kind != ArgumentKindNil {
+		output += " " + member.argument.ToString(indent, false)
+	}
+
+	if member.bitWidth > 0 {
+		output += fmt.Sprint(" & ", member.bitWidth)
+	}
+
+	output += "\n"
+
+	return
+}
+
 func (section TypeSection) ToString (indent int) (output string) {
 	output += doIndent (
 		indent,
@@ -212,6 +215,10 @@ func (section TypeSection) ToString (indent int) (output string) {
 	
 	if section.argument.kind != ArgumentKindNil {
 		output += section.argument.ToString(indent + 1, true)
+	}
+
+	for _, member := range section.members {
+		output += member.ToString(indent + 1)
 	}
 	return
 }
