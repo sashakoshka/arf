@@ -66,7 +66,7 @@ func (identifier Identifier) ToString () (output string) {
 	return
 }
 
-func (member TypeMember) ToString (indent int, breakLine bool) (output string) {
+func (member TypeSectionMember) ToString (indent int, breakLine bool) (output string) {
 	output += doIndent(indent, ".")
 	
 	output += member.permission.ToString() + " "

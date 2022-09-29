@@ -36,9 +36,12 @@ type Identifier struct {
 type TypeKind int
 
 const (
+	// TypeKindNil means that the type is unspecified.
+	TypeKindNil TypeKind = iota
+
 	// TypeKindBasic means its a normal type and inherits from something.
 	// Basic types can define new members on their parent types.
-	TypeKindBasic TypeKind = iota
+	TypeKindBasic
 
 	// TypeKindPointer means it's a pointer.
 	TypeKindPointer
