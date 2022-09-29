@@ -186,10 +186,10 @@ func (section DataSection) ToString (indent int) (output string) {
 
 func (member TypeSectionMember) ToString (indent int) (output string) {
 	output += doIndent(indent, member.permission.ToString())
+	output += " " + member.name
 
 	if member.what.kind != TypeKindNil {
-		output += " " + member.name + ":"
-		output += member.what.ToString()
+		output += ":" + member.what.ToString()
 	}
 
 	if member.argument.kind != ArgumentKindNil {
