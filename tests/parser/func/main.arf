@@ -122,9 +122,9 @@ func ro gControlFlow
 		else
 			otherThing
 
-func ro hSetPhrase
+func ro hDataInit
 	---
-	let x:Int:<3>
+	let x:Int 3
 	# loc is a reference, similar to * in C
 	let y:{Int} [loc x]
 	let z:Int:8 (398 9 2309 983 -2387
