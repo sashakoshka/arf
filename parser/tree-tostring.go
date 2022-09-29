@@ -41,7 +41,8 @@ func (tree SyntaxTree) ToString (indent int) (output string) {
 		output += doIndent(indent, "license \"", tree.license, "\"\n")
 	}
 
-	for _, require := range tree.requires {
+	for _, name := range sortMapKeysAlphabetically(tree.requires) {
+		require := tree.requires[name]
 		output += doIndent(indent, "require \"", require, "\"\n")
 	}
 	
@@ -379,13 +380,10 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 func (funcOutput FuncOutput) ToString (indent int) (output string) {
 	output += doIndent(indent + 1)
 	output += "< " + funcOutput.Declaration.ToString()
-	// why is it always nil??? WHY???
 	if funcOutput.argument.kind != ArgumentKindNil {
 		output += " " + funcOutput.argument.ToString(indent, false)
 	}
 	output += "\n"
-	
-	print(funcOutput.argument.ToString(0, true))
 
 	return
 }

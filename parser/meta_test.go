@@ -11,8 +11,8 @@ func TestMeta (test *testing.T) {
 author "Sasha Koshka"
 license "GPLv3"
 require "` + filepath.Join(cwd, "./some/local/module") + `"
-require "/some/absolute/path/to/someModule"
 require "/usr/local/include/arf/someLibraryInstalledInStandardLocation"
+require "/some/absolute/path/to/someModule"
 ---
 `, test)
 }
