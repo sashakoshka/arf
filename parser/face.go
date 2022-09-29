@@ -12,8 +12,7 @@ func (parser *ParsingOperation) parseFaceSection () (
 	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
 	
-	section.behaviors = make(map[string] FaceBehavior)
-	section.location  = parser.token.Location()
+	section.location = parser.token.Location()
 
 	// get permission
 	err = parser.nextToken(lexer.TokenKindPermission)
@@ -32,24 +31,59 @@ func (parser *ParsingOperation) parseFaceSection () (
 	if err != nil { return }
 	section.inherits, err = parser.parseIdentifier()
 	if err != nil { return }
-	err = parser.nextToken(lexer.TokenKindNewline)
+	err = parser.expect(lexer.TokenKindNewline)
 	if err != nil { return }
 	err = parser.nextToken()
 	if err != nil { return }
+	
+	if !parser.token.Is(lexer.TokenKindIndent) { return }
+	if parser.token.Value().(int) != 1         { return }
 
+	err = parser.nextToken (
+		lexer.TokenKindName,
+		lexer.TokenKindGreaterThan,
+		lexer.TokenKindLessThan)
+	if err != nil { return }
+
+	if parser.token.Is(lexer.TokenKindName) {
+		// parse type interface
+		parser.previousToken()
+		section.behaviors, err = parser.parseFaceBehaviors()
+		if err != nil { return }
+	} else {
+		// parse function interface
+		parser.previousToken()
+		section.inputs,
+		section.outputs, err = parser.parseFaceBehaviorArguments(1)
+		if err != nil { return }
+	}
+
+	return
+}
+
+// parseFaceBehaviors parses a list of interface behaviors for an object
+// interface.
+func (parser *ParsingOperation) parseFaceBehaviors () (
+	behaviors map[string] FaceBehavior,
+	err error,
+) {
 	// parse members
+	behaviors = make(map[string] FaceBehavior)
 	for {
 		// if we've left the block, stop parsing
 		if !parser.token.Is(lexer.TokenKindIndent) { return }
 		if parser.token.Value().(int) != 1         { return }
+		
+		err = parser.nextToken(lexer.TokenKindName)
+		behaviorBeginning := parser.token.Location()
+		if err != nil { return }
 
 		// parse behavior
-		behaviorBeginning := parser.token.Location()
 		var behavior FaceBehavior
-		behavior, err = parser.parseFaceBehavior()
+		behavior, err = parser.parseFaceBehavior(1)
 
 		// add to section
-		_, exists := section.behaviors[behavior.name]
+		_, exists := behaviors[behavior.name]
 		if exists {
 			err = infoerr.NewError (
 				behaviorBeginning,
@@ -58,23 +92,21 @@ func (parser *ParsingOperation) parseFaceSection () (
 				infoerr.ErrorKindError)
 			return
 		}
-		section.behaviors[behavior.name] = behavior
+		behaviors[behavior.name] = behavior
 		
 		if err != nil { return }
 	}
 }
 
-// parseFaceBehavior parses a single interface behavior. Indentation level is
-// assumed.
-func (parser *ParsingOperation) parseFaceBehavior () (
+// parseFaceBehavior parses a single interface behavior.
+func (parser *ParsingOperation) parseFaceBehavior (
+	indent int,
+) (
 	behavior FaceBehavior,
 	err      error,
 ) {
-	err = parser.expect(lexer.TokenKindIndent)
-	if err != nil { return }
-
 	// get name
-	err = parser.nextToken(lexer.TokenKindName)
+	err = parser.expect(lexer.TokenKindName)
 	if err != nil { return }
 	behavior.name = parser.token.Value().(string)
 
@@ -82,11 +114,27 @@ func (parser *ParsingOperation) parseFaceBehavior () (
 	if err != nil { return }
 	err = parser.nextToken()
 	if err != nil { return }
+
+	behavior.inputs,
+	behavior.outputs,
+	err = parser.parseFaceBehaviorArguments(indent + 1)
+	if err != nil { return }
+
+	return
+}
+
+func (parser *ParsingOperation) parseFaceBehaviorArguments (
+	indent int,
+) (
+	inputs  []Declaration,
+	outputs []Declaration,
+	err error,
+) {
 	
 	for {
-		// if we've left the block, stop parsing
+		// if we've left the behavior, stop parsing
 		if !parser.token.Is(lexer.TokenKindIndent) { return }
-		if parser.token.Value().(int) != 2         { return }
+		if parser.token.Value().(int) != indent    { return }
 
 		// get preceding symbol
 		err = parser.nextToken (
@@ -115,13 +163,9 @@ func (parser *ParsingOperation) parseFaceBehavior () (
 		if err != nil { return }
 
 		if kind == lexer.TokenKindGreaterThan {
-			behavior.inputs = append (
-				behavior.inputs,
-				declaration)
+			inputs = append(inputs, declaration)
 		} else {
-			behavior.outputs = append (
-				behavior.outputs,
-				declaration)
+			outputs = append(outputs, declaration)
 		}
 	}
 }

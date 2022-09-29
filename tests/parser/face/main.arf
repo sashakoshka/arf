@@ -14,7 +14,7 @@ face ro aReadWriter:Face
 face ro bDestroyer:Face
 	destroy
 
-face ro cFuncInterface
+face ro cFuncInterface:Func
 	> something:Int
 	< someOutput:Int
 	< otherOutput:String

@@ -191,6 +191,15 @@ type EnumSection struct {
 	members []EnumMember
 }
 
+// FaceKind determines if an interface is a type interface or an function
+// interface.
+type FaceKind int
+
+const (
+	FaceKindType FaceKind = iota
+	FaceKindFunc
+)
+
 // FaceBehavior represents a behavior of an interface section.
 type FaceBehavior struct {
 	locatable
@@ -206,8 +215,11 @@ type FaceSection struct {
 	nameable
 	permissionable
 	inherits Identifier
-	
+
+	kind FaceKind
+
 	behaviors map[string] FaceBehavior
+	FaceBehavior
 }
 
 // PhraseKind determines what semantic role a phrase plays.
