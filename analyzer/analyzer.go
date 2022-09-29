@@ -157,6 +157,20 @@ func (analyzer *AnalysisOperation) fetchSectionFromIdentifier (
 	return
 }
 
+// addSection adds a section to the analyzer's section table. If a section with
+// that name already exists, it panics because the parser should not have given
+// that to us.
+func (analyzer *AnalysisOperation) addSection (section Section) {
+	_, exists := analyzer.sectionTable[section.locator()]
+	if exists {
+		panic (
+			"invalid state: duplicate section " +
+			section.locator().ToString())
+	}
+	analyzer.sectionTable[section.locator()] = section
+	return
+}
+
 func doIndent (indent int, input ...any) (output string) {
 	for index := 0; index < indent; index ++ {
 		output += "\t"

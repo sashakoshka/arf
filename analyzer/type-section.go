@@ -50,6 +50,11 @@ func (analyzer AnalysisOperation) analyzeTypeSection () (
 	section Section,
 	err error,
 ) {
+	outputSection := TypeSection { }
+	outputSection.where = analyzer.currentPosition
+	section = outputSection
+	analyzer.addSection(section)
+
 	inputSection := analyzer.currentSection.(parser.TypeSection)
 	if inputSection.Permission() == types.PermissionReadWrite {
 		err = inputSection.NewError (
@@ -57,9 +62,6 @@ func (analyzer AnalysisOperation) analyzeTypeSection () (
 			"context, try read-only (ro)",
 			infoerr.ErrorKindError)
 	}
-
-	outputSection := TypeSection { }
-	outputSection.where = analyzer.currentPosition
 
 	outputSection.what, err = analyzer.analyzeType(inputSection.Type())
 	if err != nil { return }

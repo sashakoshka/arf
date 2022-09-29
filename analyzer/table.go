@@ -33,6 +33,7 @@ type Section interface {
 	Complete   () (complete bool)
 	ModulePath () (path string)
 	ModuleName () (path string)
+	locator    () (where locator)
 
 	// Must be implemented by each individual section
 	ToString (indent int) (output string)
@@ -65,5 +66,10 @@ func (section sectionBase) ModuleName () (name string) {
 // Complete returns wether the section has been completed.
 func (section sectionBase) Complete () (complete bool) {
 	complete = section.complete
+	return
+}
+
+func (section sectionBase) locator () (where locator) {
+	where = section.where
 	return
 }

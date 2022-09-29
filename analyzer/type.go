@@ -76,7 +76,7 @@ func (analyzer AnalysisOperation) analyzeType (
 	err error,
 ) {
 	outputType.mutable = inputType.Mutable()
-	if outputType.length < 1 {
+	if inputType.Length() < 1 {
 		err = inputType.NewError (
 			"cannot specify a length of zero",
 			infoerr.ErrorKindError)
