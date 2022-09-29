@@ -124,11 +124,11 @@ func ro gControlFlow
 
 func ro hDataInit
 	---
-	let x:Int 3
+	= x:Int 3
 	# loc is a reference, similar to * in C
-	let y:{Int} [loc x]
-	let z:Int:8 (398 9 2309 983 -2387
+	= y:{Int} [loc x]
+	= z:Int:8 (398 9 2309 983 -2387
 		478 555 123)
-	let bird:Bird (
+	= bird:Bird (
 		(99999)
 		324)

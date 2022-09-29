@@ -101,9 +101,9 @@ func ro gControlFlow
 			[otherThing]
 func ro hDataInit
 	---
-	[let x:Int 3]
-	[let y:{Int} [loc x]]
-	[let z:Int:8 (398 9 2309 983 -2387 478 555 123)]
-	[let bird:Bird ((99999) 324)]
+	[= x:Int 3]
+	[= y:{Int} [loc x]]
+	[= z:Int:8 (398 9 2309 983 -2387 478 555 123)]
+	[= bird:Bird ((99999) 324)]
 `, test)
 }

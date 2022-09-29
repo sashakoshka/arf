@@ -312,8 +312,6 @@ func (parser *ParsingOperation) parsePhraseCommand () (
 		identifier := command.value.(Identifier)
 		if len(identifier.trail) == 1 {
 			switch identifier.trail[0] {
-			case "let":
-				kind = PhraseKindLet
 			case "loc":
 				kind = PhraseKindReference
 			case "defer":

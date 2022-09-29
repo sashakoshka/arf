@@ -95,7 +95,7 @@ func (what Type) ToString () (output string) {
 	return
 }
 
-func (declaration Declaration) ToString (indent int) (output string) {
+func (declaration Declaration) ToString () (output string) {
 	output += declaration.name + ":"
 	output += declaration.what.ToString()
 	return
@@ -142,7 +142,7 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 	case ArgumentKindDeclaration:
 		output += doIndent (
 			indent,
-			argument.value.(Declaration).ToString(indent))
+			argument.value.(Declaration).ToString())
 		if breakLine { output += "\n" }
 	
 	case ArgumentKindInt, ArgumentKindUInt, ArgumentKindFloat:
@@ -260,11 +260,11 @@ func (behavior FaceBehavior) ToString (indent int) (output string) {
 	output += doIndent(indent, behavior.name, "\n")
 	
 	for _, inputItem := range behavior.inputs {
-		output += doIndent(indent + 1, "> ", inputItem.ToString(indent), "\n")
+		output += doIndent(indent + 1, "> ", inputItem.ToString(), "\n")
 	}
 	
 	for _, outputItem := range behavior.outputs {
-		output += doIndent(indent + 1, "< ", outputItem.ToString(indent), "\n")
+		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
 	}
 
 	return
@@ -280,7 +280,6 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 	switch phrase.kind {
 	case
 		PhraseKindOperator,
-		PhraseKindLet,
 		PhraseKindAssign:
 		
 		switch phrase.operator {
@@ -373,6 +372,17 @@ func (phrase Phrase) ToString (indent int, ownLine bool) (output string) {
 	return
 }
 
+func (funcOutput FuncOutput) ToString (indent int) (output string) {
+	output += doIndent(indent + 1)
+	output += "< " + funcOutput.Declaration.ToString()
+	if funcOutput.argument.kind != ArgumentKindNil {
+		output += " " + funcOutput.argument.ToString(indent, false)
+	}
+	output += "\n"
+
+	return
+}
+
 func (block Block) ToString (indent int) (output string) {
 	for _, phrase := range block {
 		output += phrase.ToString(indent, true)
@@ -391,15 +401,15 @@ func (section FuncSection) ToString (indent int) (output string) {
 	if section.receiver != nil {
 		output += doIndent (
 			indent + 1,
-			"@ ", section.receiver.ToString(indent), "\n")
+			"@ ", section.receiver.ToString(), "\n")
 	}
 	
 	for _, inputItem := range section.inputs {
-		output += doIndent(indent + 1, "> ", inputItem.ToString(indent), "\n")
+		output += doIndent(indent + 1, "> ", inputItem.ToString(), "\n")
 	}
 	
 	for _, outputItem := range section.outputs {
-		output += doIndent(indent + 1, "< ", outputItem.ToString(indent), "\n")
+		output += outputItem.ToString(indent)
 	}
 
 	output += doIndent(indent + 1, "---\n")
