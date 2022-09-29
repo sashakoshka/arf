@@ -1,5 +1,6 @@
 package analyzer
 
+import "os"
 import "path/filepath"
 
 // locator uniquely identifies a section in the section table.
@@ -9,7 +10,13 @@ type locator struct {
 }
 
 func (where locator) ToString () (output string) {
-	output += where.modulePath + "." + where.name
+	cwd, _ := os.Getwd()
+	modulePath, err := filepath.Rel(cwd, where.modulePath)
+	if err != nil {
+		panic("cant get relative path: " + err.Error())
+	}
+
+	output += modulePath + "." + where.name
 	return
 }
 
