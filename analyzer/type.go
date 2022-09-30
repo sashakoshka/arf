@@ -89,6 +89,18 @@ func (analyzer AnalysisOperation) analyzeType (
 		var points Type
 		points, err = analyzer.analyzeType(inputType.Points())
 		outputType.points = &points
+	} else {
+		var bitten parser.Identifier
+		outputType.actual,
+		bitten,
+		err = analyzer.fetchSectionFromIdentifier(inputType.Name())
+		
+		if bitten.Length() > 0 {
+			err = bitten.NewError(
+				"cannot use member selection in this context",
+				infoerr.ErrorKindError)
+			return
+		}
 	}
 	
 	// TODO

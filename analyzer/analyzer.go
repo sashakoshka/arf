@@ -127,13 +127,12 @@ func (analyzer *AnalysisOperation) fetchSectionFromIdentifier (
 	bitten  parser.Identifier,
 	err     error,
 ) {
-	bitten = which
-	item := bitten.Bite()
+	item, bitten := which.Bite()
 	
 	path, exists := analyzer.currentTree.ResolveRequire(item)
 	if exists {
 		// we have our module path, so get the section name
-		item = bitten.Bite()
+		item, bitten = bitten.Bite()
 	} else {
 		// that wasn't a module name, so the module path must be the our
 		// current one

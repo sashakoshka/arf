@@ -52,7 +52,8 @@ func (analyzer AnalysisOperation) analyzeTypeSection () (
 ) {
 	outputSection := TypeSection { }
 	outputSection.where = analyzer.currentPosition
-	section = outputSection
+
+	section = &outputSection
 	analyzer.addSection(section)
 
 	inputSection := analyzer.currentSection.(parser.TypeSection)
@@ -65,6 +66,9 @@ func (analyzer AnalysisOperation) analyzeTypeSection () (
 
 	outputSection.what, err = analyzer.analyzeType(inputSection.Type())
 	if err != nil { return }
+	
+
+	// TODO: analyze members
 
 	outputSection.complete = true
 	return

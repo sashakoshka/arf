@@ -35,10 +35,17 @@ func (identifier Identifier) Item (index int) (item string) {
 	return
 }
 
-// Bite removes the first item from the identifier and returns it.
-func (identifier *Identifier) Bite () (item string) {
-	item = identifier.trail[0]
-	identifier.trail = identifier.trail[1:]
+// Bite returns the first item of an identifier, and a copy of that identifier
+// with that item removed. If there is nothing left to bite off, this method
+// panics.
+func (identifier Identifier) Bite () (item string, bitten Identifier) {
+	if len(identifier.trail) < 1 {
+		panic ("trying to bite an empty identifier")
+	}
+	
+	bitten = identifier
+	item = bitten.trail[0]
+	bitten.trail = bitten.trail[1:]
 	return
 }
 
