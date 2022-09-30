@@ -14,6 +14,7 @@ var PrimitiveU32  = createPrimitive("U32",  Type {})
 var PrimitiveU64  = createPrimitive("U64",  Type {})
 var PrimitiveObjt = createPrimitive("Objt", Type {})
 var PrimitiveFace = createPrimitive("Face", Type {})
+var PrimitiveFunc = createPrimitive("Func", Type {})
 
 var BuiltInString = createPrimitive("String", Type {
 	actual: PrimitiveU32,

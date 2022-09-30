@@ -115,6 +115,12 @@ func (argument Argument) Kind () (kind ArgumentKind) {
 	return
 }
 
+// Nil returns true if the argument is nil, and false if it isn't.
+func (argument Argument) Nil () (isNil bool) {
+	isNil = argument.kind == ArgumentKindNil
+	return
+}
+
 // Value returns the underlying value of the argument. You can use Kind() to
 // find out what to cast this to.
 func (argument Argument) Value () (value any) {

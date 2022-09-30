@@ -26,6 +26,7 @@ func (analyzer AnalysisOperation) analyzeArgument (
 	inputArgument parser.Argument,
 ) (
 	outputArgument Argument,
+	err error,
 ) {
 	switch inputArgument.Kind() {
 	case parser.ArgumentKindNil:

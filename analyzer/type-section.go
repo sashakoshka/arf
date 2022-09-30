@@ -9,6 +9,7 @@ type TypeSection struct {
 	sectionBase
 	what     Type
 	complete bool
+	argument Argument
 	// TODO: do not add members from parent type. instead have a member
 	// function to discern whether this type contains a particular member,
 	// and have it recurse all the way up the family tree. it will be the
@@ -42,6 +43,9 @@ func (member ObjectMember) ToString (indent int) (output string) {
 func (section TypeSection) ToString (indent int) (output string) {
 	output += doIndent(indent, "typeSection ", section.where.ToString(), "\n")
 	output += section.what.ToString(indent + 1)
+	if section.argument != nil {
+		output += section.argument.ToString(indent + 1)
+	}
 	return
 }
 
@@ -66,7 +70,15 @@ func (analyzer AnalysisOperation) analyzeTypeSection () (
 
 	outputSection.what, err = analyzer.analyzeType(inputSection.Type())
 	if err != nil { return }
-	
+
+	if !inputSection.Argument().Nil() {
+		outputSection.argument,
+		err = analyzer.analyzeArgument(inputSection.Argument())
+		if err != nil { return }
+		// TODO: type check default value. possibly add a method to
+		// Argument that takes in a type and determines whether the
+		// argument can fit to it.
+	}
 
 	// TODO: analyze members
 

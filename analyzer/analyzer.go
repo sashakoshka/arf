@@ -63,6 +63,9 @@ func (analyzer *AnalysisOperation) fetchSection (
 	err error,
 ) {
 	var exists bool
+	section, exists = analyzer.resolvePrimitive(where)
+	if exists { return }
+
 	section, exists = analyzer.sectionTable[where]
 	if exists { return }
 
@@ -153,6 +156,45 @@ func (analyzer *AnalysisOperation) fetchSectionFromIdentifier (
 		return
 	}
 	
+	return
+}
+
+// resolvePrimitive checks to see if the locator is in the current module, and
+// refers to a primitive. If it does, it returns a pointer to that primitive
+// and true for exists. If it doesn't, it returns nil and false.
+func (analyzer *AnalysisOperation) resolvePrimitive (
+	where locator,
+) (
+	section Section,
+	exists bool,
+) {
+	// primitives are scoped as if they are contained within the current
+	// module, so if the location refers to something outside of the current
+	// module, it is definetly not referring to a primitive.
+	if where.modulePath != analyzer.currentPosition.modulePath {
+		return
+	}
+
+	exists = true
+	switch where.name {
+	case "Int":    section = &PrimitiveInt
+	case "UInt":   section = &PrimitiveUInt
+	case "I8":     section = &PrimitiveI8
+	case "I16":    section = &PrimitiveI16
+	case "I32":    section = &PrimitiveI32
+	case "I64":    section = &PrimitiveI64
+	case "U8":     section = &PrimitiveU8
+	case "U16":    section = &PrimitiveU16
+	case "U32":    section = &PrimitiveU32
+	case "U64":    section = &PrimitiveU64
+	case "Objt":   section = &PrimitiveObjt
+	case "Face":   section = &PrimitiveFace
+	case "Func":   section = &PrimitiveFunc
+	case "String": section = &BuiltInString
+	default:
+		exists = false
+	}
+
 	return
 }
 

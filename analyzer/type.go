@@ -63,8 +63,10 @@ func (what Type) ToString (indent int) (output string) {
 	}
 
 	if what.actual != nil {
-		output += what.actual.Name()
+		output += " " + what.actual.Name()
 	}
+
+	output += "\n"
 	return
 }
 
