@@ -1,6 +1,7 @@
 package analyzer
 
 import "os"
+import "sort"
 import "path/filepath"
 
 // locator uniquely identifies a section in the section table.
@@ -26,12 +27,48 @@ type SectionTable map[locator] Section
 
 // ToString returns the data stored in the table as a string.
 func (table SectionTable) ToString (indent int) (output string) {
-	for _, section := range table {
+	sortedKeys := make(locatorArray, len(table))
+	index := 0
+	for key, _ := range table {
+		sortedKeys[index] = key
+		index ++
+	}
+	sort.Sort(sortedKeys)
+	
+	for _, name := range sortedKeys {
+		section := table[name]
 		output += section.ToString(indent)
 	}
 
 	return
-} 
+}
+
+// locatorArray holds a sortable array of locators
+type locatorArray []locator
+
+// Len returns the length of the locator array
+func (array locatorArray) Len () (length int) {
+	length = len(array)
+	return
+}
+
+// Less returns whether item at index left is less than item at index right.
+func (array locatorArray) Less (left, right int) (less bool) {
+	leftLocator  := array[left]
+	rightLocator := array[right]
+	
+	less =
+		leftLocator.modulePath  + leftLocator.name <
+		rightLocator.modulePath + rightLocator.name
+	return
+}
+
+// Swap swaps the elments at indices left and right.
+func (array locatorArray) Swap (left, right int) {
+	temp := array[left]
+	array[left]  = array[right]
+	array[right] = temp
+}
 
 // Section is a semantically analyzed section.
 type Section interface {
