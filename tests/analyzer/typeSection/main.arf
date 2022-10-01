@@ -1,4 +1,10 @@
 :arf
 ---
 
-type ro basicInt:Int 5
+type ro aBasicInt:Int 5
+
+type ro bOnBasicInt:aBasicInt
+
+type ro cBasicObject:Obj
+	ro that:Int
+	ro this:Int

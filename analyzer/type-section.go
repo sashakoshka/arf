@@ -23,7 +23,7 @@ type ObjectMember struct {
 	
 	// even if there is a private permission in another module, we still
 	// need to include it in the semantic analysis because we need to know
-	// how many members objects have.
+	// what members objects have.
 	permission types.Permission
 
 	what Type
