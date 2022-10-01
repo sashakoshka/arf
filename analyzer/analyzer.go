@@ -187,7 +187,7 @@ func (analyzer *AnalysisOperation) resolvePrimitive (
 	case "U16":    section = &PrimitiveU16
 	case "U32":    section = &PrimitiveU32
 	case "U64":    section = &PrimitiveU64
-	case "Objt":   section = &PrimitiveObjt
+	case "Obj":    section = &PrimitiveObj
 	case "Face":   section = &PrimitiveFace
 	case "Func":   section = &PrimitiveFunc
 	case "String": section = &BuiltInString

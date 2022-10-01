@@ -3,6 +3,7 @@ package analyzer
 import "os"
 import "sort"
 import "path/filepath"
+import "git.tebibyte.media/arf/arf/types"
 
 // locator uniquely identifies a section in the section table.
 type locator struct {
@@ -77,6 +78,7 @@ type Section interface {
 	Complete   () (complete bool)
 	ModulePath () (path string)
 	ModuleName () (path string)
+	Permission () (permission types.Permission)
 	locator    () (where locator)
 
 	// Must be implemented by each individual section
@@ -85,8 +87,9 @@ type Section interface {
 
 // sectionBase is a struct that all sections must embed.
 type sectionBase struct {
-	where    locator
-	complete bool
+	where      locator
+	complete   bool
+	permission types.Permission
 }
 
 // Name returns the name of the section.
@@ -113,6 +116,13 @@ func (section sectionBase) Complete () (complete bool) {
 	return
 }
 
+// Permission returns the permission of the section.
+func (section sectionBase) Permission () (permission types.Permission) {
+	permission = section.permission
+	return
+}
+
+// locator returns the module path and name of the section.
 func (section sectionBase) locator () (where locator) {
 	where = section.where
 	return

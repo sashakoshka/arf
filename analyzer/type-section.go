@@ -41,7 +41,10 @@ func (member ObjectMember) ToString (indent int) (output string) {
 
 // ToString returns all data stored within the type section, in string form.
 func (section TypeSection) ToString (indent int) (output string) {
-	output += doIndent(indent, "typeSection ", section.where.ToString(), "\n")
+	output += doIndent(indent, "typeSection ")
+	output += section.permission.ToString() + " "
+	output += section.where.ToString()
+	output += "\n"
 	output += section.what.ToString(indent + 1)
 	if section.argument != nil {
 		output += section.argument.ToString(indent + 1)
@@ -67,6 +70,8 @@ func (analyzer AnalysisOperation) analyzeTypeSection () (
 			"context, try read-only (ro)",
 			infoerr.ErrorKindError)
 	}
+
+	outputSection.permission = inputSection.Permission()
 
 	outputSection.what, err = analyzer.analyzeType(inputSection.Type())
 	if err != nil { return }

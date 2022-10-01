@@ -12,7 +12,7 @@ var PrimitiveU8   = createPrimitive("U8",   Type {})
 var PrimitiveU16  = createPrimitive("U16",  Type {})
 var PrimitiveU32  = createPrimitive("U32",  Type {})
 var PrimitiveU64  = createPrimitive("U64",  Type {})
-var PrimitiveObjt = createPrimitive("Objt", Type {})
+var PrimitiveObj  = createPrimitive("Obj", Type {})
 var PrimitiveFace = createPrimitive("Face", Type {})
 var PrimitiveFunc = createPrimitive("Func", Type {})
 
