@@ -81,8 +81,18 @@ func compareErr (
 		return
 	}
 	
-	_, err = Tokenize(file)
+	tokens, err := Tokenize(file)
 	check, isCorrectType := err.(infoerr.Error)
+	
+	for index, token := range tokens {
+		test.Log(index, "\tgot token:", token.Describe())
+	}
+
+	if err == nil {
+		test.Log("no error was recieved, test failed.")
+		test.Fail()
+		return
+	}
 
 	test.Log("error that was recieved:")
 	test.Log(check)
@@ -262,15 +272,6 @@ func TestTokenizeErrUnexpectedSymbol (test *testing.T) {
 		infoerr.ErrorKindError,
 		"unexpected symbol character ;",
 		1, 5, 1,
-		test)
-}
-
-func TestTokenizeErrExcessDataRune (test *testing.T) {	
-	compareErr (
-		"../tests/lexer/error/excessDataRune.arf",
-		infoerr.ErrorKindError,
-		"excess data in rune literal",
-		1, 1, 7,
 		test)
 }
 
