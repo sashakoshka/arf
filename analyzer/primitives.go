@@ -2,6 +2,8 @@ package analyzer
 
 // This is a global, cannonical list of primitive and built-in types.
 
+var PrimitiveF32  = createPrimitive("Int",  Type {})
+var PrimitiveF64  = createPrimitive("Int",  Type {})
 var PrimitiveInt  = createPrimitive("Int",  Type {})
 var PrimitiveUInt = createPrimitive("UInt", Type {})
 var PrimitiveI8   = createPrimitive("I8",   Type {})

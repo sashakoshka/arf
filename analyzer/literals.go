@@ -14,9 +14,60 @@ func (literal IntLiteral) ToString (indent int) (output string) {
 	return
 }
 
+// canBePassedAs returns true if this literal can be implicitly cast to the
+// specified type, and false if it can't.
+func (literal IntLiteral) canBePassedAs (what Type) (allowed bool) {
+	// must be a singlular value
+	if what.length != 1 { return }
+	
+	// can be passed to types that are signed numbers at a primitive level.
+	primitive := what.underlyingPrimitive()
+	switch primitive {
+	case
+		&PrimitiveF64,
+		&PrimitiveF32,
+		&PrimitiveI64,
+		&PrimitiveI32,
+		&PrimitiveI16,
+		&PrimitiveI8,
+		&PrimitiveInt:
+
+		allowed = true
+	}
+	return
+}
+
 // ToString outputs the data in the argument as a string.
 func (literal UIntLiteral) ToString (indent int) (output string) {
 	output += doIndent(indent, fmt.Sprint("arg uint ", literal, "\n"))
+	return
+}
+
+// canBePassedAs returns true if this literal can be implicitly cast to the
+// specified type, and false if it can't.
+func (literal UIntLiteral) canBePassedAs (what Type) (allowed bool) {
+	// must be a singlular value
+	if what.length != 1 { return }
+	
+	// can be passed to types that are numbers at a primitive level.
+	primitive := what.underlyingPrimitive()
+	switch primitive {
+	case
+		&PrimitiveF64,
+		&PrimitiveF32,
+		&PrimitiveI64,
+		&PrimitiveI32,
+		&PrimitiveI16,
+		&PrimitiveI8,
+		&PrimitiveInt,
+		&PrimitiveU64,
+		&PrimitiveU32,
+		&PrimitiveU16,
+		&PrimitiveU8,
+		&PrimitiveUInt:
+
+		allowed = true
+	}
 	return
 }
 
@@ -26,9 +77,52 @@ func (literal FloatLiteral) ToString (indent int) (output string) {
 	return
 }
 
+// canBePassedAs returns true if this literal can be implicitly cast to the
+// specified type, and false if it can't.
+func (literal FloatLiteral) canBePassedAs (what Type) (allowed bool) {
+	// must be a singlular value
+	if what.length != 1 { return }
+
+	// can be passed to types that are floats at a primitive level.
+	primitive := what.underlyingPrimitive()
+	switch primitive {
+	case
+		&PrimitiveF64,
+		&PrimitiveF32:
+
+		allowed = true
+	}
+	return
+}
+
 // ToString outputs the data in the argument as a string.
 func (literal StringLiteral) ToString (indent int) (output string) {
 	output += doIndent(indent, fmt.Sprint("arg string \"", literal, "\"\n"))
+	return
+}
+
+// canBePassedAs returns true if this literal can be implicitly cast to the
+// specified type, and false if it can't.
+func (literal StringLiteral) canBePassedAs (what Type) (allowed bool) {
+	// can be passed to types that are numbers at a primitive level.
+	primitive := what.underlyingPrimitive()
+	switch primitive {
+	case
+		&PrimitiveF64,
+		&PrimitiveF32,
+		&PrimitiveI64,
+		&PrimitiveI32,
+		&PrimitiveI16,
+		&PrimitiveI8,
+		&PrimitiveInt,
+		&PrimitiveU64,
+		&PrimitiveU32,
+		&PrimitiveU16,
+		&PrimitiveU8,
+		&PrimitiveUInt:
+
+		allowed = true
+	}
 	return
 }
 

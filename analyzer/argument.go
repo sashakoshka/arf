@@ -19,6 +19,7 @@ type Argument interface {
 	// RuneLiteral
 
 	ToString (indent int) (output string)
+	canBePassedAs (what Type) (allowed bool)
 }
 
 // analyzeArgument analyzes an argument
