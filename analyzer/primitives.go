@@ -19,7 +19,7 @@ var PrimitiveFace = createPrimitive("Face", Type {})
 var PrimitiveFunc = createPrimitive("Func", Type {})
 
 var BuiltInString = createPrimitive("String", Type {
-	actual: PrimitiveU32,
+	actual: &PrimitiveU32,
 	kind:   TypeKindVariableArray,
 })
 
