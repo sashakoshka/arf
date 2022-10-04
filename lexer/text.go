@@ -12,7 +12,6 @@ func (lexer *LexingOperation) tokenizeString () (err error) {
 	got   := ""
 	tokenWidth := 2
 
-	beginning := lexer.file.Location(1)
 	for {
 		if lexer.char == '\\' {
 			err = lexer.nextRune()
@@ -40,7 +39,6 @@ func (lexer *LexingOperation) tokenizeString () (err error) {
 	err = lexer.nextRune()
 	if err != nil { return }
 
-	beginning.SetWidth(len(got))
 	token.kind  = TokenKindString
 	token.value = got
 

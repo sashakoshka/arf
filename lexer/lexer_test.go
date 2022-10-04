@@ -73,7 +73,7 @@ func compareErr (
 	correctWidth   int,
 	test *testing.T,
 ) {
-	test.Log("testing errors in", filePath)
+	test.Log("testing error in", filePath)
 	file, err := file.Open(filePath)
 	if err != nil {
 		test.Log(err)
@@ -82,10 +82,16 @@ func compareErr (
 	}
 	
 	_, err = Tokenize(file)
-	check, _ := err.(infoerr.Error)
+	check, isCorrectType := err.(infoerr.Error)
 
 	test.Log("error that was recieved:")
 	test.Log(check)
+
+	if !isCorrectType {
+		test.Log("error is not infoerr.Error, something has gone wrong.")
+		test.Fail()
+		return
+	}
 
 	if check.Kind() != correctKind {
 		test.Log("mismatched error kind")
@@ -215,7 +221,7 @@ func TestTokenizeNumbers (test *testing.T) {
 
 func TestTokenizeText (test *testing.T) {
 	checkTokenSlice("../tests/lexer/text.arf", test,
-		quickToken(34, TokenKindString, "hello world!\a\b\f\n\r\t\v'\\"),
+		quickToken(32, TokenKindString, "hello world!\a\b\f\n\r\t\v'\\"),
 		quickToken(1, TokenKindNewline, nil),
 		quickToken(4, TokenKindString, "\a"),
 		quickToken(4, TokenKindString, "\b"),
@@ -250,21 +256,25 @@ func TestTokenizeIndent (test *testing.T) {
 	)
 }
 
-func TestTokenizeErr (test *testing.T) {
+func TestTokenizeErrUnexpectedSymbol (test *testing.T) {
 	compareErr (
 		"../tests/lexer/error/unexpectedSymbol.arf",
 		infoerr.ErrorKindError,
 		"unexpected symbol character ;",
 		1, 5, 1,
 		test)
-	
+}
+
+func TestTokenizeErrExcessDataRune (test *testing.T) {	
 	compareErr (
 		"../tests/lexer/error/excessDataRune.arf",
 		infoerr.ErrorKindError,
 		"excess data in rune literal",
 		1, 1, 7,
 		test)
-	
+}
+
+func TestTokenizeErrUnknownEscape (test *testing.T) {
 	compareErr (
 		"../tests/lexer/error/unknownEscape.arf",
 		infoerr.ErrorKindError,
