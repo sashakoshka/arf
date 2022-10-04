@@ -153,13 +153,7 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 	case ArgumentKindString:
 		output += doIndent (
 			indent,
-			"\"" + argument.value.(string) + "\"")
-		if breakLine { output += "\n" }
-		
-	case ArgumentKindRune:
-		output += doIndent (
-			indent,
-			"'" + string(argument.value.(rune)) + "'")
+			"'" + argument.value.(string) + "'")
 		if breakLine { output += "\n" }
 	}
 

@@ -5,11 +5,11 @@ require "io"
 ---
 
 # this is a global variable
-data pv helloText:String "Hello, world!"
+data pv helloText:String 'Hello, world!'
 
 # this is a struct definition
 objt ro Greeter:Obj
-	rw text:String "Hi."
+	rw text:String 'Hi.'
 
 # this is a function
 func ro main

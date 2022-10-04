@@ -1,7 +1,7 @@
 :arf
-author "Sasha Koshka"
-license "GPLv3"
-require "./some/local/module"
-require "/some/absolute/path/to/someModule"
-require "someLibraryInstalledInStandardLocation"
+author 'Sasha Koshka'
+license 'GPLv3'
+require './some/local/module'
+require '/some/absolute/path/to/someModule'
+require 'someLibraryInstalledInStandardLocation'
 ---

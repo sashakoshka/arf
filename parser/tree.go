@@ -123,11 +123,8 @@ const (
 	// 0.44
 	ArgumentKindFloat
 
-	// "hello world"
+	// 'hello world'
 	ArgumentKindString
-
-	// 'S'
-	ArgumentKindRune
 )
 
 // Argument represents a value that can be placed anywhere a value goes. This
