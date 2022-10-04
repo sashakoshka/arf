@@ -82,7 +82,7 @@ func compareErr (
 	}
 	
 	_, err = Tokenize(file)
-	check := err.(infoerr.Error)
+	check, _ := err.(infoerr.Error)
 
 	test.Log("error that was recieved:")
 	test.Log(check)
@@ -132,7 +132,7 @@ func TestTokenizeAll (test *testing.T) {
 		quickToken(9, TokenKindUInt, uint64(932748397)),
 		quickToken(12, TokenKindFloat, 239485.37520),
 		quickToken(16, TokenKindString, "hello world!\n"),
-		quickToken(3, TokenKindRune, 'E'),
+		quickToken(3, TokenKindString, "E"),
 		quickToken(10, TokenKindName, "helloWorld"),
 		quickToken(1, TokenKindColon, nil),
 		quickToken(1, TokenKindDot, nil),
@@ -215,18 +215,17 @@ func TestTokenizeNumbers (test *testing.T) {
 
 func TestTokenizeText (test *testing.T) {
 	checkTokenSlice("../tests/lexer/text.arf", test,
-		quickToken(34, TokenKindString, "hello world!\a\b\f\n\r\t\v'\"\\"),
+		quickToken(34, TokenKindString, "hello world!\a\b\f\n\r\t\v'\\"),
 		quickToken(1, TokenKindNewline, nil),
-		quickToken(4, TokenKindRune, '\a'),
-		quickToken(4, TokenKindRune, '\b'),
-		quickToken(4, TokenKindRune, '\f'),
-		quickToken(4, TokenKindRune, '\n'),
-		quickToken(4, TokenKindRune, '\r'),
-		quickToken(4, TokenKindRune, '\t'),
-		quickToken(4, TokenKindRune, '\v'),
-		quickToken(4, TokenKindRune, '\''),
-		quickToken(4, TokenKindRune, '"' ),
-		quickToken(4, TokenKindRune, '\\'),
+		quickToken(4, TokenKindString, "\a"),
+		quickToken(4, TokenKindString, "\b"),
+		quickToken(4, TokenKindString, "\f"),
+		quickToken(4, TokenKindString, "\n"),
+		quickToken(4, TokenKindString, "\r"),
+		quickToken(4, TokenKindString, "\t"),
+		quickToken(4, TokenKindString, "\v"),
+		quickToken(4, TokenKindString, "'"),
+		quickToken(4, TokenKindString, "\\"),
 		quickToken(1, TokenKindNewline, nil),
 		quickToken(35, TokenKindString, "hello world \x40\u0040\U00000040!"),
 		quickToken(1, TokenKindNewline, nil),

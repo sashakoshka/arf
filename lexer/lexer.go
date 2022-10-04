@@ -167,10 +167,8 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 		token.kind = TokenKindNewline
 		lexer.addToken(token)
 		err = lexer.nextRune()
-	case '"':
-		err = lexer.tokenizeString(false)
 	case '\'':
-		err = lexer.tokenizeString(true)
+		err = lexer.tokenizeString()
 	case ':':
 		token := lexer.newToken()
 		token.kind = TokenKindColon
