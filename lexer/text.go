@@ -4,7 +4,7 @@ import "strconv"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // tokenizeString tokenizes a string or rune literal.
-func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
+func (lexer *LexingOperation) tokenizeString () (err error) {
 	err = lexer.nextRune()
 	if err != nil { return }
 
@@ -12,7 +12,6 @@ func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
 	got   := ""
 	tokenWidth := 2
 
-	beginning := lexer.file.Location(1)
 	for {
 		if lexer.char == '\\' {
 			err = lexer.nextRune()
@@ -34,32 +33,14 @@ func (lexer *LexingOperation) tokenizeString (isRuneLiteral bool) (err error) {
 			if err != nil { return }
 		}
 
-		if isRuneLiteral {
-			if lexer.char == '\'' { break }
-		} else {
-			if lexer.char == '"'  { break }
-		}
+		if lexer.char == '\'' { break }
 	}
 	
 	err = lexer.nextRune()
 	if err != nil { return }
 
-	beginning.SetWidth(len(got))
-	if isRuneLiteral {
-		if len(got) > 1 {
-			err = infoerr.NewError (
-				beginning,
-				"excess data in rune literal",
-				infoerr.ErrorKindError)
-			return
-		}
-
-		token.kind  = TokenKindRune
-		token.value = rune([]rune(got)[0])
-	} else {
-		token.kind  = TokenKindString
-		token.value = got
-	}
+	token.kind  = TokenKindString
+	token.value = got
 
 	token.location.SetWidth(tokenWidth)
 	lexer.addToken(token)
@@ -77,7 +58,6 @@ var escapeSequenceMap = map[rune] rune {
         't':  '\x09',
         'v':  '\x0b',
         '\'': '\'',
-        '"':  '"',
         '\\': '\\',
 }
 

@@ -73,7 +73,7 @@ func compareErr (
 	correctWidth   int,
 	test *testing.T,
 ) {
-	test.Log("testing errors in", filePath)
+	test.Log("testing error in", filePath)
 	file, err := file.Open(filePath)
 	if err != nil {
 		test.Log(err)
@@ -81,11 +81,27 @@ func compareErr (
 		return
 	}
 	
-	_, err = Tokenize(file)
-	check := err.(infoerr.Error)
+	tokens, err := Tokenize(file)
+	check, isCorrectType := err.(infoerr.Error)
+	
+	for index, token := range tokens {
+		test.Log(index, "\tgot token:", token.Describe())
+	}
+
+	if err == nil {
+		test.Log("no error was recieved, test failed.")
+		test.Fail()
+		return
+	}
 
 	test.Log("error that was recieved:")
 	test.Log(check)
+
+	if !isCorrectType {
+		test.Log("error is not infoerr.Error, something has gone wrong.")
+		test.Fail()
+		return
+	}
 
 	if check.Kind() != correctKind {
 		test.Log("mismatched error kind")
@@ -132,7 +148,7 @@ func TestTokenizeAll (test *testing.T) {
 		quickToken(9, TokenKindUInt, uint64(932748397)),
 		quickToken(12, TokenKindFloat, 239485.37520),
 		quickToken(16, TokenKindString, "hello world!\n"),
-		quickToken(3, TokenKindRune, 'E'),
+		quickToken(3, TokenKindString, "E"),
 		quickToken(10, TokenKindName, "helloWorld"),
 		quickToken(1, TokenKindColon, nil),
 		quickToken(1, TokenKindDot, nil),
@@ -215,18 +231,17 @@ func TestTokenizeNumbers (test *testing.T) {
 
 func TestTokenizeText (test *testing.T) {
 	checkTokenSlice("../tests/lexer/text.arf", test,
-		quickToken(34, TokenKindString, "hello world!\a\b\f\n\r\t\v'\"\\"),
+		quickToken(32, TokenKindString, "hello world!\a\b\f\n\r\t\v'\\"),
 		quickToken(1, TokenKindNewline, nil),
-		quickToken(4, TokenKindRune, '\a'),
-		quickToken(4, TokenKindRune, '\b'),
-		quickToken(4, TokenKindRune, '\f'),
-		quickToken(4, TokenKindRune, '\n'),
-		quickToken(4, TokenKindRune, '\r'),
-		quickToken(4, TokenKindRune, '\t'),
-		quickToken(4, TokenKindRune, '\v'),
-		quickToken(4, TokenKindRune, '\''),
-		quickToken(4, TokenKindRune, '"' ),
-		quickToken(4, TokenKindRune, '\\'),
+		quickToken(4, TokenKindString, "\a"),
+		quickToken(4, TokenKindString, "\b"),
+		quickToken(4, TokenKindString, "\f"),
+		quickToken(4, TokenKindString, "\n"),
+		quickToken(4, TokenKindString, "\r"),
+		quickToken(4, TokenKindString, "\t"),
+		quickToken(4, TokenKindString, "\v"),
+		quickToken(4, TokenKindString, "'"),
+		quickToken(4, TokenKindString, "\\"),
 		quickToken(1, TokenKindNewline, nil),
 		quickToken(35, TokenKindString, "hello world \x40\u0040\U00000040!"),
 		quickToken(1, TokenKindNewline, nil),
@@ -251,21 +266,16 @@ func TestTokenizeIndent (test *testing.T) {
 	)
 }
 
-func TestTokenizeErr (test *testing.T) {
+func TestTokenizeErrUnexpectedSymbol (test *testing.T) {
 	compareErr (
 		"../tests/lexer/error/unexpectedSymbol.arf",
 		infoerr.ErrorKindError,
 		"unexpected symbol character ;",
 		1, 5, 1,
 		test)
-	
-	compareErr (
-		"../tests/lexer/error/excessDataRune.arf",
-		infoerr.ErrorKindError,
-		"excess data in rune literal",
-		1, 1, 7,
-		test)
-	
+}
+
+func TestTokenizeErrUnknownEscape (test *testing.T) {
 	compareErr (
 		"../tests/lexer/error/unknownEscape.arf",
 		infoerr.ErrorKindError,

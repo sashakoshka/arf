@@ -25,7 +25,7 @@ func ro cBasicPhrases
 	[fn [gn 329 983 57] 123]
 func ro dArgumentTypes
 	---
-	[bird tree butterfly.wing "hello world" grass:Int:8:mut]
+	[bird tree butterfly.wing 'hello world' grass:Int:8:mut]
 func ro eMath
 	> x:Int
 	> y:Int

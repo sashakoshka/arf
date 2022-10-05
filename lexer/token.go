@@ -19,7 +19,6 @@ const (
         TokenKindUInt
         TokenKindFloat
         TokenKindString
-        TokenKindRune
 
         TokenKindName
 
@@ -156,8 +155,6 @@ func (tokenKind TokenKind) Describe () (description string) {
 		description = "Float"
 	case TokenKindString:
 		description = "String"
-	case TokenKindRune:
-		description = "Rune"
 	case TokenKindName:
 		description = "Name"
 	case TokenKindColon:

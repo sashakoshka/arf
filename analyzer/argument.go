@@ -16,7 +16,6 @@ type Argument interface {
 	// UIntLiteral
 	// FloatLiteral
 	// StringLiteral
-	// RuneLiteral
 
 	ToString (indent int) (output string)
 	canBePassedAs (what Type) (allowed bool)
@@ -62,9 +61,6 @@ func (analyzer AnalysisOperation) analyzeArgument (
 		
 	case parser.ArgumentKindString:
 		outputArgument = StringLiteral(inputArgument.Value().(string))
-		
-	case parser.ArgumentKindRune:
-		outputArgument = RuneLiteral(inputArgument.Value().(rune))
 	}
 	return
 }

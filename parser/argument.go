@@ -12,7 +12,6 @@ var validArgumentStartTokens = []lexer.TokenKind {
 	lexer.TokenKindUInt,
 	lexer.TokenKindFloat,
 	lexer.TokenKindString,
-	lexer.TokenKindRune,
 	
 	lexer.TokenKindLBracket,
 	lexer.TokenKindLParen,
@@ -76,11 +75,6 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 	case lexer.TokenKindString:
 		argument.kind  = ArgumentKindString
 		argument.value = parser.token.Value().(string)
-		parser.nextToken()
-		
-	case lexer.TokenKindRune:
-		argument.kind  = ArgumentKindRune
-		argument.value = parser.token.Value().(rune)
 		parser.nextToken()
 		
 	case lexer.TokenKindLBracket:

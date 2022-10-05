@@ -7,7 +7,7 @@ data ro aExternalData:Int
 data ro bSingleValue:Int 342
 
 data ro cNestedObject:Obj (
-	(324 "hello world")
+	(324 'hello world')
 	(123.8439 9328.21348239)
 )
 
