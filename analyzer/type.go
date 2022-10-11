@@ -68,7 +68,7 @@ func (what Type) ToString (indent int) (output string) {
 }
 
 // underlyingPrimitive returns the primitive that this type eventually inherits
-// from.
+// from. If the type ends up pointing to something, this returns nil.
 func (what Type) underlyingPrimitive () (underlying *TypeSection) {
 	// if we have already done this operation, return the cahced result.
 	if what.primitiveCache != nil {

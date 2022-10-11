@@ -104,7 +104,18 @@ func (literal StringLiteral) ToString (indent int) (output string) {
 // canBePassedAs returns true if this literal can be implicitly cast to the
 // specified type, and false if it can't.
 func (literal StringLiteral) canBePassedAs (what Type) (allowed bool) {
-	// can be passed to types that are numbers at a primitive level.
+	// can be passed to types that are numbers at a primitive level, or
+	// types that can be reduced to a variable array pointing to numbers at
+	// a primitive level.
+
+	what, worked := what.reduce()
+	if worked {
+		// TODO: make some method to check the total length of a type
+		if what.length != 1 { return }
+
+		if what.kind != TypeKindVariableArray { return }
+	}
+
 	primitive := what.underlyingPrimitive()
 	switch primitive {
 	case

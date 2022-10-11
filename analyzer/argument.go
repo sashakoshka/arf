@@ -7,10 +7,8 @@ import "git.tebibyte.media/arf/arf/parser"
 // allows things like phrases being arguments to other phrases.
 type Argument interface {
 	// Phrase
+	// List
 	// Dereference
-	// Subscript
-	// Object
-	// Array
 	// Variable
 	// IntLiteral
 	// UIntLiteral
@@ -20,6 +18,35 @@ type Argument interface {
 	ToString (indent int) (output string)
 	canBePassedAs (what Type) (allowed bool)
 }
+
+// phrase
+// 	is what
+// list
+// 	is what
+// dereference
+// 	if length is greater than 1
+// 		length is 1
+// 		is what (ignore length)
+// 	else
+// 		is points of reduced of what
+// variable
+// 	is what
+// int
+// 	primitive is basic signed | float
+// 	length is 1
+// uint
+// 	primitive is basic signed | unsigned | float
+// 	length is 1
+// float
+// 	primitive is basic float
+// 	length is 1
+// string
+// 	primitive is basic signed | unsigned | float
+//	length is equal
+//	or
+//	reduced is variable array
+//	reduced points to signed | unsigned | float
+//	length is 1
 
 // analyzeArgument analyzes an argument
 func (analyzer AnalysisOperation) analyzeArgument (
@@ -36,9 +63,6 @@ func (analyzer AnalysisOperation) analyzeArgument (
 		// TODO
 		
 	case parser.ArgumentKindDereference:
-		// TODO
-		
-	case parser.ArgumentKindSubscript:
 		// TODO
 		
 	case parser.ArgumentKindList:

@@ -80,6 +80,9 @@ func (analyzer AnalysisOperation) analyzeTypeSection () (
 		outputSection.argument,
 		err = analyzer.analyzeArgument(inputSection.Argument())
 		if err != nil { return }
+		if !outputSection.argument.canBePassedAs(outputSection.what) {
+			
+		}
 		// TODO: type check default value. possibly add a method to
 		// Argument that takes in a type and determines whether the
 		// argument can fit to it.
