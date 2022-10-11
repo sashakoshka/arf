@@ -1,7 +1,6 @@
 package analyzer
 
 import "fmt"
-import "path/filepath"
 import "git.tebibyte.media/arf/arf/parser"
 import "git.tebibyte.media/arf/arf/infoerr"
 
@@ -249,10 +248,7 @@ func (what Type) Describe () (description string) {
 			panic("invalid state: Type.actual is nil")
 
 		default:
-			locator := actual.locator()
-			description +=
-				filepath.Base(locator.modulePath) +
-				"." + locator.name
+			description += actual.ModuleName() + "." + actual.Name()
 			return
 		}
 	} else {
