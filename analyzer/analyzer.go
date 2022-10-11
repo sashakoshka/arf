@@ -46,6 +46,7 @@ func (analyzer *AnalysisOperation) analyze () (err error) {
 			modulePath: analyzer.modulePath,
 			name: sections.Value().Name(),
 		})
+		if err != nil { return err }
 		sections.Next()
 	}
 	

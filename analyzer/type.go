@@ -242,6 +242,8 @@ func (what Type) Describe () (description string) {
 			description += "UInt"
 		case &PrimitiveInt:
 			description += "Int"
+		case &BuiltInString:
+			description += "String"
 		
 		case nil:
 			panic("invalid state: Type.actual is nil")
