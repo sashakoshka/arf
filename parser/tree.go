@@ -97,10 +97,8 @@ const (
 	ArgumentKindList
 
 	// {name}
-	ArgumentKindDereference
-	
 	// {name 23}
-	ArgumentKindSubscript
+	ArgumentKindDereference
 
 	// name.name
 	// name.name.name
@@ -218,6 +216,15 @@ type FaceSection struct {
 
 	behaviors map[string] FaceBehavior
 	FaceBehavior
+}
+
+// Dereference represents a pointer dereference or array subscript.
+type Dereference struct {
+	locatable
+	valuable
+
+	// if a simple dereference was parsed, this should just be zero.
+	offset int
 }
 
 // PhraseKind determines what semantic role a phrase plays.
