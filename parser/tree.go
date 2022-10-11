@@ -224,7 +224,7 @@ type Dereference struct {
 	valuable
 
 	// if a simple dereference was parsed, this should just be zero.
-	offset int
+	offset uint64
 }
 
 // PhraseKind determines what semantic role a phrase plays.
