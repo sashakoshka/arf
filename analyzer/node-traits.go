@@ -1,13 +1,38 @@
 package analyzer
 
 import "path/filepath"
+import "git.tebibyte.media/arf/arf/file"
 import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/infoerr"
+
+// locatable allows a tree node to have a location.
+type locatable struct {
+	location file.Location
+}
+
+// Location returns the location of the node.
+func (node locatable) Location () (location file.Location) {
+	location = node.location
+	return
+}
+
+// NewError creates a new error at the node's location.
+func (node locatable) NewError (
+	message string,
+	kind    infoerr.ErrorKind,
+) (
+	err error,
+) {
+	err = infoerr.NewError(node.location, message, kind)
+	return
+}
 
 // sectionBase is a struct that all sections must embed.
 type sectionBase struct {
 	where      locator
 	complete   bool
 	permission types.Permission
+	locatable
 }
 
 // Name returns the name of the section.

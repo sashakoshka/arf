@@ -64,6 +64,8 @@ func (analyzer AnalysisOperation) analyzeTypeSection () (
 	analyzer.addSection(section)
 
 	inputSection := analyzer.currentSection.(parser.TypeSection)
+	outputSection.location = analyzer.currentSection.Location()
+	
 	if inputSection.Permission() == types.PermissionReadWrite {
 		err = inputSection.NewError (
 			"read-write (rw) permission not understood in this " +
@@ -83,7 +85,6 @@ func (analyzer AnalysisOperation) analyzeTypeSection () (
 
 		// type check default value
 		err = analyzer.typeCheck (
-			inputSection.Argument().Location(),
 			outputSection.argument,
 			outputSection.what)
 		if err != nil { return }

@@ -3,7 +3,9 @@ package analyzer
 import "os"
 import "sort"
 import "path/filepath"
+import "git.tebibyte.media/arf/arf/file"
 import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // locator uniquely identifies a section in the section table.
 type locator struct {
@@ -79,6 +81,8 @@ type Section interface {
 	ModulePath () (path string)
 	ModuleName () (path string)
 	Permission () (permission types.Permission)
+	Location   () (location file.Location)
+	NewError   (message string, kind infoerr.ErrorKind) (err error)
 	locator    () (where locator)
 
 	// Must be implemented by each individual section

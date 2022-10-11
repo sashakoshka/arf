@@ -21,6 +21,8 @@ const (
 // Type represents a description of a type. It must eventually point to a
 // TypeSection.
 type Type struct {
+	locatable
+
 	// one of these must be nil.
 	actual *TypeSection
 	points *Type
@@ -168,8 +170,9 @@ func (analyzer AnalysisOperation) analyzeType (
 	outputType Type,
 	err error,
 ) {
-	outputType.mutable = inputType.Mutable()
-	outputType.length  = inputType.Length()
+	outputType.mutable  = inputType.Mutable()
+	outputType.length   = inputType.Length()
+	outputType.location = inputType.Location()
 	if outputType.length < 1 {
 		err = inputType.NewError (
 			"cannot specify a length of zero",

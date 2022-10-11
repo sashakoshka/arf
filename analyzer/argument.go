@@ -1,7 +1,8 @@
 package analyzer
 
+import "git.tebibyte.media/arf/arf/file"
 import "git.tebibyte.media/arf/arf/parser"
-// import "git.tebibyte.media/arf/arf/infoerr"
+import "git.tebibyte.media/arf/arf/infoerr"
 
 // Argument represents a value that can be placed anywhere a value goes. This
 // allows things like phrases being arguments to other phrases.
@@ -15,7 +16,9 @@ type Argument interface {
 	// FloatLiteral
 	// StringLiteral
 
-	What () (what Type)
+	What     () (what Type)
+	Location () (location file.Location)
+	NewError (message string, kind infoerr.ErrorKind) (err error)
 	ToString (indent int) (output string)
 	canBePassedAs (what Type) (allowed bool)
 }
@@ -76,16 +79,36 @@ func (analyzer AnalysisOperation) analyzeArgument (
 		// TODO
 		
 	case parser.ArgumentKindInt:
-		outputArgument = IntLiteral(inputArgument.Value().(int64))
+		outputArgument = IntLiteral {
+			value: inputArgument.Value().(int64),
+			locatable: locatable {
+				location: inputArgument.Location(),
+			},
+		}
 		
 	case parser.ArgumentKindUInt:
-		outputArgument = UIntLiteral(inputArgument.Value().(uint64))
+		outputArgument = UIntLiteral {
+			value: inputArgument.Value().(uint64),
+			locatable: locatable {
+				location: inputArgument.Location(),
+			},
+		}
 		
 	case parser.ArgumentKindFloat:
-		outputArgument = FloatLiteral(inputArgument.Value().(float64))
+		outputArgument = FloatLiteral {
+			value: inputArgument.Value().(float64),
+			locatable: locatable {
+				location: inputArgument.Location(),
+			},
+		}
 		
 	case parser.ArgumentKindString:
-		outputArgument = StringLiteral(inputArgument.Value().(string))
+		outputArgument = StringLiteral {
+			value: inputArgument.Value().(string),
+			locatable: locatable {
+				location: inputArgument.Location(),
+			},
+		}
 	}
 	return
 }

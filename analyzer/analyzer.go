@@ -3,7 +3,6 @@ package analyzer
 import "os"
 import "fmt"
 import "path/filepath"
-import "git.tebibyte.media/arf/arf/file"
 import "git.tebibyte.media/arf/arf/parser"
 import "git.tebibyte.media/arf/arf/infoerr"
 
@@ -217,15 +216,13 @@ func (analyzer *AnalysisOperation) addSection (section Section) {
 // destination. If it can, it retunrs nil. If it can't, it returns an error
 // explaining why.
 func (analyzer *AnalysisOperation) typeCheck (
-	location file.Location,
 	source Argument,
 	destination Type,
 ) (
 	err error,
 ) {
 	if !source.canBePassedAs(destination) {
-		err = infoerr.NewError (
-			location,
+		err = source.NewError (
 			typeMismatchErrorMessage (
 				source.What(),
 				destination),

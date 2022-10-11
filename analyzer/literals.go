@@ -2,15 +2,34 @@ package analyzer
 
 import "fmt"
 
-type IntLiteral    int64
-type UIntLiteral   uint64
-type FloatLiteral  float64
-type StringLiteral string
-type RuneLiteral   rune
+type IntLiteral struct {
+	locatable
+	value int64
+}
+
+type UIntLiteral struct {
+	locatable
+	value uint64
+}
+
+type FloatLiteral struct {
+	locatable
+	value float64
+}
+
+type StringLiteral struct {
+	locatable
+	value string
+}
+
+type RuneLiteral struct {
+	locatable
+	value rune
+}
 
 // ToString outputs the data in the argument as a string.
 func (literal IntLiteral) ToString (indent int) (output string) {
-	output += doIndent(indent, fmt.Sprint("arg int ", literal, "\n"))
+	output += doIndent(indent, fmt.Sprint("arg int ", literal.value, "\n"))
 	return
 }
 
@@ -46,7 +65,7 @@ func (literal IntLiteral) canBePassedAs (what Type) (allowed bool) {
 
 // ToString outputs the data in the argument as a string.
 func (literal UIntLiteral) ToString (indent int) (output string) {
-	output += doIndent(indent, fmt.Sprint("arg uint ", literal, "\n"))
+	output += doIndent(indent, fmt.Sprint("arg uint ", literal.value, "\n"))
 	return
 }
 
@@ -94,7 +113,7 @@ func (literal FloatLiteral) What () (what Type) {
 
 // ToString outputs the data in the argument as a string.
 func (literal FloatLiteral) ToString (indent int) (output string) {
-	output += doIndent(indent, fmt.Sprint("arg float ", literal, "\n"))
+	output += doIndent(indent, fmt.Sprint("arg float ", literal.value, "\n"))
 	return
 }
 
@@ -125,7 +144,7 @@ func (literal StringLiteral) What () (what Type) {
 
 // ToString outputs the data in the argument as a string.
 func (literal StringLiteral) ToString (indent int) (output string) {
-	output += doIndent(indent, fmt.Sprint("arg string \"", literal, "\"\n"))
+	output += doIndent(indent, fmt.Sprint("arg string '", literal.value, "'\n"))
 	return
 }
 
@@ -170,7 +189,7 @@ func (literal StringLiteral) canBePassedAs (what Type) (allowed bool) {
 
 // ToString outputs the data in the argument as a string.
 func (literal RuneLiteral) ToString (indent int) (output string) {
-	output += doIndent(indent, fmt.Sprint("arg rune '", literal, "'\n"))
+	output += doIndent(indent, fmt.Sprint("arg rune '", literal.value, "'\n"))
 	return
 }
 
