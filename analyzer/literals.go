@@ -14,6 +14,13 @@ func (literal IntLiteral) ToString (indent int) (output string) {
 	return
 }
 
+// What returns the type of the argument
+func (literal IntLiteral) What () (what Type) {
+	what.actual = &PrimitiveI64
+	what.length = 1
+	return
+}
+
 // canBePassedAs returns true if this literal can be implicitly cast to the
 // specified type, and false if it can't.
 func (literal IntLiteral) canBePassedAs (what Type) (allowed bool) {
@@ -40,6 +47,13 @@ func (literal IntLiteral) canBePassedAs (what Type) (allowed bool) {
 // ToString outputs the data in the argument as a string.
 func (literal UIntLiteral) ToString (indent int) (output string) {
 	output += doIndent(indent, fmt.Sprint("arg uint ", literal, "\n"))
+	return
+}
+
+// What returns the type of the argument
+func (literal UIntLiteral) What () (what Type) {
+	what.actual = &PrimitiveU64
+	what.length = 1
 	return
 }
 
@@ -71,6 +85,13 @@ func (literal UIntLiteral) canBePassedAs (what Type) (allowed bool) {
 	return
 }
 
+// What returns the type of the argument
+func (literal FloatLiteral) What () (what Type) {
+	what.actual = &PrimitiveF64
+	what.length = 1
+	return
+}
+
 // ToString outputs the data in the argument as a string.
 func (literal FloatLiteral) ToString (indent int) (output string) {
 	output += doIndent(indent, fmt.Sprint("arg float ", literal, "\n"))
@@ -92,6 +113,13 @@ func (literal FloatLiteral) canBePassedAs (what Type) (allowed bool) {
 
 		allowed = true
 	}
+	return
+}
+
+// What returns the type of the argument
+func (literal StringLiteral) What () (what Type) {
+	what.actual = &BuiltInString
+	what.length = 1
 	return
 }
 

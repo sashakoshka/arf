@@ -15,6 +15,7 @@ type Argument interface {
 	// FloatLiteral
 	// StringLiteral
 
+	What () (what Type)
 	ToString (indent int) (output string)
 	canBePassedAs (what Type) (allowed bool)
 }

@@ -1,6 +1,7 @@
 package analyzer
 
-// import "git.tebibyte.media/arf/arf/types"
+import "fmt"
+import "path/filepath"
 import "git.tebibyte.media/arf/arf/parser"
 import "git.tebibyte.media/arf/arf/infoerr"
 
@@ -202,5 +203,65 @@ func (analyzer AnalysisOperation) analyzeType (
 	
 	// TODO
 	
+	return
+}
+
+// Describe provides a human readable description of the type. The value of this
+// should not be computationally analyzed.
+func (what Type) Describe () (description string) {
+	if what.kind == TypeKindBasic {
+		actual := what.actual
+		switch actual {
+		case &PrimitiveF32:
+			description += "F32"
+		case &PrimitiveF64:
+			description += "F64"
+		case &PrimitiveFunc:
+			description += "Func"
+		case &PrimitiveFace:
+			description += "Face"
+		case &PrimitiveObj:
+			description += "Obj"
+		case &PrimitiveU64:
+			description += "U64"
+		case &PrimitiveU32:
+			description += "U32"
+		case &PrimitiveU16:
+			description += "U16"
+		case &PrimitiveU8:
+			description += "U8"
+		case &PrimitiveI64:
+			description += "I64"
+		case &PrimitiveI32:
+			description += "I32"
+		case &PrimitiveI16:
+			description += "I16"
+		case &PrimitiveI8:
+			description += "I8"
+		case &PrimitiveUInt:
+			description += "UInt"
+		case &PrimitiveInt:
+			description += "Int"
+		
+		case nil:
+			panic("invalid state: Type.actual is nil")
+
+		default:
+			locator := actual.locator()
+			description +=
+				filepath.Base(locator.modulePath) +
+				"." + locator.name
+			return
+		}
+	} else {
+		description += "{"
+		description += what.points.Describe()
+		description += "}"
+	}
+
+	if what.length > 0 {
+		description += fmt.Sprint(":", what.length)
+	}
+
 	return
 }
