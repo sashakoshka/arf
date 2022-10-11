@@ -133,6 +133,9 @@ func (argument Argument) ToString (indent int, breakLine bool) (output string) {
 	
 	case ArgumentKindList:
 		output += argument.value.(List).ToString(indent, breakLine)
+
+	case ArgumentKindDereference:
+		output += argument.value.(Dereference).ToString(indent)
 	
 	case ArgumentKindIdentifier:
 		output += doIndent (
@@ -273,6 +276,16 @@ func (behavior FaceBehavior) ToString (indent int) (output string) {
 		output += doIndent(indent + 1, "< ", outputItem.ToString(), "\n")
 	}
 
+	return
+}
+
+func (dereference Dereference) ToString (indent int) (output string) {
+	output += "{"
+	output += dereference.argument.ToString(indent, false)
+	if dereference.offset != 0 {
+		output += fmt.Sprint(" ", dereference.offset)
+	}
+	output += "}"
 	return
 }
 

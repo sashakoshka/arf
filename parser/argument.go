@@ -3,8 +3,6 @@ package parser
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
-// TODO: add support for dereferences and subscripts
-
 var validArgumentStartTokens = []lexer.TokenKind {
 	lexer.TokenKindName,
 	
@@ -14,6 +12,7 @@ var validArgumentStartTokens = []lexer.TokenKind {
 	lexer.TokenKindString,
 	
 	lexer.TokenKindLBracket,
+	lexer.TokenKindLBrace,
 	lexer.TokenKindLParen,
 }
 
@@ -78,8 +77,12 @@ func (parser *ParsingOperation) parseArgument () (argument Argument, err error) 
 		parser.nextToken()
 		
 	case lexer.TokenKindLBracket:
-		argument.kind  = ArgumentKindPhrase
+		argument.kind = ArgumentKindPhrase
 		argument.value, err = parser.parseArgumentLevelPhrase()
+
+	case lexer.TokenKindLBrace:
+		argument.kind = ArgumentKindDereference
+		argument.value, err = parser.parseDereference()
 
 	case lexer.TokenKindLParen:
 		argument.kind = ArgumentKindList

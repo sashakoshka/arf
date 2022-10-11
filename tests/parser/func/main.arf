@@ -132,3 +132,12 @@ func ro hDataInit
 	= bird:Bird (
 		(99999)
 		324)
+
+func ro iDereference
+	> x:{Int}
+	> y:{Int ..}
+	> z:Int:4
+	---
+	= b:Int {x}
+	= c:Int {y 4}
+	= d:Int {z 3}

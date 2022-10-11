@@ -105,5 +105,13 @@ func ro hDataInit
 	[= y:{Int} [loc x]]
 	[= z:Int:8 (398 9 2309 983 -2387 478 555 123)]
 	[= bird:Bird ((99999) 324)]
+func ro iDereference
+	> x:{Int}
+	> y:{Int ..}
+	> z:Int:4
+	---
+	[= b:Int {x}]
+	[= c:Int {y 4}]
+	[= d:Int {z 3}]
 `, test)
 }
