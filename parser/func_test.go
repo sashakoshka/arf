@@ -106,12 +106,10 @@ func ro hDataInit
 	[= z:Int:8 (398 9 2309 983 -2387 478 555 123)]
 	[= bird:Bird ((99999) 324)]
 func ro iDereference
-	> w:Face
 	> x:{Int}
 	> y:{Int ..}
 	> z:Int:4
 	---
-	= a:Int {w Int}
 	= b:Int {x}
 	= c:Int {y 4}
 	= d:Int {z 3}
