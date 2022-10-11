@@ -110,8 +110,8 @@ func ro iDereference
 	> y:{Int ..}
 	> z:Int:4
 	---
-	= b:Int {x}
-	= c:Int {y 4}
-	= d:Int {z 3}
+	[= b:Int {x}]
+	[= c:Int {y 4}]
+	[= d:Int {z 3}]
 `, test)
 }

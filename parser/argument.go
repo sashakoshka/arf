@@ -3,8 +3,6 @@ package parser
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
-// TODO: add support for dereferences and subscripts (currently being worked on)
-
 var validArgumentStartTokens = []lexer.TokenKind {
 	lexer.TokenKindName,
 	
