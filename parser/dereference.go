@@ -1,7 +1,6 @@
 package parser
 
 import "git.tebibyte.media/arf/arf/lexer"
-// import "git.tebibyte.media/arf/arf/infoerr"
 
 func (parser *ParsingOperation) parseDereference () (
 	dereference Dereference,
@@ -18,13 +17,13 @@ func (parser *ParsingOperation) parseDereference () (
 	if err != nil { return }
 
 	// if there is an offset, parse it
-	err = parser.expect(lexer.TokenKindUInt, lexer.TokenKindLBrace)
+	err = parser.expect(lexer.TokenKindUInt, lexer.TokenKindRBrace)
 	if err != nil { return }
 	if parser.token.Is(lexer.TokenKindUInt) {
 		dereference.offset = parser.token.Value().(uint64)
 	}
 	
-	err = parser.nextToken(lexer.TokenKindLBrace)
+	err = parser.nextToken(lexer.TokenKindRBrace)
 	if err != nil { return }
 	err = parser.nextToken()
 	if err != nil { return }
