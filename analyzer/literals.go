@@ -18,7 +18,7 @@ func (literal IntLiteral) ToString (indent int) (output string) {
 // specified type, and false if it can't.
 func (literal IntLiteral) canBePassedAs (what Type) (allowed bool) {
 	// must be a singlular value
-	if what.length != 1 { return }
+	if !what.isSingular() { return }
 	
 	// can be passed to types that are signed numbers at a primitive level.
 	primitive := what.underlyingPrimitive()
@@ -47,7 +47,7 @@ func (literal UIntLiteral) ToString (indent int) (output string) {
 // specified type, and false if it can't.
 func (literal UIntLiteral) canBePassedAs (what Type) (allowed bool) {
 	// must be a singlular value
-	if what.length != 1 { return }
+	if !what.isSingular() { return }
 	
 	// can be passed to types that are numbers at a primitive level.
 	primitive := what.underlyingPrimitive()
@@ -81,7 +81,7 @@ func (literal FloatLiteral) ToString (indent int) (output string) {
 // specified type, and false if it can't.
 func (literal FloatLiteral) canBePassedAs (what Type) (allowed bool) {
 	// must be a singlular value
-	if what.length != 1 { return }
+	if !what.isSingular() { return }
 
 	// can be passed to types that are floats at a primitive level.
 	primitive := what.underlyingPrimitive()
@@ -108,12 +108,11 @@ func (literal StringLiteral) canBePassedAs (what Type) (allowed bool) {
 	// types that can be reduced to a variable array pointing to numbers at
 	// a primitive level.
 
-	what, worked := what.reduce()
+	reduced, worked := what.reduce()
 	if worked {
-		// TODO: make some method to check the total length of a type
-		if what.length != 1 { return }
-
-		if what.kind != TypeKindVariableArray { return }
+		if !what.isSingular() { return }
+		if reduced.kind != TypeKindVariableArray { return }
+		what = reduced
 	}
 
 	primitive := what.underlyingPrimitive()

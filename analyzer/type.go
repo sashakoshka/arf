@@ -29,6 +29,7 @@ type Type struct {
 	kind TypeKind
 
 	primitiveCache *TypeSection
+	singularCache  *bool
 
 	// if this is greater than 1, it means that this is a fixed-length array
 	// of whatever the type is. even if the type is a variable length array.
@@ -112,6 +113,27 @@ func (what Type) underlyingPrimitive () (underlying *TypeSection) {
 		underlying = actual.what.underlyingPrimitive()
 		return
 	}
+}
+
+// isSingular returns whether or not the type is a singular value. this goes
+// all the way up the inheritence chain, only stopping when it hits a non-basic
+// type because this is about data storage of a value.
+func (what Type) isSingular () (singular bool) {
+	// if we have already done this operation, return the cahced result.
+	if what.singularCache != nil {
+		singular = *what.singularCache
+		return
+	}
+
+	// decide whether or not to recurse
+	if what.kind != TypeKindBasic { return }
+	actual := what.actual
+	if actual == nil {
+		return
+	} else {
+		singular = actual.what.isSingular()
+	}
+	return
 }
 
 // reduce ascends up the inheritence chain and gets the first type it finds that
