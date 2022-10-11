@@ -82,14 +82,11 @@ func (analyzer AnalysisOperation) analyzeTypeSection () (
 		if err != nil { return }
 
 		// type check default value
-		if !outputSection.argument.canBePassedAs(outputSection.what) {
-			err = inputSection.Argument().NewError (
-				typeMismatchErrorMessage (
-					outputSection.argument.What(),
-					outputSection.what),
-				infoerr.ErrorKindError)
-			return
-		}
+		err = analyzer.typeCheck (
+			inputSection.Argument().Location(),
+			outputSection.argument,
+			outputSection.what)
+		if err != nil { return }
 	}
 
 	// TODO: analyze members

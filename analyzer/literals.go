@@ -136,6 +136,10 @@ func (literal StringLiteral) canBePassedAs (what Type) (allowed bool) {
 	// types that can be reduced to a variable array pointing to numbers at
 	// a primitive level.
 
+	// we don't check the length of what, becasue when setting a static
+	// array to a string literal, excess data will be cut off (and if it is
+	// shorter, the excess space will be filled with zeros).
+	
 	reduced, worked := what.reduce()
 	if worked {
 		if !what.isSingular() { return }

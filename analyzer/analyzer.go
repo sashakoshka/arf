@@ -3,7 +3,7 @@ package analyzer
 import "os"
 import "fmt"
 import "path/filepath"
-// import "git.tebibyte.media/arf/arf/types"
+import "git.tebibyte.media/arf/arf/file"
 import "git.tebibyte.media/arf/arf/parser"
 import "git.tebibyte.media/arf/arf/infoerr"
 
@@ -210,6 +210,28 @@ func (analyzer *AnalysisOperation) addSection (section Section) {
 			section.locator().ToString())
 	}
 	analyzer.sectionTable[section.locator()] = section
+	return
+}
+
+// typeCheck checks to see if source can fit as an argument into a slot of type
+// destination. If it can, it retunrs nil. If it can't, it returns an error
+// explaining why.
+func (analyzer *AnalysisOperation) typeCheck (
+	location file.Location,
+	source Argument,
+	destination Type,
+) (
+	err error,
+) {
+	if !source.canBePassedAs(destination) {
+		err = infoerr.NewError (
+			location,
+			typeMismatchErrorMessage (
+				source.What(),
+				destination),
+			infoerr.ErrorKindError)
+	}
+
 	return
 }
 
