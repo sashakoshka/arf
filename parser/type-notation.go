@@ -4,7 +4,7 @@ import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // parseType parses a type notation of the form Name, {Name}, etc.
-func (parser *ParsingOperation) parseType () (what Type, err error) {
+func (parser *parsingOperation) parseType () (what Type, err error) {
 	err = parser.expect(lexer.TokenKindName, lexer.TokenKindLBrace)
 	if err != nil { return }
 	what.location = parser.token.Location()

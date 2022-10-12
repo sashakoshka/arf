@@ -87,7 +87,7 @@ var controlFlowKinds = []PhraseKind {
 }
 
 // parseBlock parses an indented block of phrases
-func (parser *ParsingOperation) parseBlock (
+func (parser *parsingOperation) parseBlock (
 	indent int,
 ) (
 	block Block,
@@ -108,7 +108,7 @@ func (parser *ParsingOperation) parseBlock (
 // parseBlockLevelPhrase parses a phrase that is not being used as an argument
 // to something else. This method is allowed to do things like parse return
 // directions, and indented blocks beneath the phrase.
-func (parser *ParsingOperation) parseBlockLevelPhrase (
+func (parser *parsingOperation) parseBlockLevelPhrase (
 	indent int,
 ) (
 	phrase Phrase,
@@ -226,7 +226,7 @@ func (parser *ParsingOperation) parseBlockLevelPhrase (
 // parseArgumentLevelPhrase parses a phrase that is being used as an argument to
 // something. It is forbidden from using return direction, and it must be
 // delimited by brackets.
-func (parser *ParsingOperation) parseArgumentLevelPhrase () (
+func (parser *parsingOperation) parseArgumentLevelPhrase () (
 	phrase Phrase,
 	err error,
 ) {
@@ -277,7 +277,7 @@ func (parser *ParsingOperation) parseArgumentLevelPhrase () (
 }
 
 // parsePhraseCommand parses the command argument of a phrase.
-func (parser *ParsingOperation) parsePhraseCommand () (
+func (parser *parsingOperation) parsePhraseCommand () (
 	command  Argument,
 	kind     PhraseKind,
 	operator lexer.TokenKind,

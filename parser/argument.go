@@ -16,7 +16,7 @@ var validArgumentStartTokens = []lexer.TokenKind {
 	lexer.TokenKindLParen,
 }
 
-func (parser *ParsingOperation) parseArgument () (argument Argument, err error) {
+func (parser *parsingOperation) parseArgument () (argument Argument, err error) {
 	argument.location = parser.token.Location()
 
 	err = parser.expect(validArgumentStartTokens...)

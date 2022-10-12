@@ -5,7 +5,7 @@ import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // parseEnumSection parses an enumerated type section.
-func (parser *ParsingOperation) parseEnumSection () (
+func (parser *parsingOperation) parseEnumSection () (
 	section EnumSection,
 	err     error,
 ) {
@@ -51,7 +51,7 @@ func (parser *ParsingOperation) parseEnumSection () (
 
 // parseEnumMembers parses a list of members for an enum section. Indentation
 // level is assumed.
-func (parser *ParsingOperation) parseEnumMembers (
+func (parser *parsingOperation) parseEnumMembers (
 	into *EnumSection,
 ) (
 	err error,
@@ -70,7 +70,7 @@ func (parser *ParsingOperation) parseEnumMembers (
 }
 
 // parseEnumMember parses a single enum member. Indenttion level is assumed.
-func (parser *ParsingOperation) parseEnumMember () (
+func (parser *parsingOperation) parseEnumMember () (
 	member EnumMember,
 	err error,
 ) {

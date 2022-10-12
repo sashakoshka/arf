@@ -5,7 +5,7 @@ import "git.tebibyte.media/arf/arf/lexer"
 
 // parseTypeSection parses a type definition. It can inherit from other types,
 // and define new members on them.
-func (parser *ParsingOperation) parseTypeSection () (
+func (parser *parsingOperation) parseTypeSection () (
 	section TypeSection,
 	err     error,
 ) {
@@ -72,7 +72,7 @@ func (parser *ParsingOperation) parseTypeSection () (
 }
 
 // parseTypeSectionMember parses a type section member variable.
-func (parser *ParsingOperation) parseTypeSectionMember () (
+func (parser *parsingOperation) parseTypeSectionMember () (
 	member TypeSectionMember,
 	err error,
 ) {

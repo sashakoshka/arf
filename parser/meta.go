@@ -6,7 +6,7 @@ import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // parseMeta parsese the metadata header at the top of an arf file.
-func (parser *ParsingOperation) parseMeta () (err error) {
+func (parser *parsingOperation) parseMeta () (err error) {
 	cwd, _ := os.Getwd()
 	
 	for {

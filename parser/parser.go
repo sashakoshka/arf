@@ -7,8 +7,8 @@ import "git.tebibyte.media/arf/arf/file"
 import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
-// ParsingOperation holds information about an ongoing parsing operation.
-type ParsingOperation struct {
+// parsingOperation holds information about an ongoing parsing operation.
+type parsingOperation struct {
 	modulePath string
 	token      lexer.Token
 	tokens     []lexer.Token
@@ -34,7 +34,7 @@ func Fetch (modulePath string, skim bool) (tree SyntaxTree, err error) {
 	}
 
 	// miss, so parse the module.
-	parser := ParsingOperation {
+	parser := parsingOperation {
 		modulePath: modulePath,
 		skimming:   skim,
 		tree: SyntaxTree {
@@ -76,7 +76,7 @@ func Fetch (modulePath string, skim bool) (tree SyntaxTree, err error) {
 }
 
 // parse parses a file and adds it to the syntax tree.
-func (parser *ParsingOperation) parse (sourceFile *file.File) (err error) {
+func (parser *parsingOperation) parse (sourceFile *file.File) (err error) {
 	var tokens []lexer.Token
 	tokens, err = lexer.Tokenize(sourceFile)
 	if err != nil { return }
@@ -99,7 +99,7 @@ func (parser *ParsingOperation) parse (sourceFile *file.File) (err error) {
 // expect takes in a list of allowed token kinds, and returns an error if the
 // current token isn't one of them. If the length of allowed is zero, this
 // function will not return an error.
-func (parser *ParsingOperation) expect (allowed ...lexer.TokenKind) (err error) {
+func (parser *parsingOperation) expect (allowed ...lexer.TokenKind) (err error) {
 	if len(allowed) == 0 { return }
 
 	for _, kind := range allowed {
@@ -129,7 +129,7 @@ func (parser *ParsingOperation) expect (allowed ...lexer.TokenKind) (err error) 
 }
 
 // nextToken is the same as expect, but it advances to the next token first.
-func (parser *ParsingOperation) nextToken (allowed ...lexer.TokenKind) (err error) {
+func (parser *parsingOperation) nextToken (allowed ...lexer.TokenKind) (err error) {
 	parser.tokenIndex ++
 	if parser.tokenIndex >= len(parser.tokens) { return io.EOF }
 	parser.token = parser.tokens[parser.tokenIndex]
@@ -140,7 +140,7 @@ func (parser *ParsingOperation) nextToken (allowed ...lexer.TokenKind) (err erro
 
 // previousToken goes back one token. If the parser is already at the beginning,
 // this does nothing.
-func (parser *ParsingOperation) previousToken () {
+func (parser *parsingOperation) previousToken () {
 	parser.tokenIndex --
 	if parser.tokenIndex < 0 { parser.tokenIndex = 0 }
 	parser.token = parser.tokens[parser.tokenIndex]
@@ -149,7 +149,7 @@ func (parser *ParsingOperation) previousToken () {
 
 // skipIndentLevel advances the parser, ignoring every line with an indentation
 // equal to or greater than the specified indent.
-func (parser *ParsingOperation) skipIndentLevel (indent int) (err error) {
+func (parser *parsingOperation) skipIndentLevel (indent int) (err error) {
 	braceLevel   := 0
 	parenLevel   := 0
 	bracketLevel := 0
@@ -187,7 +187,7 @@ func (parser *ParsingOperation) skipIndentLevel (indent int) (err error) {
 }
 
 // skipWhitespace skips over newlines and indent tokens.
-func (parser *ParsingOperation) skipWhitespace () (err error) {
+func (parser *parsingOperation) skipWhitespace () (err error) {
 	for {
 		isWhitespace :=
 			parser.token.Is(lexer.TokenKindIndent) ||

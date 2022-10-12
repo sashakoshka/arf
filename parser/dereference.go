@@ -2,7 +2,7 @@ package parser
 
 import "git.tebibyte.media/arf/arf/lexer"
 
-func (parser *ParsingOperation) parseDereference () (
+func (parser *parsingOperation) parseDereference () (
 	dereference Dereference,
 	err error,
 ) {

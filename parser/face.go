@@ -5,7 +5,7 @@ import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // parseFaceSection parses an interface section.
-func (parser *ParsingOperation) parseFaceSection () (
+func (parser *parsingOperation) parseFaceSection () (
 	section FaceSection,
 	err     error,
 ) {
@@ -65,7 +65,7 @@ func (parser *ParsingOperation) parseFaceSection () (
 
 // parseFaceBehaviors parses a list of interface behaviors for an object
 // interface.
-func (parser *ParsingOperation) parseFaceBehaviors () (
+func (parser *parsingOperation) parseFaceBehaviors () (
 	behaviors map[string] FaceBehavior,
 	err error,
 ) {
@@ -101,7 +101,7 @@ func (parser *ParsingOperation) parseFaceBehaviors () (
 }
 
 // parseFaceBehavior parses a single interface behavior.
-func (parser *ParsingOperation) parseFaceBehavior (
+func (parser *parsingOperation) parseFaceBehavior (
 	indent int,
 ) (
 	behavior FaceBehavior,
@@ -125,7 +125,7 @@ func (parser *ParsingOperation) parseFaceBehavior (
 	return
 }
 
-func (parser *ParsingOperation) parseFaceBehaviorArguments (
+func (parser *parsingOperation) parseFaceBehaviorArguments (
 	indent int,
 ) (
 	inputs  []Declaration,

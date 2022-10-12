@@ -5,7 +5,7 @@ import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // parseFunc parses a function section.
-func (parser *ParsingOperation) parseFuncSection () (
+func (parser *parsingOperation) parseFuncSection () (
 	section FuncSection,
 	err     error,
 ) {
@@ -75,7 +75,7 @@ func (parser *ParsingOperation) parseFuncSection () (
 
 // parseFuncArguments parses a function's inputs, outputs, and reciever if that
 // exists.
-func (parser *ParsingOperation) parseFuncArguments (
+func (parser *parsingOperation) parseFuncArguments (
 	into *FuncSection,
 ) (
 	err error,

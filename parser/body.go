@@ -4,7 +4,7 @@ import "git.tebibyte.media/arf/arf/lexer"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // parse body parses the body of an arf file, after the metadata header.
-func (parser *ParsingOperation) parseBody () (err error) {
+func (parser *parsingOperation) parseBody () (err error) {
 	for {
 		err = parser.expect(lexer.TokenKindName)
 		if err != nil { return }

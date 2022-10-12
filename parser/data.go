@@ -4,7 +4,7 @@ import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/lexer"
 
 // parseData parses a data section.
-func (parser *ParsingOperation) parseDataSection () (
+func (parser *parsingOperation) parseDataSection () (
 	section DataSection,
 	err     error,
 ) {

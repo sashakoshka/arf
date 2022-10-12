@@ -3,7 +3,7 @@ package parser
 import "git.tebibyte.media/arf/arf/lexer"
 
 // parseIdentifier parses an identifier made out of dot separated names.
-func (parser *ParsingOperation) parseIdentifier () (
+func (parser *parsingOperation) parseIdentifier () (
 	identifier Identifier,
 	err        error,
 ) {

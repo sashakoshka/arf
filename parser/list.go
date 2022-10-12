@@ -3,7 +3,7 @@ package parser
 import "git.tebibyte.media/arf/arf/lexer"
 
 // parseList parses a parenthetically delimited list of arguments.
-func (parser *ParsingOperation) parseList () (list List, err error) {
+func (parser *parsingOperation) parseList () (list List, err error) {
 	list.location = parser.token.Location()
 
 	err = parser.expect(lexer.TokenKindLParen)
