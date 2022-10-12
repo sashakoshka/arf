@@ -53,7 +53,7 @@ func (section TypeSection) ToString (indent int) (output string) {
 }
 
 // analyzeTypeSection analyzes a type section.
-func (analyzer AnalysisOperation) analyzeTypeSection () (
+func (analyzer analysisOperation) analyzeTypeSection () (
 	section Section,
 	err error,
 ) {

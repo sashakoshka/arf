@@ -6,8 +6,8 @@ import "path/filepath"
 import "git.tebibyte.media/arf/arf/parser"
 import "git.tebibyte.media/arf/arf/infoerr"
 
-// AnalysisOperation holds information about an ongoing analysis operation.
-type AnalysisOperation struct {
+// analysisOperation holds information about an ongoing analysis operation.
+type analysisOperation struct {
 	sectionTable SectionTable
 	modulePath   string
 
@@ -24,7 +24,7 @@ func Analyze (modulePath string, skim bool) (table SectionTable, err error) {
 		modulePath = filepath.Join(cwd, modulePath)
 	}
 
-	analyzer := AnalysisOperation {
+	analyzer := analysisOperation {
 		sectionTable: make(SectionTable),
 		modulePath:   modulePath,
 	}
@@ -36,7 +36,7 @@ func Analyze (modulePath string, skim bool) (table SectionTable, err error) {
 
 // analyze performs an analysis operation given the state of the operation
 // struct.
-func (analyzer *AnalysisOperation) analyze () (err error) {
+func (analyzer *analysisOperation) analyze () (err error) {
 	tree, err := parser.Fetch(analyzer.modulePath, false)
 	sections := tree.Sections()
 
@@ -56,7 +56,7 @@ func (analyzer *AnalysisOperation) analyze () (err error) {
 // been analyzed, it analyzes it first. If the section does not actually exist,
 // a nil section is returned. When this happens, an error should be created on
 // whatever syntax tree node "requested" the section be analyzed.
-func (analyzer *AnalysisOperation) fetchSection (
+func (analyzer *analysisOperation) fetchSection (
 	where locator,
 ) (
 	section Section,
@@ -123,7 +123,7 @@ func (analyzer *AnalysisOperation) fetchSection (
 // may have more items than 1 or 2, but those will be ignored. This method
 // "consumes" items from the identifier, it will return an identifier without
 // those items.
-func (analyzer *AnalysisOperation) fetchSectionFromIdentifier (
+func (analyzer *analysisOperation) fetchSectionFromIdentifier (
 	which parser.Identifier,
 ) (
 	section Section,
@@ -162,7 +162,7 @@ func (analyzer *AnalysisOperation) fetchSectionFromIdentifier (
 // resolvePrimitive checks to see if the locator is in the current module, and
 // refers to a primitive. If it does, it returns a pointer to that primitive
 // and true for exists. If it doesn't, it returns nil and false.
-func (analyzer *AnalysisOperation) resolvePrimitive (
+func (analyzer *analysisOperation) resolvePrimitive (
 	where locator,
 ) (
 	section Section,
@@ -201,7 +201,7 @@ func (analyzer *AnalysisOperation) resolvePrimitive (
 // addSection adds a section to the analyzer's section table. If a section with
 // that name already exists, it panics because the parser should not have given
 // that to us.
-func (analyzer *AnalysisOperation) addSection (section Section) {
+func (analyzer *analysisOperation) addSection (section Section) {
 	_, exists := analyzer.sectionTable[section.locator()]
 	if exists {
 		panic (
@@ -215,7 +215,7 @@ func (analyzer *AnalysisOperation) addSection (section Section) {
 // typeCheck checks to see if source can fit as an argument into a slot of type
 // destination. If it can, it retunrs nil. If it can't, it returns an error
 // explaining why.
-func (analyzer *AnalysisOperation) typeCheck (
+func (analyzer *analysisOperation) typeCheck (
 	source Argument,
 	destination Type,
 ) (

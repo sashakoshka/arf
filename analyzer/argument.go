@@ -53,7 +53,7 @@ type Argument interface {
 //	length is 1
 
 // analyzeArgument analyzes an argument
-func (analyzer AnalysisOperation) analyzeArgument (
+func (analyzer analysisOperation) analyzeArgument (
 	inputArgument parser.Argument,
 ) (
 	outputArgument Argument,

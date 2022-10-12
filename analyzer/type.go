@@ -169,7 +169,7 @@ func (what Type) reduce () (reduced Type, reducible bool) {
 }
 
 // analyzeType analyzes a type specifier.
-func (analyzer AnalysisOperation) analyzeType (
+func (analyzer analysisOperation) analyzeType (
 	inputType parser.Type,
 ) (
 	outputType Type,
