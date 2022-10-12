@@ -35,5 +35,6 @@ type ro iIntArrayInit:Int:3
 	923
 	92
 	)
+type ro jAtEnd:Int
 `, test)
 }

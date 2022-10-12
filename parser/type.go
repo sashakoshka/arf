@@ -34,7 +34,8 @@ func (parser *parsingOperation) parseTypeSection () (
 
 	// see if value exists
 	if parser.token.Is(lexer.TokenKindNewline) {
-		parser.nextToken()
+		err = parser.nextToken()
+		if err != nil { return }
 		// if we have exited the section, return
 		if !parser.token.Is(lexer.TokenKindIndent) { return }
 		if parser.token.Value().(int) != 1         { return }

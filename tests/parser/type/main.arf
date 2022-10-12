@@ -34,3 +34,5 @@ type ro hIntArray:{Int ..}
 
 type ro iIntArrayInit:Int:3
 	(3298 923 92)
+
+type ro jAtEnd:Int
