@@ -123,7 +123,24 @@ func (analyzer analysisOperation) analyzeTypeSection () (
 		if err != nil { return }
 	}
 
-	// TODO: analyze members
+	// analyze members
+	isObj := outputSection.what.underlyingPrimitive() == &PrimitiveObj
+	if isObj {
+		// use the Member method on the inherited type to type check and
+		// permission check default value overrides.
+		for index := 0; index < inputSection.MembersLength(); index ++ {
+			// inputMember := inputSection.Member(index)
+			// TODO
+		}
+		
+	} else if inputSection.MembersLength() > 0 {
+		// if there are members, and the inherited type does not have
+		// Obj as a primitive, throw an error.
+		err = inputSection.Member(0).NewError (
+			"members can only be defined on types descending " +
+			"from Obj",
+			infoerr.ErrorKindError)
+	}
 
 	outputSection.complete = true
 	return
