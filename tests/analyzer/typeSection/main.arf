@@ -1,4 +1,5 @@
 :arf
+require './something'
 ---
 
 type ro aBasicInt:Int 5
@@ -8,3 +9,5 @@ type ro bOnBasicInt:aBasicInt
 type ro cBasicObject:Obj
 	ro that:Int
 	ro this:Int
+
+type ro dInheritedFromOther:something.Thing

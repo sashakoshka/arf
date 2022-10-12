@@ -197,8 +197,21 @@ func (analyzer analysisOperation) analyzeType (
 		bitten,
 		err = analyzer.fetchSectionFromIdentifier(inputType.Name())
 
-		outputType.actual = actual.(*TypeSection)
-		// TODO: produce an error if this doesnt work
+		if actual == nil {
+			err = inputType.NewError (
+				"this type does not exist",
+				infoerr.ErrorKindError)
+			return
+		}
+
+		var worked bool
+		outputType.actual, worked = actual.(*TypeSection)
+		if !worked {
+			err = inputType.NewError (
+				"this must refer to a type or an interface",
+				infoerr.ErrorKindError)
+			return
+		}
 		
 		if bitten.Length() > 0 {
 			err = bitten.NewError(
