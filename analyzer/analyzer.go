@@ -49,7 +49,9 @@ func Analyze (modulePath string, skim bool) (table SectionTable, err error) {
 // analyze performs an analysis operation given the state of the operation
 // struct.
 func (analyzer *analysisOperation) analyze () (err error) {
-	tree, err := parser.Fetch(analyzer.modulePath, false)
+	var tree parser.SyntaxTree
+	tree, err = parser.Fetch(analyzer.modulePath, false)
+	if err != nil { return }
 	sections := tree.Sections()
 
 	for !sections.End() {
