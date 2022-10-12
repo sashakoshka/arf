@@ -74,6 +74,8 @@ func Fetch (modulePath string, skim bool) (tree SyntaxTree, err error) {
 
  		// parse the tokens into the module
 		err  = parser.parse(sourceFile)
+		if err == io.EOF { err = nil}
+		if err != nil { return }
 	}
 	
 	tree = parser.tree
