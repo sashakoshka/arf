@@ -185,10 +185,3 @@ func (literal StringLiteral) canBePassedAs (what Type) (allowed bool) {
 	}
 	return
 }
-
-// ToString outputs the data in the argument as a string.
-func (literal RuneLiteral) ToString (indent int) (output string) {
-	output += doIndent(indent, fmt.Sprint("arg rune '", literal.value, "'\n"))
-	return
-}
-

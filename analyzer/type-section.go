@@ -52,6 +52,39 @@ func (section TypeSection) ToString (indent int) (output string) {
 	return
 }
 
+// Member returns the membrs ksdn ,mn ,mxc lkzxjclkjxzc l,mnzc .,zxmn.,zxmc
+// IT RECURSES!
+func (section TypeSection) Member (
+	name string,
+) (
+	member ObjectMember,
+	exists bool,
+) {
+	switch section.what.kind {
+	case TypeKindBasic:
+		for _, currentMember := range section.members {
+			if currentMember.name == name {
+				member = currentMember
+				exists = true
+				break
+			}
+		}
+		
+		if !exists {
+			actual := section.what.actual
+			if actual == nil { return }
+			member, exists = actual.Member(name)
+		}
+		
+	case TypeKindPointer:
+		points := section.what.points
+		if points == nil { return }
+		member, exists = points.actual.Member(name)
+	}
+		
+	return
+}
+
 // analyzeTypeSection analyzes a type section.
 func (analyzer analysisOperation) analyzeTypeSection () (
 	section Section,
