@@ -196,6 +196,7 @@ func (analyzer analysisOperation) analyzeType (
 		actual,
 		bitten,
 		err = analyzer.fetchSectionFromIdentifier(inputType.Name())
+		if err != nil { return }
 
 		if actual == nil {
 			err = inputType.NewError (
