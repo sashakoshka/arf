@@ -81,6 +81,8 @@ func (parser *parsingOperation) parseTypeSectionMember () (
 	if err != nil { return }
 	member.permission = parser.token.Value().(types.Permission)
 
+	member.location = parser.token.Location()
+
 	// get name
 	err = parser.nextToken(lexer.TokenKindName)
 	if err != nil { return }

@@ -25,6 +25,10 @@ func NewError (
 ) (
 	err Error,
 ) {
+	if location.File() == nil {
+		panic("cannot create new Error in a blank file")
+	}
+	
 	return Error {
 		Location: location,
 		message:  message,
