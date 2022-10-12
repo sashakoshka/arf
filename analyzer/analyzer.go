@@ -232,6 +232,8 @@ func (analyzer *AnalysisOperation) typeCheck (
 	return
 }
 
+// doIndent perfroms a fmt.Sprint operation on input, indenting the string. This
+// does not add a trailing newline.
 func doIndent (indent int, input ...any) (output string) {
 	for index := 0; index < indent; index ++ {
 		output += "\t"

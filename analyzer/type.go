@@ -127,6 +127,11 @@ func (what Type) isSingular () (singular bool) {
 		return
 	}
 
+	if what.length > 0 {
+		singular = true
+		return
+	}
+
 	// decide whether or not to recurse
 	if what.kind != TypeKindBasic { return }
 	actual := what.actual
