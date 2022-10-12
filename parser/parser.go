@@ -1,3 +1,15 @@
+/*
+Package parser implements a parser for the ARF language. It contains an abstract
+syntax tree (SyntaxTree), various tree nodes, and a function called Fetch that
+returns a SyntaxTree for the module located at the given path. Internally, the
+parser caches parsing results so Fetch may be called frequently.
+
+Trees returned by this package can be expected to be internally consistent and
+syntactically corred, but not semantically correct. Ensuring the semantic
+integrity of ARF code is the job of the analyzer package.
+
+This package automatically invokes lexer before parsing module files.
+*/
 package parser
 
 import "io"
@@ -18,9 +30,9 @@ type parsingOperation struct {
 	tree SyntaxTree
 }
 
-// Fetch returns the parsed module located at the specified path, and returns an
-// abstract syntax tree. If the module has not yet been parsed, it parses it
-// first.
+// Fetch returns the parsed module located at the specified path as a
+// SyntaxTree. If the module has not yet been parsed, it parses it first. If it
+// has, it grabs it out of a cache. This function can be called frequently.
 func Fetch (modulePath string, skim bool) (tree SyntaxTree, err error) {
 	if modulePath[0] != '/' {
 		panic("module path did not begin at filesystem root")

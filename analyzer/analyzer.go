@@ -1,3 +1,14 @@
+/*
+Package analyzer implements a semantic analyzer for the ARF language. In it,
+there is a function called Analyze which takes in a module path and returns a
+table of sections representative of that module. The result of this operation is
+not cached.
+
+The section table returned by Analyze can be expected to be both syntactically
+correct and semantically sound.
+
+This package automatically invokes the parser and lexer packages.
+*/
 package analyzer
 
 import "os"
@@ -16,8 +27,9 @@ type analysisOperation struct {
 	currentTree     parser.SyntaxTree
 }
 
-// Analyze performs a semantic analyisys on the module specified by path, and
-// returns a SectionTable that can be translated into C.
+// Analyze performs a semantic analysis on the module specified by path, and
+// returns a SectionTable that can be translated into C. The result of this is
+// not cached.
 func Analyze (modulePath string, skim bool) (table SectionTable, err error) {
 	if modulePath[0] != '/' {
 		cwd, _ := os.Getwd()

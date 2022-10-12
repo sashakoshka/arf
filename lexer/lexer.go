@@ -1,3 +1,8 @@
+/*
+Package lexer implements a tokenizer for the ARF language. It contains a
+function called Tokenize which takes in a file from the ARF file package, and
+outputs an array of tokens.
+*/
 package lexer
 
 import "io"

@@ -2,29 +2,28 @@ package analyzer
 
 import "fmt"
 
+// IntLiteral represents a constant signed integer value.
 type IntLiteral struct {
 	locatable
 	value int64
 }
 
+// UIntLiteral represents a constant unsigned itneger value.
 type UIntLiteral struct {
 	locatable
 	value uint64
 }
 
+// FloatLiteral represents a constant floating point value.
 type FloatLiteral struct {
 	locatable
 	value float64
 }
 
+// StringLiteral represents a constant text value.
 type StringLiteral struct {
 	locatable
 	value string
-}
-
-type RuneLiteral struct {
-	locatable
-	value rune
 }
 
 // ToString outputs the data in the argument as a string.
