@@ -5,8 +5,8 @@ import "git.tebibyte.media/arf/arf/file"
 import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/infoerr"
 
-// LexingOperation holds information about an ongoing lexing operataion.
-type LexingOperation struct {
+// lexingOperation holds information about an ongoing lexing operataion.
+type lexingOperation struct {
 	file   *file.File
 	char   rune
 	tokens []Token
@@ -14,7 +14,7 @@ type LexingOperation struct {
 
 // Tokenize converts a file into a slice of tokens (lexemes).
 func Tokenize (file *file.File) (tokens []Token, err error) {
-	lexer := LexingOperation { file: file }
+	lexer := lexingOperation { file: file }
 	err    = lexer.tokenize()
 	tokens = lexer.tokens
 
@@ -28,7 +28,7 @@ func Tokenize (file *file.File) (tokens []Token, err error) {
 
 // tokenize converts a file into a slice of tokens (lexemes). It will always
 // return a non-nil error, but if nothing went wrong it will return io.EOF.
-func (lexer *LexingOperation) tokenize () (err error) {
+func (lexer *lexingOperation) tokenize () (err error) {
 	// check to see if the beginning of the file says :arf
 	var shebangCheck = []rune(":arf\n")
 	for index := 0; index < 5; index ++ {
@@ -66,6 +66,8 @@ func (lexer *LexingOperation) tokenize () (err error) {
 		if err != nil { return }
 	}
 
+	// TODO: figure out why this is here and what its proper place is
+	// because it is apparently unreachable
 	if lexer.tokens[len(lexer.tokens) - 1].kind != TokenKindNewline {
 		token := lexer.newToken()
 		token.kind = TokenKindNewline
@@ -75,7 +77,7 @@ func (lexer *LexingOperation) tokenize () (err error) {
 	return
 }
 
-func (lexer *LexingOperation) tokenizeAlphaBeginning () (err error) {
+func (lexer *lexingOperation) tokenizeAlphaBeginning () (err error) {
 	token := lexer.newToken()
 	token.kind = TokenKindName
 
@@ -109,7 +111,7 @@ func (lexer *LexingOperation) tokenizeAlphaBeginning () (err error) {
 	return
 }
 
-func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
+func (lexer *lexingOperation) tokenizeSymbolBeginning () (err error) {
 	switch lexer.char {
 	case '#':
 		// comment
@@ -385,7 +387,7 @@ func (lexer *LexingOperation) tokenizeSymbolBeginning () (err error) {
 	return
 }
 
-func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
+func (lexer *lexingOperation) tokenizeDashBeginning () (err error) {
 	token := lexer.newToken()
 	err = lexer.nextRune()
 	if err != nil { return }
@@ -422,17 +424,17 @@ func (lexer *LexingOperation) tokenizeDashBeginning () (err error) {
 }
 
 // newToken creates a new token from the lexer's current position in the file.
-func (lexer *LexingOperation) newToken () (token Token) {
+func (lexer *lexingOperation) newToken () (token Token) {
 	return Token { location: lexer.file.Location(1) }
 }
 
 // addToken adds a new token to the lexer's token slice.
-func (lexer *LexingOperation) addToken (token Token) {
+func (lexer *lexingOperation) addToken (token Token) {
 	lexer.tokens = append(lexer.tokens, token)
 }
 
 // skipSpaces skips all space characters (not tabs or newlines)
-func (lexer *LexingOperation) skipSpaces () (err error) {
+func (lexer *lexingOperation) skipSpaces () (err error) {
 	for lexer.char == ' ' {
 		err = lexer.nextRune()
 		if err != nil { return }
@@ -442,7 +444,7 @@ func (lexer *LexingOperation) skipSpaces () (err error) {
 }
 
 // nextRune advances the lexer to the next rune in the file.
-func (lexer *LexingOperation) nextRune () (err error) {
+func (lexer *lexingOperation) nextRune () (err error) {
 	lexer.char, _, err = lexer.file.ReadRune()
 	if err != nil && err != io.EOF {
 		return infoerr.NewError (

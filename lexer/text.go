@@ -4,7 +4,7 @@ import "strconv"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // tokenizeString tokenizes a string or rune literal.
-func (lexer *LexingOperation) tokenizeString () (err error) {
+func (lexer *lexingOperation) tokenizeString () (err error) {
 	err = lexer.nextRune()
 	if err != nil { return }
 
@@ -62,7 +62,7 @@ var escapeSequenceMap = map[rune] rune {
 }
 
 // getEscapeSequence reads an escape sequence in a string or rune literal.
-func (lexer *LexingOperation) getEscapeSequence () (
+func (lexer *lexingOperation) getEscapeSequence () (
 	result     rune,
 	amountRead int,
 	err        error,

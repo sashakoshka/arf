@@ -4,7 +4,7 @@ import "strconv"
 import "git.tebibyte.media/arf/arf/infoerr"
 
 // tokenizeSymbolBeginning lexes a token that starts with a number.
-func (lexer *LexingOperation) tokenizeNumberBeginning (negative bool) (err error) {
+func (lexer *lexingOperation) tokenizeNumberBeginning (negative bool) (err error) {
 	var intNumber   uint64
 	var floatNumber float64
 	var isFloat     bool
@@ -107,7 +107,7 @@ func runeIsDigit (char rune, radix uint64) (isDigit bool) {
 }
 
 // tokenizeNumber reads and tokenizes a number with the specified radix.
-func (lexer *LexingOperation) tokenizeNumber (
+func (lexer *lexingOperation) tokenizeNumber (
 	radix uint64,
 ) (
 	intNumber   uint64,
