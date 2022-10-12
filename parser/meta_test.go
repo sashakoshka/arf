@@ -10,7 +10,7 @@ func TestMeta (test *testing.T) {
 `:arf
 author 'Sasha Koshka'
 license 'GPLv3'
-require '` + filepath.Join(cwd, "./some/local/module") + `'
+require '` + filepath.Join(cwd, "../tests/parser/meta/some/local/module") + `'
 require '/usr/local/include/arf/someLibraryInstalledInStandardLocation'
 require '/some/absolute/path/to/someModule'
 ---
