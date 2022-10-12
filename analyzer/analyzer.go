@@ -136,22 +136,25 @@ func (analyzer *analysisOperation) fetchSection (
 // of whatever module is currently being analyzed. The identifier in question
 // may have more items than 1 or 2, but those will be ignored. This method
 // "consumes" items from the identifier, it will return an identifier without
-// those items.
+// those items. If the section comes from a different module (and permissions
+// should therefore be respected), external will be set to true.
 func (analyzer *analysisOperation) fetchSectionFromIdentifier (
 	which parser.Identifier,
 ) (
-	section Section,
-	bitten  parser.Identifier,
-	err     error,
+	section  Section,
+	external bool,
+	bitten   parser.Identifier,
+	err      error,
 ) {
 	item, bitten := which.Bite()
-	
+
 	path, exists := analyzer.currentTree.ResolveRequire(item)
 	if exists {
 		// we have our module path, so get the section name
 		item, bitten = bitten.Bite()
+		external = true
 	} else {
-		// that wasn't a module name, so the module path must be the our
+		// that wasn't a module name, so the module path must be our
 		// current one
 		path = analyzer.currentPosition.modulePath
 	}

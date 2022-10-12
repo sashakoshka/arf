@@ -1,6 +1,7 @@
 package analyzer
 
 import "fmt"
+import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/parser"
 import "git.tebibyte.media/arf/arf/infoerr"
 
@@ -185,15 +186,19 @@ func (analyzer analysisOperation) analyzeType (
 		return
 	}
 
-	// analyze type this type points to, if it exists
 	if inputType.Kind() != parser.TypeKindBasic {
+		// analyze type this type points to, if it exists
 		var points Type
 		points, err = analyzer.analyzeType(inputType.Points())
 		outputType.points = &points
 	} else {
+		// analyze the type section this type uses
 		var bitten parser.Identifier
+		var external bool
 		var actual Section
+		
 		actual,
+		external,
 		bitten,
 		err = analyzer.fetchSectionFromIdentifier(inputType.Name())
 		if err != nil { return }
@@ -213,6 +218,14 @@ func (analyzer analysisOperation) analyzeType (
 				infoerr.ErrorKindError)
 			return
 		}
+
+		if external && actual.Permission() == types.PermissionPrivate {
+			err = bitten.NewError(
+				"this type is private, and cannot be used " +
+				"outside of its module",
+				infoerr.ErrorKindError)
+			return
+		}
 		
 		if bitten.Length() > 0 {
 			err = bitten.NewError(
@@ -223,6 +236,7 @@ func (analyzer analysisOperation) analyzeType (
 	}
 	
 	// TODO
+	// TODO: figure out what todo ???
 	
 	return
 }
