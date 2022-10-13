@@ -1,5 +1,6 @@
 package analyzer
 
+import "fmt"
 import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/parser"
 import "git.tebibyte.media/arf/arf/infoerr"
@@ -21,6 +22,7 @@ type TypeSection struct {
 type ObjectMember struct {
 	locatable
 	name string
+	bitWidth uint64
 	
 	// even if there is a private permission in another module, we still
 	// need to include it in the semantic analysis because we need to know
@@ -31,12 +33,18 @@ type ObjectMember struct {
 	argument Argument
 }
 
+// ToString returns all data stored within the member, in string form.
 func (member ObjectMember) ToString (indent int) (output string) {
 	output += doIndent (
-		indent,
-		member.name, " ",
-		member.permission.ToString(),
-		"\n")
+		indent, "member ",
+		member.permission.ToString(), " ",
+		member.name)
+
+	if member.bitWidth > 0 {
+		output += fmt.Sprint(" width ", member.bitWidth)
+	}
+
+	output += "\n"
 	output += member.what.ToString(indent + 1)
 	return
 }
@@ -50,6 +58,9 @@ func (section TypeSection) ToString (indent int) (output string) {
 	output += section.what.ToString(indent + 1)
 	if section.argument != nil {
 		output += section.argument.ToString(indent + 1)
+	}
+	for _, member := range section.members {
+		output += member.ToString(indent + 1)
 	}
 	return
 }
@@ -162,6 +173,7 @@ func (analyzer *analysisOperation) analyzeObjectMembers (
 		outputMember.location   = inputMember.Location()
 		outputMember.name       = inputMember.Name()
 		outputMember.permission = inputMember.Permission()
+		outputMember.bitWidth   = inputMember.BitWidth()
 		
 		inheritedMember, exists :=
 			inheritedSection.Member(inputMember.Name())
@@ -212,6 +224,10 @@ func (analyzer *analysisOperation) analyzeObjectMembers (
 					infoerr.ErrorKindError)
 				return
 			}
+			
+			outputMember.what, err = analyzer.analyzeType (
+				inputMember.Type())
+			if err != nil { return }
 			
 			// apply default value
 			if !inputMember.Argument().Nil() {
