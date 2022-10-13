@@ -4,8 +4,13 @@ import "testing"
 
 func TestTypeSection (test *testing.T) {
 	checkTree ("../tests/analyzer/typeSection", false,
-`typeSection ro ../tests/analyzer/typeSection/something.Thing
+`typeSection ro ../tests/analyzer/typeSection/required.aBasic
 	type 1 basic Int
+typeSection ro ../tests/analyzer/typeSection/required.bBird
+	type 1 basic Obj
+	member rw wing
+		type 1 basic Int
+		arg uint 2
 typeSection ro ../tests/analyzer/typeSection.aBasicInt
 	type 1 basic Int
 	arg uint 5
@@ -14,10 +19,23 @@ typeSection ro ../tests/analyzer/typeSection.bOnBasicInt
 typeSection ro ../tests/analyzer/typeSection.cBasicObject
 	type 1 basic Obj
 	member ro that
-		type 1 basic Int
+		type 1 basic UInt
 	member ro this
 		type 1 basic Int
-typeSection ro ../tests/analyzer/typeSection.dInheritedFromOther
-	type 1 basic Thing
+typeSection ro ../tests/analyzer/typeSection.dInheritFromOther
+	type 1 basic aBasic
+typeSection ro ../tests/analyzer/typeSection.eInheritObject
+	type 1 basic cBasicObject
+	member ro that
+		type 1 basic UInt
+		arg uint 5
+typeSection ro ../tests/analyzer/typeSection.fInheritObjectFromOther
+	type 1 basic bBird
+	member ro wing
+		type 1 basic Int
+		arg uint 2
+	member ro beak
+		type 1 basic Int
+		arg uint 238
 `, test)
 }

@@ -1,5 +1,5 @@
 :arf
-require './something'
+require './required'
 ---
 
 type ro aBasicInt:Int 5
@@ -10,11 +10,11 @@ type ro cBasicObject:Obj
 	ro that:UInt
 	ro this:Int
 
-type ro dInheritFromOther:something.aBasic
+type ro dInheritFromOther:required.aBasic
 
 type ro eInheritObject:cBasicObject
 	ro that 5
 
-type ro dInheritObjectFromOther:something.bBird
+type ro fInheritObjectFromOther:required.bBird
 	ro wing 2
 	ro beak:Int 238
