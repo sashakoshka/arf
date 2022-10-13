@@ -129,6 +129,16 @@ func (analyzer analysisOperation) analyzeTypeSection () (
 	outputSection.what, err = analyzer.analyzeType(inputSection.Type())
 	if err != nil { return }
 
+	// type sections are only allowed to inherit other type sections
+	_, inheritsFromTypeSection := outputSection.what.actual.(*TypeSection)
+	if !inheritsFromTypeSection {
+		err = inputSection.Type().NewError (
+			"type sections can only inherit from other type " +
+			"sections.",
+			infoerr.ErrorKindError)
+		return
+	}
+
 	if !inputSection.Argument().Nil() {
 		outputSection.argument,
 		err = analyzer.analyzeArgument(inputSection.Argument())
