@@ -130,7 +130,7 @@ func (analyzer analysisOperation) analyzeTypeSection () (
 	if !inheritsFromTypeSection {
 		err = inputSection.Type().NewError (
 			"type sections can only inherit from other type " +
-			"sections.",
+			"sections",
 			infoerr.ErrorKindError)
 		return
 	}

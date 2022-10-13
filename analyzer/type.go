@@ -119,16 +119,15 @@ func (what Type) underlyingPrimitive () (underlying *TypeSection) {
 			underlying =
 				actual.(*TypeSection).
 				what.underlyingPrimitive()
-		// TODO
 		// case *FaceSection:
 			// TODO: depending on if this is an object interface or
 			// a function interface, return either Face or Func.
 			// we can assume this because of inheritence rules.
 			
-		// // case *EnumSection:
-			// underlying =
-				// actual.(*EnumSection).
-				// what.underlyingPrimitive()
+		case *EnumSection:
+			underlying =
+				actual.(*EnumSection).
+				what.underlyingPrimitive()
 		
 		default:
 			panic (
@@ -164,13 +163,12 @@ func (what Type) isSingular () (singular bool) {
 		switch actual.(type) {
 		case *TypeSection:
 			singular = actual.(*TypeSection).what.isSingular()
-		// TODO: uncomment this when these sections have been
-		// implemented
+		// TODO: uncomment this when this section has been implemented
 		// case *FaceSection:
 			// singular = true
 			
-		// case *EnumSection:
-			// singular = actual.(*EnumSection).what.isSingular()
+		case *EnumSection:
+			singular = actual.(*EnumSection).what.isSingular()
 		
 		default:
 			panic (
@@ -207,13 +205,12 @@ func (what Type) reduce () (reduced Type, reducible bool) {
 	case *TypeSection:
 		reduced, reducible = what.actual.(*TypeSection).what.reduce()
 		
-	// TODO: uncomment this when these sections have been
-	// implemented
+	// TODO: uncomment this when his section has been implemented
 	// case *FaceSection:
 		// singular = true
 		
-	// case *EnumSection:
-		// reduced, reducible = what.actual.(*EnumSection).what.reduce()
+	case *EnumSection:
+		reduced, reducible = what.actual.(*EnumSection).what.reduce()
 	
 	default:
 		panic (
@@ -268,7 +265,7 @@ func (analyzer analysisOperation) analyzeType (
 
 		switch actual.(type) {
 		// TODO: uncomment once these sections are implemented
-		case *TypeSection /* , *EnumSection, *FaceSection */:
+		case *TypeSection, *EnumSection /* , *FaceSection */:
 			outputType.actual = actual
 		default:
 			err = inputType.NewError (

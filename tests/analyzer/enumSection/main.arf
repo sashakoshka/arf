@@ -1,7 +1,7 @@
 :arf
 ---
 
-enum ro Weekday:Int
+enum ro aWeekday:Int
 	- sunday
 	- monday
 	- tuesday
@@ -9,3 +9,12 @@ enum ro Weekday:Int
 	- thursday
 	- friday
 	- saturday
+
+type ro bColor:U32
+
+enum ro cNamedColor:bColor
+	- red   0xFF0000
+	- green 0x00FF00
+	- blue  0x0000FF
+
+type ro X:cNamedColor

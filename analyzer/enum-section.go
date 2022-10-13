@@ -74,7 +74,7 @@ func (analyzer analysisOperation) analyzeEnumSection () (
 	if !inheritsFromTypeSection {
 		err = inputSection.Type().NewError (
 			"enum sections can only inherit from other type " +
-			"sections.",
+			"sections",
 			infoerr.ErrorKindError)
 		return
 	}
@@ -97,7 +97,14 @@ func (analyzer analysisOperation) analyzeEnumSection () (
 				outputSection.what)
 			if err != nil { return }
 		}
+
+		outputSection.members = append (
+			outputSection.members,
+			outputMember)
 	}
+
+	// TODO: fill in members that do not have values with incrementing
+	// values. take care to not duplicate them.
 
 	outputSection.complete = true
 	return

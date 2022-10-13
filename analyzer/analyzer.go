@@ -264,6 +264,10 @@ func (analyzer *analysisOperation) inCurrentModule (
 	return
 }
 
+// TODO: make a method of analyzer that, given a name, searches through all
+// accessible scopes and returns the thing the name references. when analyzing
+// a function, the analyzer should remember a trail of scopes.
+
 // doIndent perfroms a fmt.Sprint operation on input, indenting the string. This
 // does not add a trailing newline.
 func doIndent (indent int, input ...any) (output string) {
