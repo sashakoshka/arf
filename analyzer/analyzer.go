@@ -249,6 +249,19 @@ func (analyzer *analysisOperation) typeCheck (
 	return
 }
 
+// inCurrentModule returns whether or not the specified section resides within
+// the current module.
+func (analyzer *analysisOperation) inCurrentModule (
+	section Section,
+) (
+	inCurrent bool,
+){
+	inCurrent =
+		section.locator().modulePath ==
+		analyzer.currentPosition.modulePath
+	return
+}
+
 // doIndent perfroms a fmt.Sprint operation on input, indenting the string. This
 // does not add a trailing newline.
 func doIndent (indent int, input ...any) (output string) {

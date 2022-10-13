@@ -10,7 +10,11 @@ type ro cBasicObject:Obj
 	ro that:UInt
 	ro this:Int
 
-type ro dInheritedFromOther:something.Thing
+type ro dInheritFromOther:something.aBasic
 
 type ro eInheritObject:cBasicObject
-	rw that
+	ro that 5
+
+type ro dInheritObjectFromOther:something.bBird
+	ro wing 2
+	ro beak:Int 238

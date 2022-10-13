@@ -1,3 +1,6 @@
 :arf
 ---
-type ro Thing:Int
+type ro aBasic:Int
+
+type ro bBird:Obj
+	rw wing:Int 2

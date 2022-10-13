@@ -169,6 +169,8 @@ func (analyzer *analysisOperation) analyzeObjectMembers (
 	err error,
 ) {
 	inheritedSection := into.what.actual
+	inheritsFromSameModule := analyzer.inCurrentModule(inheritedSection)
+	
 	for index := 0; index < from.MembersLength(); index ++ {
 		inputMember := from.Member(index)
 
@@ -184,6 +186,20 @@ func (analyzer *analysisOperation) analyzeObjectMembers (
 		if exists {
 			// modifying default value/permissions of an
 			// inherited member
+
+			canAccessMember := 
+				inheritsFromSameModule ||
+				inheritedMember.permission !=
+				types.PermissionPrivate
+
+			if !canAccessMember {
+				err = inputMember.NewError (
+					"inherited member is private (pv) in " +
+					"parent type, and cannot be modified " +
+					"here",
+					infoerr.ErrorKindError)
+				return
+			}
 
 			outputMember.what = inheritedMember.what
 			if !inputMember.Type().Nil() {
@@ -202,11 +218,25 @@ func (analyzer *analysisOperation) analyzeObjectMembers (
 				return
 			}
 
+			canOverwriteMember :=
+				inheritsFromSameModule ||
+				inheritedMember.permission ==
+				types.PermissionReadWrite
+
 			// apply default value
 			if inputMember.Argument().Nil() {
 				// if it is unspecified, inherit it
 				outputMember.argument = inheritedMember.argument
 			} else {
+				if !canOverwriteMember {
+					err = inputMember.Argument().NewError (
+						"member is read-only (ro) in " +
+						"parent type, its default " +
+						"value cannot be overridden",
+						infoerr.ErrorKindError)
+					return
+				}
+				
 				outputMember.argument,
 				err = analyzer.analyzeArgument(inputMember.Argument())
 				if err != nil { return }
