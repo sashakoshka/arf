@@ -266,14 +266,11 @@ func (analyzer analysisOperation) analyzeType (
 			return
 		}
 
-		actualIsValidSectionKind := false
 		switch actual.(type) {
 		// TODO: uncomment once these sections are implemented
 		case *TypeSection /* , *EnumSection, *FaceSection */:
-			actualIsValidSectionKind = true
-		}
-
-		if !actualIsValidSectionKind {
+			outputType.actual = actual
+		default:
 			err = inputType.NewError (
 				"this must refer to a type, interface, or enum",
 				infoerr.ErrorKindError)

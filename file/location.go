@@ -43,7 +43,7 @@ func (location *Location) SetWidth (width int) {
 func (location Location) Describe () (description string) {
 	return fmt.Sprint (
 		"in ", location.file.Path(),
-		" row ", location.row,
-		" column ", location.column,
+		" row ", location.row + 1,
+		" column ", location.column + 1,
 		" width ", location.width)
 }
