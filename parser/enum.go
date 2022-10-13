@@ -87,7 +87,8 @@ func (parser *parsingOperation) parseEnumMember () (
 	err = parser.nextToken()
 	if err != nil { return }
 	if parser.token.Is(lexer.TokenKindNewline) {
-		parser.nextToken()
+		err = parser.nextToken()
+		if err != nil { return }
 		// if we have exited the member, return
 		if !parser.token.Is(lexer.TokenKindIndent) { return }
 		if parser.token.Value().(int) != 2         { return }

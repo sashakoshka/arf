@@ -1,0 +1,11 @@
+:arf
+---
+
+enum ro Weekday:Int
+	- sunday
+	- monday
+	- tuesday
+	- wednesday
+	- thursday
+	- friday
+	- saturday

@@ -111,7 +111,7 @@ func (analyzer *analysisOperation) fetchSection (
 		analyzer.currentTree     = previousTree
 	} ()
 
-	// TODO: analyze section. have analysis methods work on currentPosition
+	// analyze section. have analysis methods work on currentPosition
 	// and currentSection.
 	// 
 	// while building an analyzed section, add it to the section
@@ -123,6 +123,8 @@ func (analyzer *analysisOperation) fetchSection (
 		section, err = analyzer.analyzeTypeSection()
 		if err != nil { return}
 	case parser.EnumSection:
+		section, err = analyzer.analyzeEnumSection()
+		if err != nil { return}
 	case parser.FaceSection:
 	case parser.DataSection:
 	case parser.FuncSection:

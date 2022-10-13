@@ -9,7 +9,6 @@ import "git.tebibyte.media/arf/arf/infoerr"
 type TypeSection struct {
 	sectionBase
 	what     Type
-	complete bool
 	argument Argument
 	members []ObjectMember
 }
@@ -19,10 +18,6 @@ type ObjectMember struct {
 	locatable
 	name string
 	bitWidth uint64
-	
-	// even if there is a private permission in another module, we still
-	// need to include it in the semantic analysis because we need to know
-	// what members objects have.
 	permission types.Permission
 
 	what Type
@@ -126,6 +121,7 @@ func (analyzer analysisOperation) analyzeTypeSection () (
 
 	outputSection.permission = inputSection.Permission()
 
+	// get inherited type
 	outputSection.what, err = analyzer.analyzeType(inputSection.Type())
 	if err != nil { return }
 
@@ -173,6 +169,8 @@ func (analyzer analysisOperation) analyzeTypeSection () (
 	return
 }
 
+// analyzeObjectMembers analyzes object members from a parser type section into
+// a semantic type section.
 func (analyzer *analysisOperation) analyzeObjectMembers (
 	into *TypeSection,
 	from parser.TypeSection,
