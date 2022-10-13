@@ -55,6 +55,12 @@ func (what Type) Kind () (kind TypeKind) {
 	return
 }
 
+// Nil returns true if the type is nil, and false if it isn't.
+func (what Type) Nil () (isNil bool) {
+	isNil = what.kind == TypeKindNil
+	return
+}
+
 // Mutable returns whether or not the type's data is mutable.
 func (what Type) Mutable () (mutable bool) {
 	mutable = what.mutable

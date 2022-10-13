@@ -19,6 +19,7 @@ type TypeSection struct {
 
 // ObjectMember is a member of an object type. 
 type ObjectMember struct {
+	locatable
 	name string
 	
 	// even if there is a private permission in another module, we still
@@ -27,6 +28,7 @@ type ObjectMember struct {
 	permission types.Permission
 
 	what Type
+	argument Argument
 }
 
 func (member ObjectMember) ToString (indent int) (output string) {
@@ -98,12 +100,13 @@ func (analyzer analysisOperation) analyzeTypeSection () (
 
 	inputSection := analyzer.currentSection.(parser.TypeSection)
 	outputSection.location = analyzer.currentSection.Location()
-	
+
 	if inputSection.Permission() == types.PermissionReadWrite {
 		err = inputSection.NewError (
 			"read-write (rw) permission not understood in this " +
 			"context, try read-only (ro)",
 			infoerr.ErrorKindError)
+		return
 	}
 
 	outputSection.permission = inputSection.Permission()
@@ -126,12 +129,10 @@ func (analyzer analysisOperation) analyzeTypeSection () (
 	// analyze members
 	isObj := outputSection.what.underlyingPrimitive() == &PrimitiveObj
 	if isObj {
-		// use the Member method on the inherited type to type check and
-		// permission check default value overrides.
-		for index := 0; index < inputSection.MembersLength(); index ++ {
-			// inputMember := inputSection.Member(index)
-			// TODO
-		}
+		err = analyzer.analyzeObjectMembers (
+			&outputSection,
+			inputSection)
+		if err != nil { return }
 		
 	} else if inputSection.MembersLength() > 0 {
 		// if there are members, and the inherited type does not have
@@ -140,8 +141,95 @@ func (analyzer analysisOperation) analyzeTypeSection () (
 			"members can only be defined on types descending " +
 			"from Obj",
 			infoerr.ErrorKindError)
+		if err != nil { return }
 	}
 
 	outputSection.complete = true
+	return
+}
+
+func (analyzer *analysisOperation) analyzeObjectMembers (
+	into *TypeSection,
+	from parser.TypeSection,
+) (
+	err error,
+) {
+	inheritedSection := into.what.actual
+	for index := 0; index < from.MembersLength(); index ++ {
+		inputMember := from.Member(index)
+
+		outputMember := ObjectMember { }
+		outputMember.location   = inputMember.Location()
+		outputMember.name       = inputMember.Name()
+		outputMember.permission = inputMember.Permission()
+		
+		inheritedMember, exists :=
+			inheritedSection.Member(inputMember.Name())
+
+		if exists {
+			// modifying default value/permissions of an
+			// inherited member
+
+			outputMember.what = inheritedMember.what
+			if !inputMember.Type().Nil() {
+				err = inputMember.NewError (
+					"cannot override type of " +
+					"inherited member",
+					infoerr.ErrorKindError)
+				return
+			}
+			
+			if outputMember.permission > inheritedMember.permission {
+				err = inputMember.NewError (
+					"cannot relax permission of " +
+					"inherited member",
+					infoerr.ErrorKindError)
+				return
+			}
+
+			// apply default value
+			if inputMember.Argument().Nil() {
+				// if it is unspecified, inherit it
+				outputMember.argument = inheritedMember.argument
+			} else {
+				outputMember.argument,
+				err = analyzer.analyzeArgument(inputMember.Argument())
+				if err != nil { return }
+
+				// type check default value
+				err = analyzer.typeCheck (
+					outputMember.argument,
+					outputMember.what)
+				if err != nil { return }
+			}
+			
+		} else {
+			// defining a new member
+			if inputMember.Type().Nil() {
+				err = inputMember.NewError (
+					"new members must be given a " +
+					"type",
+					infoerr.ErrorKindError)
+				return
+			}
+			
+			// apply default value
+			if !inputMember.Argument().Nil() {
+				outputMember.argument,
+				err = analyzer.analyzeArgument(inputMember.Argument())
+				if err != nil { return }
+
+				// type check default value
+				err = analyzer.typeCheck (
+					outputMember.argument,
+					outputMember.what)
+				if err != nil { return }
+			}
+		}
+
+		into.members = append (
+			into.members,
+			outputMember)
+	}
 	return
 }

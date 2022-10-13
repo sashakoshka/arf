@@ -4,7 +4,9 @@ import "testing"
 
 func TestTypeSection (test *testing.T) {
 	checkTree ("../tests/analyzer/typeSection", false,
-`typeSection ro ../tests/analyzer/typeSection.aBasicInt
+`typeSection ro ../tests/analyzer/typeSection/something.Thing
+	type 1 basic Int
+typeSection ro ../tests/analyzer/typeSection.aBasicInt
 	type 1 basic Int
 	arg uint 5
 typeSection ro ../tests/analyzer/typeSection.bOnBasicInt
@@ -15,5 +17,7 @@ typeSection ro ../tests/analyzer/typeSection.cBasicObject
 		type 1 basic Int
 	member ro this
 		type 1 basic Int
+typeSection ro ../tests/analyzer/typeSection.dInheritedFromOther
+	type 1 basic Thing
 `, test)
 }
