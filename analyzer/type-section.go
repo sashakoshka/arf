@@ -39,13 +39,16 @@ func (member ObjectMember) ToString (indent int) (output string) {
 		indent, "member ",
 		member.permission.ToString(), " ",
 		member.name)
-
 	if member.bitWidth > 0 {
 		output += fmt.Sprint(" width ", member.bitWidth)
 	}
-
 	output += "\n"
+	
 	output += member.what.ToString(indent + 1)
+	if member.argument != nil {
+		output += member.argument.ToString(indent + 1)
+	}
+	
 	return
 }
 
