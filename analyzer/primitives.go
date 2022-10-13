@@ -41,11 +41,13 @@ var PrimitiveU64  = createPrimitive("U64",  Type {})
 // PrimitiveObj is a blank object primitive.
 var PrimitiveObj  = createPrimitive("Obj",  Type {})
 
+// TODO: make these two be interface sections
+
 // PrimitiveFace is a blank interface primitive. It accepts any value.
-var PrimitiveFace = createPrimitive("Face", Type {})
+// var PrimitiveFace = createPrimitive("Face", Type {})
 
 // PrimitiveFunc is a blank function interface primitive. It is useless.
-var PrimitiveFunc = createPrimitive("Func", Type {})
+// var PrimitiveFunc = createPrimitive("Func", Type {})
 
 // BuiltInString is a built in string type. It is a dynamic array of UTF-32
 // codepoints.

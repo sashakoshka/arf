@@ -25,7 +25,7 @@ type Type struct {
 	locatable
 
 	// one of these must be nil.
-	actual *TypeSection
+	actual Section
 	points *Type
 
 	mutable bool
@@ -91,8 +91,6 @@ func (what Type) underlyingPrimitive () (underlying *TypeSection) {
 	case
 		&PrimitiveF32,
 		&PrimitiveF64,
-		&PrimitiveFunc,
-		&PrimitiveFace,
 		&PrimitiveObj,
 		&PrimitiveU64,
 		&PrimitiveU32,
@@ -105,7 +103,7 @@ func (what Type) underlyingPrimitive () (underlying *TypeSection) {
 		&PrimitiveUInt,
 		&PrimitiveInt:
 
-		underlying = actual
+		underlying = actual.(*TypeSection)
 		return
 	
 	case nil:
@@ -234,9 +232,6 @@ func (analyzer analysisOperation) analyzeType (
 			return
 		}
 	}
-	
-	// TODO
-	// TODO: figure out what todo ???
 	
 	return
 }

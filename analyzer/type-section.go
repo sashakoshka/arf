@@ -11,10 +11,6 @@ type TypeSection struct {
 	what     Type
 	complete bool
 	argument Argument
-	// TODO: do not add members from parent type. instead have a member
-	// function to discern whether this type contains a particular member,
-	// and have it recurse all the way up the family tree. it will be the
-	// translator's job to worry about what members are placed where.
 	members []ObjectMember
 }
 
