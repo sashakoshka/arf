@@ -160,6 +160,8 @@ func (literal StringLiteral) canBePassedAs (what Type) (allowed bool) {
 	
 	reduced, worked := what.reduce()
 	if worked {
+		// if the type was reduced to a non-basic type, only pass to
+		// singular dynamic arrays.
 		if !what.isSingular() { return }
 		if reduced.kind != TypeKindVariableArray { return }
 		what = reduced

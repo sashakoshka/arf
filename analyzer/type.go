@@ -107,11 +107,35 @@ func (what Type) underlyingPrimitive () (underlying *TypeSection) {
 		return
 	
 	case nil:
-		panic("invalid state: Type.actual is nil")
+		panic (
+			"invalid state: Type.actual is nil for " +
+			what.Describe() + " " +
+			what.locatable.location.Describe())
 
 	default:
 		// if none of the primitives matched, recurse.
-		underlying = actual.what.underlyingPrimitive()
+		switch actual.(type) {
+		case *TypeSection:
+			underlying =
+				actual.(*TypeSection).
+				what.underlyingPrimitive()
+		// TODO
+		// case *FaceSection:
+			// TODO: depending on if this is an object interface or
+			// a function interface, return either Face or Func.
+			// we can assume this because of inheritence rules.
+			
+		// // case *EnumSection:
+			// underlying =
+				// actual.(*EnumSection).
+				// what.underlyingPrimitive()
+		
+		default:
+			panic (
+				"invalid state: type " + what.Describe() +
+				"has illegal actual " +
+				what.locatable.location.Describe())
+		}
 		return
 	}
 }
@@ -137,7 +161,23 @@ func (what Type) isSingular () (singular bool) {
 	if actual == nil {
 		return
 	} else {
-		singular = actual.what.isSingular()
+		switch actual.(type) {
+		case *TypeSection:
+			singular = actual.(*TypeSection).what.isSingular()
+		// TODO: uncomment this when these sections have been
+		// implemented
+		// case *FaceSection:
+			// singular = true
+			
+		// case *EnumSection:
+			// singular = actual.(*EnumSection).what.isSingular()
+		
+		default:
+			panic (
+				"invalid state: type " + what.Describe() +
+				"has illegal actual " +
+				what.locatable.location.Describe())
+		}
 	}
 	return
 }
@@ -163,7 +203,25 @@ func (what Type) reduce () (reduced Type, reducible bool) {
 	}
 
 	// otherwise, recurse
-	reduced, reducible = what.actual.what.reduce()
+	switch what.actual.(type) {
+	case *TypeSection:
+		reduced, reducible = what.actual.(*TypeSection).what.reduce()
+		
+	// TODO: uncomment this when these sections have been
+	// implemented
+	// case *FaceSection:
+		// singular = true
+		
+	// case *EnumSection:
+		// reduced, reducible = what.actual.(*EnumSection).what.reduce()
+	
+	default:
+		panic (
+			"invalid state: type " + what.Describe() +
+			"has illegal actual " +
+			what.locatable.location.Describe())
+	}
+
 	return
 }
 
@@ -208,11 +266,16 @@ func (analyzer analysisOperation) analyzeType (
 			return
 		}
 
-		var worked bool
-		outputType.actual, worked = actual.(*TypeSection)
-		if !worked {
+		actualIsValidSectionKind := false
+		switch actual.(type) {
+		// TODO: uncomment once these sections are implemented
+		case *TypeSection /* , *EnumSection, *FaceSection */:
+			actualIsValidSectionKind = true
+		}
+
+		if !actualIsValidSectionKind {
 			err = inputType.NewError (
-				"this must refer to a type or an interface",
+				"this must refer to a type, interface, or enum",
 				infoerr.ErrorKindError)
 			return
 		}
@@ -246,10 +309,6 @@ func (what Type) Describe () (description string) {
 			description += "F32"
 		case &PrimitiveF64:
 			description += "F64"
-		case &PrimitiveFunc:
-			description += "Func"
-		case &PrimitiveFace:
-			description += "Face"
 		case &PrimitiveObj:
 			description += "Obj"
 		case &PrimitiveU64:
@@ -272,11 +331,15 @@ func (what Type) Describe () (description string) {
 			description += "UInt"
 		case &PrimitiveInt:
 			description += "Int"
+		// case &PrimitiveFunc:
+			// description += "Func"
+		// case &PrimitiveFace:
+			// description += "Face"
 		case &BuiltInString:
 			description += "String"
 		
 		case nil:
-			panic("invalid state: Type.actual is nil")
+			description += "NIL-TYPE-ACTUAL"
 
 		default:
 			description += actual.ModuleName() + "." + actual.Name()

@@ -83,15 +83,20 @@ func (section TypeSection) Member (
 		}
 		
 		if !exists {
-			actual := section.what.actual
-			if actual == nil { return }
+			if section.what.actual == nil { return }
+			
+			actual, isTypeSection := section.what.actual.(*TypeSection)
+			if !isTypeSection { return }
 			member, exists = actual.Member(name)
 		}
 		
 	case TypeKindPointer:
 		points := section.what.points
 		if points == nil { return }
-		member, exists = points.actual.Member(name)
+		
+		actual, isTypeSection := points.actual.(*TypeSection)
+		if !isTypeSection { return }
+		member, exists = actual.Member(name)
 	}
 		
 	return
@@ -164,7 +169,7 @@ func (analyzer *analysisOperation) analyzeObjectMembers (
 ) (
 	err error,
 ) {
-	inheritedSection := into.what.actual
+	inheritedSection := into.what.actual.(*TypeSection)
 	inheritsFromSameModule := analyzer.inCurrentModule(inheritedSection)
 	
 	for index := 0; index < from.MembersLength(); index ++ {
