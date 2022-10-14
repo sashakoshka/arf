@@ -39,6 +39,18 @@ func (literal IntLiteral) What () (what Type) {
 	return
 }
 
+// Equals returns whether the literal is equal to the specified value.
+func (literal IntLiteral) Equals (value any) (equal bool) {
+	equal = literal.value == value
+	return
+}
+
+// Value returns the literal's value
+func (literal IntLiteral) Value () (value any) {
+	value = literal.value
+	return
+}
+
 // canBePassedAs returns true if this literal can be implicitly cast to the
 // specified type, and false if it can't.
 func (literal IntLiteral) canBePassedAs (what Type) (allowed bool) {
@@ -63,6 +75,18 @@ func (literal UIntLiteral) What () (what Type) {
 	return
 }
 
+// Equals returns whether the literal is equal to the specified value.
+func (literal UIntLiteral) Equals (value any) (equal bool) {
+	equal = literal.value == value
+	return
+}
+
+// Value returns the literal's value
+func (literal UIntLiteral) Value () (value any) {
+	value = literal.value
+	return
+}
+
 // canBePassedAs returns true if this literal can be implicitly cast to the
 // specified type, and false if it can't.
 func (literal UIntLiteral) canBePassedAs (what Type) (allowed bool) {
@@ -83,6 +107,18 @@ func (literal FloatLiteral) What () (what Type) {
 // ToString outputs the data in the argument as a string.
 func (literal FloatLiteral) ToString (indent int) (output string) {
 	output += doIndent(indent, fmt.Sprint("arg float ", literal.value, "\n"))
+	return
+}
+
+// Equals returns whether the literal is equal to the specified value.
+func (literal FloatLiteral) Equals (value any) (equal bool) {
+	equal = literal.value == value
+	return
+}
+
+// Value returns the literal's value
+func (literal FloatLiteral) Value () (value any) {
+	value = literal.value
 	return
 }
 
@@ -114,6 +150,18 @@ func (literal StringLiteral) What () (what Type) {
 // ToString outputs the data in the argument as a string.
 func (literal StringLiteral) ToString (indent int) (output string) {
 	output += doIndent(indent, fmt.Sprint("arg string '", literal.value, "'\n"))
+	return
+}
+
+// Equals returns whether the literal is equal to the specified value.
+func (literal StringLiteral) Equals (value any) (equal bool) {
+	equal = literal.value == value
+	return
+}
+
+// Value returns the literal's value
+func (literal StringLiteral) Value () (value any) {
+	value = literal.value
 	return
 }
 

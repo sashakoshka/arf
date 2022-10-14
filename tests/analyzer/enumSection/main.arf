@@ -1,4 +1,5 @@
 :arf
+require '../typeSection'
 ---
 
 enum ro aWeekday:Int
@@ -12,9 +13,7 @@ enum ro aWeekday:Int
 
 type ro bColor:U32
 
-enum ro cNamedColor:bColor
-	- red   0xFF0000
-	- green 0x00FF00
-	- blue  0x0000FF
-
-type ro X:cNamedColor
+# enum ro cNamedColor:bColor
+	# - red   0xFF0000
+	# - green 0x00FF00
+	# - blue  0x0000FF

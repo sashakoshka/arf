@@ -20,6 +20,8 @@ type Argument interface {
 	Location () (location file.Location)
 	NewError (message string, kind infoerr.ErrorKind) (err error)
 	ToString (indent int) (output string)
+	Equals   (value any) (equal bool)
+	Value    () (value any)
 	canBePassedAs (what Type) (allowed bool)
 }
 

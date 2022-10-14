@@ -69,6 +69,10 @@ func (analyzer analysisOperation) analyzeEnumSection () (
 	outputSection.what, err = analyzer.analyzeType(inputSection.Type())
 	if err != nil { return }
 
+	isNumeric :=
+		outputSection.what.isNumeric() &&
+		outputSection.what.isSingular()
+
 	// enum sections are only allowed to inherit from type sections
 	_, inheritsFromTypeSection := outputSection.what.actual.(*TypeSection)
 	if !inheritsFromTypeSection {
@@ -96,6 +100,33 @@ func (analyzer analysisOperation) analyzeEnumSection () (
 				outputMember.argument,
 				outputSection.what)
 			if err != nil { return }
+		} else if !isNumeric {
+			// non-numeric enums must have filled in values
+			err = inputMember.NewError (
+				"member value must be specified manually for " +
+				"non-numeric enums",
+				infoerr.ErrorKindError)
+			return
+		}
+
+		for _, compareMember := range outputSection.members {
+			if compareMember.name == outputMember.name {
+				err = inputMember.NewError (
+					"enum member names must be unique",
+					infoerr.ErrorKindError)
+				return
+			}
+
+			if outputMember.argument == nil { continue }
+
+			if compareMember.argument.Equals (
+				outputMember.argument.Value(),
+			) {
+				err = inputMember.NewError (
+					"enum member values must be unique",
+					infoerr.ErrorKindError)
+				return
+			}
 		}
 
 		outputSection.members = append (

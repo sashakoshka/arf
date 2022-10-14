@@ -47,3 +47,7 @@ func (location Location) Describe () (description string) {
 		" column ", location.column + 1,
 		" width ", location.width)
 }
+
+// TODO: add extend method that extends that takes in another location, and
+// returns a new location that spans the two. then, use it in the parser to
+// properly locate an entire tree node.
