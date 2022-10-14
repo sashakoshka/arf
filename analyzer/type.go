@@ -119,6 +119,7 @@ func (what Type) underlyingPrimitive () (underlying *TypeSection) {
 			underlying =
 				actual.(*TypeSection).
 				what.underlyingPrimitive()
+		
 		// case *FaceSection:
 			// TODO: depending on if this is an object interface or
 			// a function interface, return either Face or Func.
@@ -137,6 +138,50 @@ func (what Type) underlyingPrimitive () (underlying *TypeSection) {
 		}
 		return
 	}
+}
+
+// isNumeric returns whether or not the type descends from a numeric primitive.
+func (what Type) isNumeric () (numeric bool) {
+	primitive := what.underlyingPrimitive()
+	switch primitive {
+	case
+		&PrimitiveF64,
+		&PrimitiveF32,
+		&PrimitiveI64,
+		&PrimitiveI32,
+		&PrimitiveI16,
+		&PrimitiveI8,
+		&PrimitiveInt,
+		&PrimitiveU64,
+		&PrimitiveU32,
+		&PrimitiveU16,
+		&PrimitiveU8,
+		&PrimitiveUInt:
+
+		numeric = true
+	}
+
+	return
+}
+
+// isSignedNumeric returns whether or not the type descends from a signed
+// numeric primitive.
+func (what Type) isSignedNumeric () (signedNumeric bool) {
+	primitive := what.underlyingPrimitive()
+	switch primitive {
+	case
+		&PrimitiveF64,
+		&PrimitiveF32,
+		&PrimitiveI64,
+		&PrimitiveI32,
+		&PrimitiveI16,
+		&PrimitiveI8,
+		&PrimitiveInt:
+
+		signedNumeric = true
+	}
+
+	return
 }
 
 // isSingular returns whether or not the type is a singular value. this goes
@@ -163,6 +208,7 @@ func (what Type) isSingular () (singular bool) {
 		switch actual.(type) {
 		case *TypeSection:
 			singular = actual.(*TypeSection).what.isSingular()
+		
 		// TODO: uncomment this when this section has been implemented
 		// case *FaceSection:
 			// singular = true

@@ -42,23 +42,11 @@ func (literal IntLiteral) What () (what Type) {
 // canBePassedAs returns true if this literal can be implicitly cast to the
 // specified type, and false if it can't.
 func (literal IntLiteral) canBePassedAs (what Type) (allowed bool) {
-	// must be a singlular value
-	if !what.isSingular() { return }
-	
-	// can be passed to types that are signed numbers at a primitive level.
-	primitive := what.underlyingPrimitive()
-	switch primitive {
-	case
-		&PrimitiveF64,
-		&PrimitiveF32,
-		&PrimitiveI64,
-		&PrimitiveI32,
-		&PrimitiveI16,
-		&PrimitiveI8,
-		&PrimitiveInt:
-
-		allowed = true
-	}
+	// can be passed to singular types that are signed numbers at a
+	// primitive level.
+	allowed =
+		what.isSingular() &&
+		what.isSignedNumeric()
 	return
 }
 
@@ -78,28 +66,10 @@ func (literal UIntLiteral) What () (what Type) {
 // canBePassedAs returns true if this literal can be implicitly cast to the
 // specified type, and false if it can't.
 func (literal UIntLiteral) canBePassedAs (what Type) (allowed bool) {
-	// must be a singlular value
-	if !what.isSingular() { return }
-	
-	// can be passed to types that are numbers at a primitive level.
-	primitive := what.underlyingPrimitive()
-	switch primitive {
-	case
-		&PrimitiveF64,
-		&PrimitiveF32,
-		&PrimitiveI64,
-		&PrimitiveI32,
-		&PrimitiveI16,
-		&PrimitiveI8,
-		&PrimitiveInt,
-		&PrimitiveU64,
-		&PrimitiveU32,
-		&PrimitiveU16,
-		&PrimitiveU8,
-		&PrimitiveUInt:
-
-		allowed = true
-	}
+	// can be passed to singular types that are numbers at a primitive level.
+	allowed =
+		what.isSingular() &&
+		what.isNumeric()
 	return
 }
 
@@ -167,23 +137,6 @@ func (literal StringLiteral) canBePassedAs (what Type) (allowed bool) {
 		what = reduced
 	}
 
-	primitive := what.underlyingPrimitive()
-	switch primitive {
-	case
-		&PrimitiveF64,
-		&PrimitiveF32,
-		&PrimitiveI64,
-		&PrimitiveI32,
-		&PrimitiveI16,
-		&PrimitiveI8,
-		&PrimitiveInt,
-		&PrimitiveU64,
-		&PrimitiveU32,
-		&PrimitiveU16,
-		&PrimitiveU8,
-		&PrimitiveUInt:
-
-		allowed = true
-	}
+	allowed = what.isNumeric()
 	return
 }
