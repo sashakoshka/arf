@@ -22,6 +22,7 @@ type Argument interface {
 	ToString (indent int) (output string)
 	Equals   (value any) (equal bool)
 	Value    () (value any)
+	Resolve  () (constant Argument, err error)
 	canBePassedAs (what Type) (allowed bool)
 }
 

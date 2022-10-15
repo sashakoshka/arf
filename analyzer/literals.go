@@ -51,6 +51,13 @@ func (literal IntLiteral) Value () (value any) {
 	return
 }
 
+// Resolve resolves the argument to a constant literal, which in this case is
+// trivial because the literal is already constant.
+func (literal IntLiteral) Resolve () (constant Argument, err error) {
+	constant = literal
+	return
+}
+
 // canBePassedAs returns true if this literal can be implicitly cast to the
 // specified type, and false if it can't.
 func (literal IntLiteral) canBePassedAs (what Type) (allowed bool) {
@@ -97,6 +104,13 @@ func (literal UIntLiteral) canBePassedAs (what Type) (allowed bool) {
 	return
 }
 
+// Resolve resolves the argument to a constant literal, which in this case is
+// trivial because the literal is already constant.
+func (literal UIntLiteral) Resolve () (constant Argument, err error) {
+	constant = literal
+	return
+}
+
 // What returns the type of the argument
 func (literal FloatLiteral) What () (what Type) {
 	what.actual = &PrimitiveF64
@@ -119,6 +133,13 @@ func (literal FloatLiteral) Equals (value any) (equal bool) {
 // Value returns the literal's value
 func (literal FloatLiteral) Value () (value any) {
 	value = literal.value
+	return
+}
+
+// Resolve resolves the argument to a constant literal, which in this case is
+// trivial because the literal is already constant.
+func (literal FloatLiteral) Resolve () (constant Argument, err error) {
+	constant = literal
 	return
 }
 
@@ -162,6 +183,13 @@ func (literal StringLiteral) Equals (value any) (equal bool) {
 // Value returns the literal's value
 func (literal StringLiteral) Value () (value any) {
 	value = literal.value
+	return
+}
+
+// Resolve resolves the argument to a constant literal, which in this case is
+// trivial because the literal is already constant.
+func (literal StringLiteral) Resolve () (constant Argument, err error) {
+	constant = literal
 	return
 }
 

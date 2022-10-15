@@ -5,7 +5,7 @@ require '../typeSection'
 enum ro aWeekday:Int
 	- sunday
 	- monday
-	- tuesday
+	- tuesday 3
 	- wednesday
 	- thursday
 	- friday
@@ -13,7 +13,7 @@ enum ro aWeekday:Int
 
 type ro bColor:U32
 
-# enum ro cNamedColor:bColor
-	# - red   0xFF0000
-	# - green 0x00FF00
-	# - blue  0x0000FF
+enum ro cNamedColor:bColor
+	- red   0xFF0000
+	- green 0x00FF00
+	- blue  0x0000FF

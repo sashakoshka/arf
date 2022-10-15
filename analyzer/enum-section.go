@@ -69,6 +69,9 @@ func (analyzer analysisOperation) analyzeEnumSection () (
 	outputSection.what, err = analyzer.analyzeType(inputSection.Type())
 	if err != nil { return }
 
+	// if the inherited type is a single number, we take note of that here
+	// because it will allow us to do things like automatically fill in
+	// member values if they are not specified.
 	isNumeric :=
 		outputSection.what.isNumeric() &&
 		outputSection.what.isSingular()
@@ -94,8 +97,14 @@ func (analyzer analysisOperation) analyzeEnumSection () (
 			outputMember.argument,
 			err = analyzer.analyzeArgument(inputMember.Argument())
 			if err != nil { return }
+
+			// attempt to resolve the argument to a single constant
+			// literal
+			outputMember.argument, err =
+				outputMember.argument.Resolve()
+			if err != nil { return }
 	
-			// type check default value
+			// type check value
 			err = analyzer.typeCheck (
 				outputMember.argument,
 				outputSection.what)
@@ -117,7 +126,8 @@ func (analyzer analysisOperation) analyzeEnumSection () (
 				return
 			}
 
-			if outputMember.argument == nil { continue }
+			if outputMember.argument  == nil { continue }
+			if compareMember.argument == nil { continue }
 
 			if compareMember.argument.Equals (
 				outputMember.argument.Value(),
@@ -134,8 +144,55 @@ func (analyzer analysisOperation) analyzeEnumSection () (
 			outputMember)
 	}
 
-	// TODO: fill in members that do not have values with incrementing
-	// values. take care to not duplicate them.
+	// fill in members that do not have values
+	if isNumeric {
+		for index, fillInMember := range outputSection.members {
+			if fillInMember.argument != nil { continue }
+
+			max := uint64(0)
+			for _, compareMember := range outputSection.members {
+			
+				compareValue := compareMember.argument
+				switch compareValue.(type) {
+				case IntLiteral:
+					number := uint64 (
+						compareValue.(IntLiteral).value)
+					if number > max {
+						max = number
+					}
+				case UIntLiteral:
+					number := uint64 (
+						compareValue.(UIntLiteral).value)
+					if number > max {
+						max = number
+					}
+				case FloatLiteral:
+					number := uint64 (
+						compareValue.(FloatLiteral).value)
+					if number > max {
+						max = number
+					}
+				case nil:
+					// do nothing
+				default:
+					panic (
+						"invalid state: illegal " +
+						"argument type while " +
+						"attempting to fill in enum " +
+						"member value for " +
+						fillInMember.name + " in " +
+						outputSection.location.Describe())
+				}
+			}
+			
+			// fill in
+			fillInMember.argument = UIntLiteral {
+				locatable: fillInMember.locatable,
+				value: max + 1,
+			}
+			outputSection.members[index] = fillInMember
+		}
+	}
 
 	outputSection.complete = true
 	return
