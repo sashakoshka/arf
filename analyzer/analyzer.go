@@ -127,6 +127,8 @@ func (analyzer *analysisOperation) fetchSection (
 		if err != nil { return}
 	case parser.FaceSection:
 	case parser.DataSection:
+		section, err = analyzer.analyzeDataSection()
+		if err != nil { return}
 	case parser.FuncSection:
 	}
 	

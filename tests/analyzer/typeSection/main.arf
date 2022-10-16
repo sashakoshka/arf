@@ -18,3 +18,5 @@ type ro eInheritObject:cBasicObject
 type ro fInheritObjectFromOther:required.bBird
 	ro wing 2
 	ro beak:Int 238
+
+# TODO: test a type that has a member pointing to itself

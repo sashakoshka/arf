@@ -1,0 +1,10 @@
+:arf
+---
+
+data ro aBasicInt:Int 5
+
+data ro bRune:Int 'A'
+
+data ro cString:String 'A very large bird'
+
+data ro dCharBuffer:U8:32 'A very large bird\000'
