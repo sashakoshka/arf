@@ -5,7 +5,7 @@ require '../typeSection'
 enum ro aWeekday:Int
 	- sunday
 	- monday
-	- tuesday 3
+	- tuesday
 	- wednesday
 	- thursday
 	- friday
@@ -17,3 +17,7 @@ enum ro cNamedColor:bColor
 	- red   0xFF0000
 	- green 0x00FF00
 	- blue  0x0000FF
+
+enum ro dFromFarAway:typeSection.dInheritFromOther
+	- bird
+	- bread 4

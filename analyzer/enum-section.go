@@ -8,7 +8,8 @@ import "git.tebibyte.media/arf/arf/infoerr"
 type EnumSection struct {
 	sectionBase
 	what     Type
-	members []EnumMember
+	members  []EnumMember
+	argument Argument
 }
 
 // EnumMember is a member of an enumerated type. 
@@ -34,6 +35,7 @@ func (section EnumSection) ToString (indent int) (output string) {
 	output += section.permission.ToString() + " "
 	output += section.where.ToString()
 	output += "\n"
+	output += section.argument.ToString(indent + 1)
 	output += section.what.ToString(indent + 1)
 	for _, member := range section.members {
 		output += member.ToString(indent + 1)
@@ -193,6 +195,15 @@ func (analyzer analysisOperation) analyzeEnumSection () (
 			outputSection.members[index] = fillInMember
 		}
 	}
+
+	if len(outputSection.members) < 1 {
+		err = outputSection.NewError (
+			"cannot create an enum with no members",
+			infoerr.ErrorKindError)
+		return
+	}
+
+	outputSection.argument = outputSection.members[0].argument
 
 	outputSection.complete = true
 	return
