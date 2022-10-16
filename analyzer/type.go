@@ -391,7 +391,7 @@ func (what Type) Describe () (description string) {
 		description += "}"
 	}
 
-	if what.length > 0 {
+	if what.length != 1 {
 		description += fmt.Sprint(":", what.length)
 	}
 

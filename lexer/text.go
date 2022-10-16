@@ -5,11 +5,12 @@ import "git.tebibyte.media/arf/arf/infoerr"
 
 // tokenizeString tokenizes a string or rune literal.
 func (lexer *lexingOperation) tokenizeString () (err error) {
+	token := lexer.newToken()
+	
 	err = lexer.nextRune()
 	if err != nil { return }
 
-	token := lexer.newToken()
-	got   := ""
+	got := ""
 	tokenWidth := 2
 
 	for {
