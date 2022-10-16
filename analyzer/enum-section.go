@@ -35,7 +35,9 @@ func (section EnumSection) ToString (indent int) (output string) {
 	output += section.permission.ToString() + " "
 	output += section.where.ToString()
 	output += "\n"
-	output += section.argument.ToString(indent + 1)
+	if section.argument != nil {
+		output += section.argument.ToString(indent + 1)
+	}
 	output += section.what.ToString(indent + 1)
 	for _, member := range section.members {
 		output += member.ToString(indent + 1)

@@ -21,3 +21,4 @@ enum ro cNamedColor:bColor
 enum ro dFromFarAway:typeSection.dInheritFromOther
 	- bird
 	- bread 4
+
