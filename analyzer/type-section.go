@@ -285,6 +285,16 @@ func (analyzer *analysisOperation) analyzeObjectMembers (
 			}
 		}
 
+		// ensure all member names are unique
+		for _, compareMember := range into.members {
+			if compareMember.name == outputMember.name {
+				err = inputMember.NewError (
+					"object member names must be unique",
+					infoerr.ErrorKindError)
+				return
+			}
+		}
+
 		into.members = append (
 			into.members,
 			outputMember)
