@@ -1,7 +1,6 @@
 package analyzer
 
 import "fmt"
-import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/parser"
 import "git.tebibyte.media/arf/arf/infoerr"
 
@@ -292,45 +291,19 @@ func (analyzer analysisOperation) analyzeType (
 		outputType.points = &points
 	} else {
 		// analyze the type section this type uses
-		var bitten parser.Identifier
-		var external bool
-		var actual Section
+		var node any
 		
-		actual,
-		external,
-		bitten,
-		err = analyzer.fetchSectionFromIdentifier(inputType.Name())
+		node, err = analyzer.fetchNodeFromIdentifier(inputType.Name())
 		if err != nil { return }
 
-		if actual == nil {
-			err = inputType.NewError (
-				"this type does not exist",
-				infoerr.ErrorKindError)
-			return
-		}
-
-		switch actual.(type) {
+		switch node.(type) {
 		// TODO: uncomment once these sections are implemented
 		case *TypeSection, *EnumSection /* , *FaceSection */:
-			outputType.actual = actual
+			outputType.actual = node.(Section)
+			
 		default:
-			err = inputType.NewError (
+			err = inputType.Name().NewError (
 				"this must refer to a type, interface, or enum",
-				infoerr.ErrorKindError)
-			return
-		}
-
-		if external && actual.Permission() == types.PermissionPrivate {
-			err = bitten.NewError(
-				"this type is private, and cannot be used " +
-				"outside of its module",
-				infoerr.ErrorKindError)
-			return
-		}
-		
-		if bitten.Length() > 0 {
-			err = bitten.NewError(
-				"cannot use member selection in this context",
 				infoerr.ErrorKindError)
 			return
 		}

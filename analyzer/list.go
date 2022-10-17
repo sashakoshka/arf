@@ -12,11 +12,11 @@ type List struct {
 func (list List) ToString (indent int) (output string) {
 	// TODO
 	panic("TODO")
-	return
+	// return
 } 
 
 func (list List) canBePassedAs (what Type) (allowed bool) {
 	// TODO
 	panic("TODO")
-	return
+	// return
 }

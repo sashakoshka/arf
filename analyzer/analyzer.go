@@ -14,6 +14,7 @@ package analyzer
 import "os"
 import "fmt"
 import "path/filepath"
+import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/parser"
 import "git.tebibyte.media/arf/arf/infoerr"
 
@@ -135,23 +136,42 @@ func (analyzer *analysisOperation) fetchSection (
 	return
 }
 
-// fetchSectionFromIdentifier is like fetchSection, but takes in an identifier
-// referring to a section and returns the section. This works within the context
-// of whatever module is currently being analyzed. The identifier in question
-// may have more items than 1 or 2, but those will be ignored. This method
-// "consumes" items from the identifier, it will return an identifier without
-// those items. If the section comes from a different module (and permissions
-// should therefore be respected), external will be set to true.
-func (analyzer *analysisOperation) fetchSectionFromIdentifier (
+// TODO: make this method a generalized "get this from an identifier in context
+// of the current scope" method. have it return various things like sections,
+// variables, functions, members, methods, etc. have it return an any.
+// if no node could be found, return an error saying entity not found. if a node
+// is found, but other identifier items describe members of that node that do
+// not exist, return an error saying nonexistent member. if the node is private,
+// also return an error.
+//
+// when new things are defined, they should not be allowed to shadow anything
+// else in above scopes. nevertheless, the method should search in this order:
+// 
+// 1. search scopes starting with closest -> farthest
+// 2. if first part of identifier is a require, get section from other module
+// 3. search for section in current module
+//
+// look into making a unified structure for data sections and variables, and
+// having data section variables be part of a "root" scope at the base of every
+// module.
+
+// fetchNodeFromIdentifier is like fetchSection, but takes in an identifier
+// referring to any node accessible within the current scope and returns it.
+// This method works within the current scope and current module. This method
+// consumes the entire identifier, and will produce an error if there are
+// identifier items left unconsumed.
+func (analyzer *analysisOperation) fetchNodeFromIdentifier (
 	which parser.Identifier,
 ) (
-	section  Section,
-	external bool,
-	bitten   parser.Identifier,
-	err      error,
+	node any,
+	err  error,
 ) {
 	item, bitten := which.Bite()
 
+	// TODO: search scopes for variables
+
+	// the identifier must be referring to a section
+	var external bool
 	path, exists := analyzer.currentTree.ResolveRequire(item)
 	if exists {
 		// we have our module path, so get the section name
@@ -163,18 +183,38 @@ func (analyzer *analysisOperation) fetchSectionFromIdentifier (
 		path = analyzer.currentPosition.modulePath
 	}
 
+	// attempt to get section
+	var section Section
 	section, err = analyzer.fetchSection (locator {
 		name:       item,
 		modulePath: path,
 	})
+	node = section
 	if err != nil { return }
 
-	if section == nil {
+	// return error if nothing mentioned in the identifier is accessible
+	if node == nil {
 		err = which.NewError (
-			"section \"" + item + "\" does not exist",
+			"can't find anything called \"" + item + "\" within " +
+			"current scope",
 			infoerr.ErrorKindError,
 		)
 		return
+	}
+
+	// return error if the section is private
+	if external && section.Permission() == types.PermissionPrivate {
+		err = which.NewError(
+			"this section is private, and cannot be used " +
+			"outside of its module",
+			infoerr.ErrorKindError)
+		return
+	}
+
+	// see if we can do member selection on the section
+	// TODO: at this point, we are gonna return an argument.
+	if bitten.Length > 0 {
+		switch 
 	}
 	
 	return
