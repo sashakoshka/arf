@@ -203,7 +203,7 @@ func (literal StringLiteral) canBePassedAs (what Type) (allowed bool) {
 	// we don't check the length of what, becasue when setting a static
 	// array to a string literal, excess data will be cut off (and if it is
 	// shorter, the excess space will be filled with zeros).
-	
+
 	reduced, worked := what.reduce()
 	if worked {
 		// if the type was reduced to a non-basic type, only pass to
@@ -211,8 +211,10 @@ func (literal StringLiteral) canBePassedAs (what Type) (allowed bool) {
 		if !what.isSingular() { return }
 		if reduced.kind != TypeKindVariableArray { return }
 		what = reduced
+		allowed = what.points.isNumeric()
+	} else {
+		allowed = what.isNumeric()
 	}
 
-	allowed = what.isNumeric()
 	return
 }

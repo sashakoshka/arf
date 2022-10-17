@@ -13,7 +13,7 @@ type DataSection struct {
 
 // ToString returns all data stored within the data section, in string form.
 func (section DataSection) ToString (indent int) (output string) {
-	output += doIndent(indent, "typeSection ")
+	output += doIndent(indent, "dataSection ")
 	output += section.permission.ToString() + " "
 	output += section.where.ToString()
 	output += "\n"
