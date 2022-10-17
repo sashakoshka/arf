@@ -292,9 +292,19 @@ func (analyzer analysisOperation) analyzeType (
 	} else {
 		// analyze the type section this type uses
 		var node any
+		var bitten parser.Identifier
 		
-		node, err = analyzer.fetchNodeFromIdentifier(inputType.Name())
+		node,
+		bitten,
+		err = analyzer.fetchNodeFromIdentifier(inputType.Name())
 		if err != nil { return }
+
+		if bitten.Length() > 0 {
+			err = bitten.NewError(
+				"cannot use member selection in this context",
+				infoerr.ErrorKindError)
+			return
+		}		
 
 		switch node.(type) {
 		// TODO: uncomment once these sections are implemented

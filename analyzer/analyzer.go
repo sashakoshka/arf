@@ -136,13 +136,51 @@ func (analyzer *analysisOperation) fetchSection (
 	return
 }
 
+// resolvePrimitive checks to see if the locator is in the current module, and
+// refers to a primitive. If it does, it returns a pointer to that primitive
+// and true for exists. If it doesn't, it returns nil and false. this method is
+// only to be used by analysisOperation.fetchSection.
+func (analyzer *analysisOperation) resolvePrimitive (
+	where locator,
+) (
+	section Section,
+	exists bool,
+) {
+	// primitives are scoped as if they are contained within the current
+	// module, so if the location refers to something outside of the current
+	// module, it is definetly not referring to a primitive.
+	if where.modulePath != analyzer.currentPosition.modulePath {
+		return
+	}
+
+	exists = true
+	switch where.name {
+	case "Int":    section = &PrimitiveInt
+	case "UInt":   section = &PrimitiveUInt
+	case "I8":     section = &PrimitiveI8
+	case "I16":    section = &PrimitiveI16
+	case "I32":    section = &PrimitiveI32
+	case "I64":    section = &PrimitiveI64
+	case "U8":     section = &PrimitiveU8
+	case "U16":    section = &PrimitiveU16
+	case "U32":    section = &PrimitiveU32
+	case "U64":    section = &PrimitiveU64
+	case "Obj":    section = &PrimitiveObj
+	// case "Face":   section = &PrimitiveFace
+	// case "Func":   section = &PrimitiveFunc
+	case "String": section = &BuiltInString
+	default:
+		exists = false
+	}
+
+	return
+}
+
 // TODO: make this method a generalized "get this from an identifier in context
 // of the current scope" method. have it return various things like sections,
 // variables, functions, members, methods, etc. have it return an any.
-// if no node could be found, return an error saying entity not found. if a node
-// is found, but other identifier items describe members of that node that do
-// not exist, return an error saying nonexistent member. if the node is private,
-// also return an error.
+// if no node could be found, return an error saying entity not found. if the
+// node is private, return an error.
 //
 // when new things are defined, they should not be allowed to shadow anything
 // else in above scopes. nevertheless, the method should search in this order:
@@ -150,23 +188,21 @@ func (analyzer *analysisOperation) fetchSection (
 // 1. search scopes starting with closest -> farthest
 // 2. if first part of identifier is a require, get section from other module
 // 3. search for section in current module
-//
-// look into making a unified structure for data sections and variables, and
-// having data section variables be part of a "root" scope at the base of every
-// module.
 
 // fetchNodeFromIdentifier is like fetchSection, but takes in an identifier
 // referring to any node accessible within the current scope and returns it.
 // This method works within the current scope and current module. This method
-// consumes the entire identifier, and will produce an error if there are
-// identifier items left unconsumed.
+// consumes items from the input identifier, and outputs the items which it did
+// not consume.
 func (analyzer *analysisOperation) fetchNodeFromIdentifier (
 	which parser.Identifier,
 ) (
 	node any,
-	err  error,
+	bitten parser.Identifier,
+	err error,
 ) {
-	item, bitten := which.Bite()
+	var item string
+	item, bitten = which.Bite()
 
 	// TODO: search scopes for variables
 
@@ -210,52 +246,7 @@ func (analyzer *analysisOperation) fetchNodeFromIdentifier (
 			infoerr.ErrorKindError)
 		return
 	}
-
-	// see if we can do member selection on the section
-	// TODO: at this point, we are gonna return an argument.
-	if bitten.Length > 0 {
-		switch 
-	}
 	
-	return
-}
-
-// resolvePrimitive checks to see if the locator is in the current module, and
-// refers to a primitive. If it does, it returns a pointer to that primitive
-// and true for exists. If it doesn't, it returns nil and false.
-func (analyzer *analysisOperation) resolvePrimitive (
-	where locator,
-) (
-	section Section,
-	exists bool,
-) {
-	// primitives are scoped as if they are contained within the current
-	// module, so if the location refers to something outside of the current
-	// module, it is definetly not referring to a primitive.
-	if where.modulePath != analyzer.currentPosition.modulePath {
-		return
-	}
-
-	exists = true
-	switch where.name {
-	case "Int":    section = &PrimitiveInt
-	case "UInt":   section = &PrimitiveUInt
-	case "I8":     section = &PrimitiveI8
-	case "I16":    section = &PrimitiveI16
-	case "I32":    section = &PrimitiveI32
-	case "I64":    section = &PrimitiveI64
-	case "U8":     section = &PrimitiveU8
-	case "U16":    section = &PrimitiveU16
-	case "U32":    section = &PrimitiveU32
-	case "U64":    section = &PrimitiveU64
-	case "Obj":    section = &PrimitiveObj
-	// case "Face":   section = &PrimitiveFace
-	// case "Func":   section = &PrimitiveFunc
-	case "String": section = &BuiltInString
-	default:
-		exists = false
-	}
-
 	return
 }
 
