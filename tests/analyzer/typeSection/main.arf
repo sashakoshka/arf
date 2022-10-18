@@ -19,4 +19,8 @@ type ro fInheritObjectFromOther:required.bBird
 	ro wing 2
 	ro beak:Int 238
 
+type ro gPointer:{Int}
+
+type ro hDynamicArray:{Int ..}
+
 # TODO: test a type that has a member pointing to itself

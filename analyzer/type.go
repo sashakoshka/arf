@@ -53,7 +53,7 @@ func (what Type) ToString (indent int) (output string) {
 	case TypeKindPointer:
 		output += " pointer"
 	case TypeKindVariableArray:
-		output += " variableArray"
+		output += " dynamicArray"
 	}
 
 	if what.points != nil {
