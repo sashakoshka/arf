@@ -284,11 +284,21 @@ func (analyzer analysisOperation) analyzeType (
 		return
 	}
 
+	switch inputType.Kind() {
+	case parser.TypeKindBasic:
+		outputType.kind = TypeKindBasic
+	case parser.TypeKindPointer:
+		outputType.kind = TypeKindPointer
+	case parser.TypeKindVariableArray:
+		outputType.kind = TypeKindVariableArray
+	}
+	
 	if inputType.Kind() != parser.TypeKindBasic {
 		// analyze type this type points to, if it exists
 		var points Type
 		points, err = analyzer.analyzeType(inputType.Points())
 		outputType.points = &points
+
 	} else {
 		// analyze the type section this type uses
 		var node any

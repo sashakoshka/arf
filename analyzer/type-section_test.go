@@ -38,8 +38,12 @@ typeSection ro ../tests/analyzer/typeSection.fInheritObjectFromOther
 		type 1 basic Int
 		arg uint 238
 typeSection ro ../tests/analyzer/typeSection.gPointer
-	type 1 pointer {Int}
+	type 1 pointer {
+		type 1 basic Int
+	}
 typeSection ro ../tests/analyzer/typeSection.hDynamicArray
-	type 1 dynamicArray {Int}
+	type 1 dynamicArray {
+		type 1 basic Int
+	}
 `, test)
 }
