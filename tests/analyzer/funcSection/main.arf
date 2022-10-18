@@ -1,0 +1,8 @@
+:arf
+---
+
+type ro aCString:{U8}
+
+func ro bArbitrary
+	---
+	'puts' [cast 'hellorld\000' aCString]
