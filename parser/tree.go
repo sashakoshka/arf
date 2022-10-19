@@ -236,6 +236,7 @@ const (
 	PhraseKindOperator
 	PhraseKindAssign
 	PhraseKindReference
+	PhraseKindCast
 	PhraseKindDefer
 	PhraseKindIf
 	PhraseKindElseIf
