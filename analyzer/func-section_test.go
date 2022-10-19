@@ -6,7 +6,9 @@ func TestFuncSection (test *testing.T) {
 	checkTree ("../tests/analyzer/funcSection", false,
 `
 typeSection ro ../tests/analyzer/funcSection.aCString
-	type 1 pointer {Int}
+	type 1 pointer {
+		type 1 basic U8
+	}
 funcSection ro ../tests/analyzer/funcSection.bArbitrary
 	block
 		arbitraryPhrase

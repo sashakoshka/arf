@@ -10,10 +10,10 @@ typeSection ro ../tests/analyzer/typeSection/required.bBird
 	type 1 basic Obj
 	member rw wing
 		type 1 basic Int
-		arg uint 2
+		uintLiteral 2
 typeSection ro ../tests/analyzer/typeSection.aBasicInt
 	type 1 basic Int
-	arg uint 5
+	uintLiteral 5
 typeSection ro ../tests/analyzer/typeSection.bOnBasicInt
 	type 1 basic aBasicInt
 typeSection ro ../tests/analyzer/typeSection.cBasicObject
@@ -28,15 +28,15 @@ typeSection ro ../tests/analyzer/typeSection.eInheritObject
 	type 1 basic cBasicObject
 	member ro that
 		type 1 basic UInt
-		arg uint 5
+		uintLiteral 5
 typeSection ro ../tests/analyzer/typeSection.fInheritObjectFromOther
 	type 1 basic bBird
 	member ro wing
 		type 1 basic Int
-		arg uint 2
+		uintLiteral 2
 	member ro beak
 		type 1 basic Int
-		arg uint 238
+		uintLiteral 238
 typeSection ro ../tests/analyzer/typeSection.gPointer
 	type 1 pointer {
 		type 1 basic Int

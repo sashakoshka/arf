@@ -28,7 +28,7 @@ type StringLiteral struct {
 
 // ToString outputs the data in the argument as a string.
 func (literal IntLiteral) ToString (indent int) (output string) {
-	output += doIndent(indent, fmt.Sprint("arg int ", literal.value, "\n"))
+	output += doIndent(indent, fmt.Sprint("intLiteral ", literal.value, "\n"))
 	return
 }
 
@@ -71,7 +71,7 @@ func (literal IntLiteral) canBePassedAs (what Type) (allowed bool) {
 
 // ToString outputs the data in the argument as a string.
 func (literal UIntLiteral) ToString (indent int) (output string) {
-	output += doIndent(indent, fmt.Sprint("arg uint ", literal.value, "\n"))
+	output += doIndent(indent, fmt.Sprint("uintLiteral ", literal.value, "\n"))
 	return
 }
 
@@ -120,7 +120,7 @@ func (literal FloatLiteral) What () (what Type) {
 
 // ToString outputs the data in the argument as a string.
 func (literal FloatLiteral) ToString (indent int) (output string) {
-	output += doIndent(indent, fmt.Sprint("arg float ", literal.value, "\n"))
+	output += doIndent(indent, fmt.Sprint("floatLiteral ", literal.value, "\n"))
 	return
 }
 
@@ -170,7 +170,7 @@ func (literal StringLiteral) What () (what Type) {
 
 // ToString outputs the data in the argument as a string.
 func (literal StringLiteral) ToString (indent int) (output string) {
-	output += doIndent(indent, fmt.Sprint("arg string '", literal.value, "'\n"))
+	output += doIndent(indent, fmt.Sprint("stringLiteral '", literal.value, "'\n"))
 	return
 }
 
