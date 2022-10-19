@@ -70,3 +70,9 @@ func (section sectionBase) locator () (where locator) {
 	where = section.where
 	return
 }
+
+// phraseBase is a struct that all phrases must embed.
+type phraseBase struct {
+	locatable
+	returnsTo []Argument
+}

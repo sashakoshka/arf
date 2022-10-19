@@ -13,7 +13,7 @@ funcSection ro ../tests/analyzer/funcSection.bArbitrary
 	block
 		arbitraryPhrase
 			command 'puts'
-			cast
+			castPhrase
 				type aCString
 				arg string 'hellorld` + "\000" + `'
 `, test)
