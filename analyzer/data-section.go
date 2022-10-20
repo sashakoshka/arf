@@ -9,6 +9,7 @@ type DataSection struct {
 	sectionBase
 	what     Type
 	argument Argument
+	external bool
 }
 
 // ToString returns all data stored within the data section, in string form.
@@ -64,7 +65,10 @@ func (analyzer analysisOperation) analyzeDataSection () (
 		return
 	}
 
-	if !inputSection.Argument().Nil() {
+	if inputSection.External() {
+		outputSection.external = true
+			
+	} else if !inputSection.Argument().Nil() {
 		outputSection.argument,
 		err = analyzer.analyzeArgument(inputSection.Argument())
 		if err != nil { return }
