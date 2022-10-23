@@ -53,7 +53,17 @@ func (parser *parsingOperation) parseBody () (err error) {
 // addSection adds a section to the tree, ensuring it has a unique name within
 // the module.
 func (tree *SyntaxTree) addSection (section Section) (err error) {
-	_, exists := tree.sections[section.Name()]
+	index := section.Name()
+
+	funcSection, isFuncSection := section.(FuncSection)
+	if isFuncSection {
+		receiver := funcSection.receiver
+		if receiver != nil {
+			index = receiver.what.points.name.trail[0] + "_" + index
+		}
+	}
+
+	_, exists := tree.sections[index]
 	if exists {
 		err = section.NewError (
 			"cannot have multiple sections with the same name",
@@ -61,6 +71,6 @@ func (tree *SyntaxTree) addSection (section Section) (err error) {
 		return
 	}
 
-	tree.sections[section.Name()] = section
+	tree.sections[index] = section
 	return
 }

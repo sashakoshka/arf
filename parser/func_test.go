@@ -6,13 +6,13 @@ func TestFunc (test *testing.T) {
 	checkTree ("../tests/parser/func", false,
 `:arf
 ---
-func ro aBasicExternal
+func ro bMethod
+	@ bird:{Bird}
 	> someInput:Int:mut
 	< someOutput:Int 4
 	---
 	external
-func ro bMethod
-	@ bird:{Bird}
+func ro aBasicExternal
 	> someInput:Int:mut
 	< someOutput:Int 4
 	---
