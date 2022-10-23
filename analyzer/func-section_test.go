@@ -4,8 +4,7 @@ import "testing"
 
 func TestFuncSection (test *testing.T) {
 	checkTree ("../tests/analyzer/funcSection", false,
-`
-typeSection ro ../tests/analyzer/funcSection.aCString
+`typeSection ro ../tests/analyzer/funcSection.aCString
 	type 1 pointer {
 		type 1 basic U8
 	}
