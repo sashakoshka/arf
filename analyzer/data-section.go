@@ -1,6 +1,5 @@
 package analyzer
 
-import "git.tebibyte.media/arf/arf/types"
 import "git.tebibyte.media/arf/arf/parser"
 import "git.tebibyte.media/arf/arf/infoerr"
 
@@ -37,16 +36,7 @@ func (analyzer analysisOperation) analyzeDataSection () (
 	analyzer.addSection(section)
 
 	inputSection := analyzer.currentSection.(parser.DataSection)
-	outputSection.location = analyzer.currentSection.Location()
-
-	if inputSection.Permission() == types.PermissionReadWrite {
-		err = inputSection.NewError (
-			"read-write (rw) permission not understood in this " +
-			"context, try read-only (ro)",
-			infoerr.ErrorKindError)
-		return
-	}
-
+	outputSection.location   = analyzer.currentSection.Location()
 	outputSection.permission = inputSection.Permission()
 
 	// get inherited type
