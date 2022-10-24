@@ -5,7 +5,15 @@ import "git.tebibyte.media/arf/arf/types"
 // LookupSection looks returns the section under the give name. If the section
 // does not exist, nil is returned. If a method is being searched for, the type
 // name of its receiver should be passed. If not, it should just be left blank.
-func (tree SyntaxTree) LookupSection (name string) (section Section) {
+func (tree SyntaxTree) LookupSection (
+	receiver string,
+	name string,
+) (
+	section Section,
+) {
+	if receiver != "" {
+		name = receiver + "_" + name
+	}
 	section = tree.sections[name]
 	return
 }

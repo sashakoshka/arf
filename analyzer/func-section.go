@@ -7,7 +7,8 @@ import "git.tebibyte.media/arf/arf/infoerr"
 // FuncSection represents a type definition section.
 type FuncSection struct {
 	sectionBase
-	external bool	
+	root Block
+	external bool
 }
 
 // ToString returns all data stored within the function section, in string form.
@@ -18,7 +19,7 @@ func (section FuncSection) ToString (indent int) (output string) {
 	output += "\n"
 	
 	// TODO: arguments
-	// TODO: root block
+	output += section.root.ToString(indent + 1)
 	return
 }
 
@@ -53,6 +54,8 @@ func (analyzer *analysisOperation) analyzeFuncSection () (
 		outputSection.external = true
 			
 	} else {
+		outputSection.root, err = analyzer.analyzeBlock(inputSection.Root())
+		if err != nil { return }
 		// TODO: analyze root block if not nil
 	}
 	

@@ -58,7 +58,7 @@ func (analyzer *analysisOperation) analyze () (err error) {
 	for !sections.End() {
 		_, err = analyzer.fetchSection(locator {
 			modulePath: analyzer.modulePath,
-			name: sections.Value().Name(),
+			name: sections.Key(),
 		})
 		if err != nil { return err }
 		sections.Next()
@@ -93,7 +93,7 @@ func (analyzer *analysisOperation) fetchSection (
 		return
 	}
 
-	var parsedSection = tree.LookupSection(where.name)
+	var parsedSection = tree.LookupSection("", where.name)
 	if parsedSection == nil {
 		section = nil
 		return
