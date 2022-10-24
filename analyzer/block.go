@@ -14,7 +14,10 @@ func (block Block) ToString (indent int) (output string) {
 	output += doIndent(indent, "block\n")
 
 	// TODO: variables
-	// TODO: phrases
+	
+	for _, phrase := range block.phrases {
+		output += phrase.ToString(indent + 1)
+	}
 	return
 }
 
@@ -27,5 +30,8 @@ func (analyzer *analysisOperation) analyzeBlock (
 	block Block,
 	err error,
 ) {
+	for _, inputPhrase := range inputBlock {
+		
+	}
 	return
 }

@@ -52,6 +52,9 @@ func (analyzer *analysisOperation) analyzeFuncSection () (
 	
 	if inputSection.External() {
 		outputSection.external = true
+		if inputSection.Root() != nil {
+			panic("invalid state: input func is external with non-nil root")
+		}
 			
 	} else {
 		outputSection.root, err = analyzer.analyzeBlock(inputSection.Root())
