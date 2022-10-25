@@ -277,7 +277,7 @@ const (
 // Phrase represents a function call or operator. In ARF they are the same
 // syntactical concept.
 type Phrase struct {
-	location  file.Location
+	locatable
 	returnees []Argument
 	multiValuable
 	

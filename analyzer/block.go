@@ -4,7 +4,6 @@ import "git.tebibyte.media/arf/arf/parser"
 
 // Block represents a scoped block of phrases.
 type Block struct {
-	locatable
 	phrases []Phrase
 
 	// TODO: create a scope struct and embed it
@@ -31,7 +30,10 @@ func (analyzer *analysisOperation) analyzeBlock (
 	err error,
 ) {
 	for _, inputPhrase := range inputBlock {
-		
+		var outputPhrase Phrase
+		outputPhrase, err = analyzer.analyzePhrase(inputPhrase)
+		block.phrases = append(block.phrases, outputPhrase)
 	}
+	
 	return
 }
