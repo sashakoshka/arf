@@ -231,19 +231,46 @@ type Dereference struct {
 type PhraseKind int
 
 const (
-	PhraseKindCall = iota
-	PhraseKindCallExternal
+	// [name]
+	PhraseKindCall PhraseKind = iota
+	
+	// ["name"]
+	PhraseKindArbitrary
+	
+	// [+] [-]
 	PhraseKindOperator
+	
+	// [= x y]
 	PhraseKindAssign
+	
+	// [loc x]
 	PhraseKindReference
+	
+	// [cast x T]
 	PhraseKindCast
+
+	// [defer]
 	PhraseKindDefer
+	
+	// [if c]
 	PhraseKindIf
+	
+	// [elseif]
 	PhraseKindElseIf
+	
+	// [else]
 	PhraseKindElse
+	
+	// [switch]
 	PhraseKindSwitch
+	
+	// [case]
 	PhraseKindCase
+	
+	// [while c]
 	PhraseKindWhile
+	
+	// [for x y z]
 	PhraseKindFor
 )
 

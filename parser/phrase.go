@@ -306,7 +306,7 @@ func (parser *parsingOperation) parsePhraseCommand () (
 
 	// determine semantic role of phrase
 	if command.kind == ArgumentKindString {
-		kind = PhraseKindCallExternal
+		kind = PhraseKindArbitrary
 		
 	} else if command.kind == ArgumentKindIdentifier {
 		identifier := command.value.(Identifier)
