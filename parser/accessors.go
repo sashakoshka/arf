@@ -191,6 +191,12 @@ func (section DataSection) External () (external bool) {
 	return
 }
 
+// Command returns the phrase's command.
+func (phrase Phrase) Command () (command Argument) {
+	command = phrase.command
+	return
+}
+
 // Kind returns what kind of phrase it is.
 func (phrase Phrase) Kind () (kind PhraseKind) {
 	kind = phrase.kind

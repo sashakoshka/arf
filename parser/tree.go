@@ -283,8 +283,6 @@ type Phrase struct {
 	
 	kind PhraseKind
 
-	// TODO: do not have this be an argument. make a string version, and
-	// and identifier version.
 	command Argument
 
 	// only applicable for PhraseKindOperator
