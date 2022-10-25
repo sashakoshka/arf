@@ -47,9 +47,8 @@ func (analyzer *analysisOperation) analyzePhrase (
 	phrase Phrase,
 	err error,
 ) {
-	base := phraseBase {
-		
-	}
+	base := phraseBase { }
+	base.location = inputPhrase.Location()
 
 	arguments := []Argument { }
 	for index := 0; index < inputPhrase.Length(); index ++ {
@@ -58,6 +57,7 @@ func (analyzer *analysisOperation) analyzePhrase (
 		var argument Argument
 		argument, err = analyzer.analyzeArgument(inputArgument)
 		if err != nil { return }
+		
 		arguments = append(arguments, argument)
 	}
 
