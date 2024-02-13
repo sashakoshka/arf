@@ -1,5 +1,9 @@
 # ![ARF](assets/logo.svg)
 
+This repository is no longer being developed. The ARF language has since gone through several revisions and has been given a different name (FSPL), and the new version can be found [here](git.tebibyte.media/sashakoshka/fspl). The new repository will eventually be migrated into this origanization.
+
+README of this repository:
+
 The ARF programming language.
 
 This is still under development and does not compile things yet. Once complete,
